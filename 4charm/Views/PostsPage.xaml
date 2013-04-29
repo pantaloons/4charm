@@ -1,0 +1,279 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="_4charm.Views.PostsPage"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:models="clr-namespace:_4charm.Models"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="False">
+    
+    <phone:PhoneApplicationPage.Resources>
+        <DataTemplate x:Key="PostItemTemplate">
+            <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24">
+                <Grid.Triggers>
+                    <EventTrigger RoutedEvent="Grid.Loaded">
+                        <BeginStoryboard>
+                            <Storyboard>
+                                <DoubleAnimation Duration="0:0:0.5" From="0" To="1"
+                                                 Storyboard.TargetName="RootGrid"
+                                                 Storyboard.TargetProperty="Opacity">
+                                </DoubleAnimation>
+                            </Storyboard>
+                        </BeginStoryboard>
+                    </EventTrigger>
+                </Grid.Triggers>
+
+                <Grid.Resources>
+                    <Storyboard x:Key="FlashStoryboard">
+                        <ColorAnimation To="#FF7449" AutoReverse="True" Duration="0:0:0.1" BeginTime="0:0:0"
+                                        Storyboard.TargetName="RootGrid"
+                                        Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"/>
+                    </Storyboard>
+                </Grid.Resources>
+
+                <Grid Margin="{StaticResource PhoneHorizontalMargin}">
+                    <StackPanel Margin="{StaticResource PhoneVerticalMargin}">
+                        <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                               Margin="0"
+                               Visibility="{Binding Subject, Converter={StaticResource NullVisibleConverter}}"
+                               FontSize="17"
+                               Foreground="#0F0C5D"
+                               TextWrapping="Wrap"
+                               Text="{Binding Subject}"/>
+                        <Grid>
+                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
+                                <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                                       Margin="0"
+                                       Foreground="{Binding CapCode, Converter={StaticResource CapCodeColorConverter}}"
+                                       FontSize="17"
+                                       Text="{Binding AuthorName}"/>
+                                <Image Source="\Assets\Icons\sticky.gif"
+                                   Visibility="{Binding IsSticky, Converter={StaticResource BoolVisibleConverter}}"/>
+                                <Image Source="\Assets\Icons\closed.gif"
+                                   Visibility="{Binding IsClosed, Converter={StaticResource BoolVisibleConverter}}"/>
+                                <Image Source="\Assets\Icons\adminicon.gif"
+                                   Visibility="{Binding IsAdmin, Converter={StaticResource BoolVisibleConverter}}"/>
+                                <Image Source="\Assets\Icons\modicon.gif"
+                                   Visibility="{Binding IsMod, Converter={StaticResource BoolVisibleConverter}}"/>
+                                <Image Source="\Assets\Icons\evelopericon.gif"
+                                   Visibility="{Binding IsDeveloper, Converter={StaticResource BoolVisibleConverter}}"/>
+                                <Image Source="\Assets\Icons\filedeleted-res.gif"
+                                   Visibility="{Binding FileDeleted, Converter={StaticResource BoolVisibleConverter}}"/>
+                            </StackPanel>
+                            
+                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                                   Margin="0"
+                                   Grid.Column="1"
+                                   HorizontalAlignment="Right"
+                                   FontSize="17"
+                                   Foreground="Black"
+                                   Text="{Binding Number}">
+                                <i:Interaction.Triggers>
+                                    <i:EventTrigger EventName="Tap">
+                                        <i:InvokeCommandAction Command="{Binding NumberTapped}" />
+                                    </i:EventTrigger>
+                                </i:Interaction.Triggers>
+                            </TextBlock>
+                        </Grid>
+
+                        <Grid>
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+
+                            <Grid Margin="0,6,0,6">
+                                <Image VerticalAlignment="Top"
+                                   Width="{Binding ThumbWidth}"
+                                   Height="{Binding ThumbHeight}"
+                                   Margin="{Binding ThumbMargin}"
+                                   Source="{Binding Image}">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Tap">
+                                            <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </Image>
+                            </Grid>
+
+                            <RichTextBox VerticalAlignment="Top" Grid.Column="1"
+                                     models:BindableTextBlock.FormattedText="{Binding Comment}"
+                                     Margin="-12,0,-12,0"
+                                     TextWrapping="Wrap"
+                                     FontSize="17"
+                                     FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                                     Foreground="Black"/>
+                        </Grid>
+
+                        <Grid>
+                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                                   Margin="0"
+                                   FontSize="17"
+                                   HorizontalAlignment="Left"
+                                   Foreground="#707070"
+                                   Text="{Binding PrettyTime}"/>
+                        </Grid>
+                    </StackPanel>
+                </Grid>
+            </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ImageItemTemplate">
+            <Grid Margin="12,0,0,12">
+                <Image Source="{Binding Image}"
+                   Width="98"
+                   Height="98"
+                   Margin="0"
+                   Stretch="UniformToFill">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Tap">
+                            <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+                </Image>
+            </Grid>
+        </DataTemplate>
+        
+        <Style x:Key="OverlaidScrollbarLLS" TargetType="phone:LongListSelector">
+        	<Setter Property="Background" Value="Transparent"/>
+        	<Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+        	<Setter Property="Template">
+        		<Setter.Value>
+        			<ControlTemplate TargetType="phone:LongListSelector">
+        				<Grid Background="{TemplateBinding Background}" d:DesignWidth="480" d:DesignHeight="800">
+        					<VisualStateManager.VisualStateGroups>
+        						<VisualStateGroup x:Name="ScrollStates">
+        							<VisualStateGroup.Transitions>
+        								<VisualTransition GeneratedDuration="00:00:00.5"/>
+        							</VisualStateGroup.Transitions>
+        							<VisualState x:Name="Scrolling">
+        								<Storyboard>
+        									<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="VerticalScrollBar"/>
+        								</Storyboard>
+        							</VisualState>
+        							<VisualState x:Name="NotScrolling"/>
+        						</VisualStateGroup>
+        					</VisualStateManager.VisualStateGroups>
+        					<Grid Margin="{TemplateBinding Padding}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                </Grid.ColumnDefinitions>
+        						<ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
+        						<ScrollBar x:Name="VerticalScrollBar" Grid.Column="1" Margin="4,0,4,0" Opacity="0" Orientation="Vertical"/>
+        					</Grid>
+        				</Grid>
+        			</ControlTemplate>
+        		</Setter.Value>
+        	</Setter>
+        </Style>
+    </phone:PhoneApplicationPage.Resources>
+
+    <Grid x:Name="LayoutRoot">
+        <phone:Pivot x:Name="MainPivot" Title="{Binding PivotTitle}" SelectionChanged="MainPivotSelectionChanged">
+            <phone:PivotItem x:Name="TextPivot">
+                <Grid>
+                    <Grid.Resources>
+                        <Storyboard x:Name="ExpandStoryboard" Completed="ExpandStoryboardCompleted">
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimation From="-224" To="0" Duration="0:0:0.75"
+                                             Storyboard.TargetName="SelectionLLS"
+                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DoubleAnimation.EasingFunction>
+                                    <ElasticEase EasingMode="EaseOut" Oscillations="3" Springiness="7"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation From="0" To="224" Duration="0:0:0.75"
+                                             Storyboard.TargetName="TextLLS"
+                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DoubleAnimation.EasingFunction>
+                                    <ElasticEase EasingMode="EaseOut" Oscillations="3" Springiness="7"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+
+                        <Storyboard x:Name="CollapseStoryboard">
+                            <DoubleAnimation From="0" To="-224" Duration="0:0:0.15"
+                                             Storyboard.TargetName="SelectionLLS"
+                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DoubleAnimation.EasingFunction>
+                                    <ExponentialEase EasingMode="EaseOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation From="224" To="0" Duration="0:0:0.15"
+                                             Storyboard.TargetName="TextLLS"
+                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DoubleAnimation.EasingFunction>
+                                    <ExponentialEase EasingMode="EaseOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                    </Grid.Resources>
+                    
+                    <Grid>
+                        <Grid.Clip>
+                            <RectangleGeometry Rect="0,0,2048,2048"/>
+                        </Grid.Clip>
+                        <phone:LongListSelector Visibility="Collapsed"
+                                                Height="200"
+                                                VerticalAlignment="Top"
+                                                x:Name="SelectionLLS"
+                                                Style="{StaticResource OverlaidScrollbarLLS}"
+                                                ItemTemplate="{StaticResource PostItemTemplate}"
+                                                Margin="12,0,0,0" ItemsSource="{Binding SelectedPosts}"
+                                                ItemRealized="SelectionLLS_ItemRealized"
+                                                ItemUnrealized="LLS_ItemUnrealized">
+                            <phone:LongListSelector.RenderTransform>
+                                <CompositeTransform/>
+                            </phone:LongListSelector.RenderTransform>
+                        </phone:LongListSelector>
+                    </Grid>
+                    <phone:LongListSelector x:Name="TextLLS"
+                                            Style="{StaticResource OverlaidScrollbarLLS}"
+                                            ItemTemplate="{StaticResource PostItemTemplate}"
+                                            Margin="12,0,0,0" ItemsSource="{Binding AllPosts}"
+                                            ItemRealized="LLS_ItemRealized"
+                                            ItemUnrealized="LLS_ItemUnrealized">
+                        <phone:LongListSelector.RenderTransform>
+                            <CompositeTransform />
+                        </phone:LongListSelector.RenderTransform>
+                        <phone:LongListSelector.ListFooterTemplate>
+                            <DataTemplate>
+                                <Rectangle Height="180"/>
+                            </DataTemplate>
+                        </phone:LongListSelector.ListFooterTemplate>
+                    </phone:LongListSelector>
+                </Grid>
+            </phone:PivotItem>
+
+            <phone:PivotItem>
+                <phone:LongListSelector x:Name="ImageLLS" 
+                                        Visibility="Collapsed"
+                                        Style="{StaticResource OverlaidScrollbarLLS}"
+                                        ItemTemplate="{StaticResource ImageItemTemplate}"
+                                        Margin="0" ItemsSource="{Binding ImagePosts}"
+                                        ItemRealized="LLS_ItemRealized"
+                                        ItemUnrealized="LLS_ItemUnrealized"
+                                        LayoutMode="Grid"
+                                        GridCellSize="110,110">
+                </phone:LongListSelector>
+            </phone:PivotItem>
+        </phone:Pivot>
+
+        <Grid VerticalAlignment="Top">
+            <ProgressBar IsIndeterminate="True"
+                         Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>

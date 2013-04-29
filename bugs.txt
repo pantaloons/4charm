@@ -1,0 +1,11 @@
+Bugs:
+10 Upgrade compat / transition
+
+Features:
+Image saving
+Link clicking
+Posting
+Rating reminder
+Image download cancellation
+Refactoring GIFs/mediaviewer
+Memory leaks...

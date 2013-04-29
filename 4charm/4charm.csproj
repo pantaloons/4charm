@@ -1,0 +1,405 @@
+﻿<?xml version="1.0" encoding="utf-8"?>
+<Project ToolsVersion="4.0" DefaultTargets="Build" xmlns="http://schemas.microsoft.com/developer/msbuild/2003">
+  <PropertyGroup>
+    <Configuration Condition=" '$(Configuration)' == '' ">Debug</Configuration>
+    <Platform Condition=" '$(Platform)' == '' ">AnyCPU</Platform>
+    <ProductVersion>10.0.20506</ProductVersion>
+    <SchemaVersion>2.0</SchemaVersion>
+    <ProjectGuid>{C39B22F8-5238-4FD1-A864-76169663F0D9}</ProjectGuid>
+    <ProjectTypeGuids>{C089C8C0-30E0-4E22-80C0-CE093F111A43};{fae04ec0-301f-11d3-bf4b-00c04f79efbc}</ProjectTypeGuids>
+    <OutputType>Library</OutputType>
+    <AppDesignerFolder>Properties</AppDesignerFolder>
+    <RootNamespace>_4charm</RootNamespace>
+    <AssemblyName>4charm</AssemblyName>
+    <TargetFrameworkIdentifier>WindowsPhone</TargetFrameworkIdentifier>
+    <TargetFrameworkVersion>v8.0</TargetFrameworkVersion>
+    <SilverlightVersion>$(TargetFrameworkVersion)</SilverlightVersion>
+    <SilverlightApplication>true</SilverlightApplication>
+    <SupportedCultures>
+    </SupportedCultures>
+    <XapOutputs>true</XapOutputs>
+    <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
+    <XapFilename>_4charm_$(Configuration)_$(Platform).xap</XapFilename>
+    <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
+    <SilverlightAppEntry>_4charm.App</SilverlightAppEntry>
+    <ValidateXaml>true</ValidateXaml>
+    <MinimumVisualStudioVersion>11.0</MinimumVisualStudioVersion>
+    <ThrowErrorsInValidation>true</ThrowErrorsInValidation>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\x86\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\x86\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|ARM' ">
+    <DebugSymbols>true</DebugSymbols>
+    <DebugType>full</DebugType>
+    <Optimize>false</Optimize>
+    <OutputPath>Bin\ARM\Debug</OutputPath>
+    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|ARM' ">
+    <DebugType>pdbonly</DebugType>
+    <Optimize>true</Optimize>
+    <OutputPath>Bin\ARM\Release</OutputPath>
+    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
+    <NoStdLib>true</NoStdLib>
+    <NoConfig>true</NoConfig>
+    <ErrorReport>prompt</ErrorReport>
+    <WarningLevel>4</WarningLevel>
+  </PropertyGroup>
+  <ItemGroup>
+    <Compile Include="App.xaml.cs">
+      <DependentUpon>App.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Converters\BoolVisibleConverter.cs" />
+    <Compile Include="Converters\CapCodeColorConverter.cs" />
+    <Compile Include="Converters\IndexOrientationConverter.cs" />
+    <Compile Include="Converters\NullVisibleConverter.cs" />
+    <Compile Include="LocalizedStrings.cs" />
+    <Compile Include="Models\API\APIPage.cs" />
+    <Compile Include="Models\API\APIPost.cs" />
+    <Compile Include="Models\API\APIThread.cs" />
+    <Compile Include="Models\BindableTextBlock.cs" />
+    <Compile Include="Models\Board.cs" />
+    <Compile Include="Models\BoardID.cs" />
+    <Compile Include="Models\BoardList.cs" />
+    <Compile Include="Models\MediaViewer\DragState.cs" />
+    <Compile Include="Models\MediaViewer\GIFViewer.cs" />
+    <Compile Include="Models\MediaViewer\IDisplayableImage.cs" />
+    <Compile Include="Models\MediaViewer\ItemDisplayedEventArgs.cs" />
+    <Compile Include="Models\MediaViewer\IThumbnailedImage.cs" />
+    <Compile Include="Models\MediaViewer\MediaViewer.cs" />
+    <Compile Include="Models\MediaViewer\ThumbnailedImageViewer.cs" />
+    <Compile Include="Models\MediaViewer\UnloadedVisibleConverter.cs" />
+    <Compile Include="Models\MediaViewer\VirtualizedItem.cs" />
+    <Compile Include="Models\ModelCommand.cs" />
+    <Compile Include="Models\PNG\ToolStackCRCLib.cs" />
+    <Compile Include="Models\PNG\ToolStackPNGWriterLib.cs" />
+    <Compile Include="Models\PNG\ToolStackPNGWriterWBext.cs" />
+    <Compile Include="Models\Post.cs" />
+    <Compile Include="Models\RequestManager.cs" />
+    <Compile Include="Models\SettingsManager.cs" />
+    <Compile Include="Models\SortedObservableCollection.cs" />
+    <Compile Include="Models\Thread.cs" />
+    <Compile Include="Models\ThreadCache.cs" />
+    <Compile Include="Models\ThreadID.cs" />
+    <Compile Include="Properties\AssemblyInfo.cs" />
+    <Compile Include="Resources\AppResources.Designer.cs">
+      <AutoGen>True</AutoGen>
+      <DesignTime>True</DesignTime>
+      <DependentUpon>AppResources.resx</DependentUpon>
+    </Compile>
+    <Compile Include="ViewModels\AboutPageViewModel.cs" />
+    <Compile Include="ViewModels\AddBoardPageViewModel.cs" />
+    <Compile Include="ViewModels\BoardsPageViewModel.cs" />
+    <Compile Include="ViewModels\BoardViewModel.cs" />
+    <Compile Include="ViewModels\ImageViewerPageViewModel.cs" />
+    <Compile Include="ViewModels\PostsPageViewModel.cs" />
+    <Compile Include="ViewModels\PostViewModel.cs" />
+    <Compile Include="ViewModels\SettingsPageViewModel.cs" />
+    <Compile Include="ViewModels\ThreadsPageViewModel.cs" />
+    <Compile Include="ViewModels\ThreadViewModel.cs" />
+    <Compile Include="ViewModels\TilePickerViewModel.cs" />
+    <Compile Include="ViewModels\ViewModelBase.cs" />
+    <Compile Include="Views\AboutPage.xaml.cs">
+      <DependentUpon>AboutPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\AddBoardPage.xaml.cs">
+      <DependentUpon>AddBoardPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\BoardsPage.xaml.cs">
+      <DependentUpon>BoardsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ImageViewer.xaml.cs">
+      <DependentUpon>ImageViewer.xaml</DependentUpon>
+      <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\PostsPage.xaml.cs">
+      <DependentUpon>PostsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\SettingsPage.xaml.cs">
+      <DependentUpon>SettingsPage.xaml</DependentUpon>
+    </Compile>
+    <Compile Include="Views\ThreadsPage.xaml.cs">
+      <DependentUpon>ThreadsPage.xaml</DependentUpon>
+    </Compile>
+  </ItemGroup>
+  <ItemGroup>
+    <ApplicationDefinition Include="App.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </ApplicationDefinition>
+    <Content Include="Assets\Appbar\appbar.add.png" />
+    <Content Include="Assets\Appbar\appbar.delete.png" />
+    <Content Include="Assets\Appbar\appbar.eye.check.png" />
+    <Content Include="Assets\Appbar\appbar.eye.png" />
+    <Content Include="Assets\Appbar\appbar.refresh.png" />
+    <Content Include="Assets\Appbar\appbar.reply.png" />
+    <Content Include="Assets\Appbar\appbar.send.png" />
+    <Page Include="Themes\generic.xaml">
+      <SubType>Designer</SubType>
+    </Page>
+    <Page Include="Views\AboutPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\AddBoardPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\BoardsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Content Include="Assets\ApplicationIcon.dark.png" />
+    <Content Include="Assets\Boards\Fanart\3.jpg" />
+    <Content Include="Assets\Boards\Fanart\a.jpg" />
+    <Content Include="Assets\Boards\Fanart\adv.jpg" />
+    <Content Include="Assets\Boards\Fanart\an.jpg" />
+    <Content Include="Assets\Boards\Fanart\asp.jpg" />
+    <Content Include="Assets\Boards\Fanart\b.jpg" />
+    <Content Include="Assets\Boards\Fanart\c.jpg" />
+    <Content Include="Assets\Boards\Fanart\cgl.jpg" />
+    <Content Include="Assets\Boards\Fanart\ck.jpg" />
+    <Content Include="Assets\Boards\Fanart\cm.jpg" />
+    <Content Include="Assets\Boards\Fanart\co.jpg" />
+    <Content Include="Assets\Boards\Fanart\d.jpg" />
+    <Content Include="Assets\Boards\Fanart\diy.jpg" />
+    <Content Include="Assets\Boards\Fanart\e.jpg" />
+    <Content Include="Assets\Boards\Fanart\fa.jpg" />
+    <Content Include="Assets\Boards\Fanart\fit.jpg" />
+    <Content Include="Assets\Boards\Fanart\g.jpg" />
+    <Content Include="Assets\Boards\Fanart\gd.jpg" />
+    <Content Include="Assets\Boards\Fanart\gif.jpg" />
+    <Content Include="Assets\Boards\Fanart\h.jpg" />
+    <Content Include="Assets\Boards\Fanart\hc.jpg" />
+    <Content Include="Assets\Boards\Fanart\hm.jpg" />
+    <Content Include="Assets\Boards\Fanart\hr.jpg" />
+    <Content Include="Assets\Boards\Fanart\i.jpg" />
+    <Content Include="Assets\Boards\Fanart\ic.jpg" />
+    <Content Include="Assets\Boards\Fanart\int.jpg" />
+    <Content Include="Assets\Boards\Fanart\jp.jpg" />
+    <Content Include="Assets\Boards\Fanart\k.jpg" />
+    <Content Include="Assets\Boards\Fanart\lgbt.jpg" />
+    <Content Include="Assets\Boards\Fanart\lit.jpg" />
+    <Content Include="Assets\Boards\Fanart\m.jpg" />
+    <Content Include="Assets\Boards\Fanart\mlp.jpg" />
+    <Content Include="Assets\Boards\Fanart\mu.jpg" />
+    <Content Include="Assets\Boards\Fanart\n.jpg" />
+    <Content Include="Assets\Boards\Fanart\o.jpg" />
+    <Content Include="Assets\Boards\Fanart\out.jpg" />
+    <Content Include="Assets\Boards\Fanart\p.jpg" />
+    <Content Include="Assets\Boards\Fanart\po.jpg" />
+    <Content Include="Assets\Boards\Fanart\pol.jpg" />
+    <Content Include="Assets\Boards\Fanart\q.jpg" />
+    <Content Include="Assets\Boards\Fanart\r.jpg" />
+    <Content Include="Assets\Boards\Fanart\r9k.jpg" />
+    <Content Include="Assets\Boards\Fanart\s.jpg" />
+    <Content Include="Assets\Boards\Fanart\s4s.jpg" />
+    <Content Include="Assets\Boards\Fanart\sci.jpg" />
+    <Content Include="Assets\Boards\Fanart\soc.jpg" />
+    <Content Include="Assets\Boards\Fanart\sp.jpg" />
+    <Content Include="Assets\Boards\Fanart\t.jpg" />
+    <Content Include="Assets\Boards\Fanart\tg.jpg" />
+    <Content Include="Assets\Boards\Fanart\toy.jpg" />
+    <Content Include="Assets\Boards\Fanart\trv.jpg" />
+    <Content Include="Assets\Boards\Fanart\tv.jpg" />
+    <Content Include="Assets\Boards\Fanart\u.jpg" />
+    <Content Include="Assets\Boards\Fanart\v.jpg" />
+    <Content Include="Assets\Boards\Fanart\vg.jpg" />
+    <Content Include="Assets\Boards\Fanart\vp.jpg" />
+    <Content Include="Assets\Boards\Fanart\vr.jpg" />
+    <Content Include="Assets\Boards\Fanart\w.jpg" />
+    <Content Include="Assets\Boards\Fanart\wg.jpg" />
+    <Content Include="Assets\Boards\Fanart\wsg.jpg" />
+    <Content Include="Assets\Boards\Fanart\x.jpg" />
+    <Content Include="Assets\Boards\Fanart\y.jpg" />
+    <Content Include="Assets\Boards\Icons\3.jpg" />
+    <Content Include="Assets\Boards\Icons\a.jpg" />
+    <Content Include="Assets\Boards\Icons\adv.jpg" />
+    <Content Include="Assets\Boards\Icons\an.jpg" />
+    <Content Include="Assets\Boards\Icons\asp.jpg" />
+    <Content Include="Assets\Boards\Icons\b.jpg" />
+    <Content Include="Assets\Boards\Icons\c.jpg" />
+    <Content Include="Assets\Boards\Icons\cgl.jpg" />
+    <Content Include="Assets\Boards\Icons\ck.jpg" />
+    <Content Include="Assets\Boards\Icons\cm.jpg" />
+    <Content Include="Assets\Boards\Icons\co.jpg" />
+    <Content Include="Assets\Boards\Icons\d.jpg" />
+    <Content Include="Assets\Boards\Icons\diy.jpg" />
+    <Content Include="Assets\Boards\Icons\e.jpg" />
+    <Content Include="Assets\Boards\Icons\fa.jpg" />
+    <Content Include="Assets\Boards\Icons\fit.jpg" />
+    <Content Include="Assets\Boards\Icons\g.jpg" />
+    <Content Include="Assets\Boards\Icons\gd.jpg" />
+    <Content Include="Assets\Boards\Icons\gif.jpg" />
+    <Content Include="Assets\Boards\Icons\h.jpg" />
+    <Content Include="Assets\Boards\Icons\hc.jpg" />
+    <Content Include="Assets\Boards\Icons\hm.jpg" />
+    <Content Include="Assets\Boards\Icons\hr.jpg" />
+    <Content Include="Assets\Boards\Icons\i.jpg" />
+    <Content Include="Assets\Boards\Icons\ic.jpg" />
+    <Content Include="Assets\Boards\Icons\int.jpg" />
+    <Content Include="Assets\Boards\Icons\jp.jpg" />
+    <Content Include="Assets\Boards\Icons\k.jpg" />
+    <Content Include="Assets\Boards\Icons\lgbt.jpg" />
+    <Content Include="Assets\Boards\Icons\lit.jpg" />
+    <Content Include="Assets\Boards\Icons\m.jpg" />
+    <Content Include="Assets\Boards\Icons\mlp.jpg" />
+    <Content Include="Assets\Boards\Icons\mu.jpg" />
+    <Content Include="Assets\Boards\Icons\n.jpg" />
+    <Content Include="Assets\Boards\Icons\o.jpg" />
+    <Content Include="Assets\Boards\Icons\out.jpg" />
+    <Content Include="Assets\Boards\Icons\p.jpg" />
+    <Content Include="Assets\Boards\Icons\po.jpg" />
+    <Content Include="Assets\Boards\Icons\pol.jpg" />
+    <Content Include="Assets\Boards\Icons\q.jpg" />
+    <Content Include="Assets\Boards\Icons\r.jpg" />
+    <Content Include="Assets\Boards\Icons\r9k.jpg" />
+    <Content Include="Assets\Boards\Icons\s.jpg" />
+    <Content Include="Assets\Boards\Icons\s4s.jpg" />
+    <Content Include="Assets\Boards\Icons\sci.jpg" />
+    <Content Include="Assets\Boards\Icons\soc.jpg" />
+    <Content Include="Assets\Boards\Icons\sp.jpg" />
+    <Content Include="Assets\Boards\Icons\t.jpg" />
+    <Content Include="Assets\Boards\Icons\tg.jpg" />
+    <Content Include="Assets\Boards\Icons\toy.jpg" />
+    <Content Include="Assets\Boards\Icons\trv.jpg" />
+    <Content Include="Assets\Boards\Icons\tv.jpg" />
+    <Content Include="Assets\Boards\Icons\u.jpg" />
+    <Content Include="Assets\Boards\Icons\v.jpg" />
+    <Content Include="Assets\Boards\Icons\vg.jpg" />
+    <Content Include="Assets\Boards\Icons\vp.jpg" />
+    <Content Include="Assets\Boards\Icons\vr.jpg" />
+    <Content Include="Assets\Boards\Icons\w.jpg" />
+    <Content Include="Assets\Boards\Icons\wg.jpg" />
+    <Content Include="Assets\Boards\Icons\wsg.jpg" />
+    <Content Include="Assets\Boards\Icons\x.jpg" />
+    <Content Include="Assets\Boards\Icons\y.jpg" />
+    <Page Include="Views\ImageViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\PostsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\SettingsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\ThreadsPage.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+  </ItemGroup>
+  <ItemGroup>
+    <None Include="packages.config" />
+    <None Include="Properties\AppManifest.xml" />
+    <None Include="Properties\WMAppManifest.xml">
+      <SubType>Designer</SubType>
+    </None>
+  </ItemGroup>
+  <ItemGroup>
+    <Content Include="Assets\ApplicationIcon.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Icons\adminicon.gif" />
+    <Content Include="Assets\Icons\closed.gif" />
+    <Content Include="Assets\Icons\developericon.gif" />
+    <Content Include="Assets\Icons\filedeleted-res.gif" />
+    <Content Include="Assets\Icons\filedeleted.gif" />
+    <Content Include="Assets\Icons\modicon.gif" />
+    <Content Include="Assets\Icons\sticky.gif" />
+    <Content Include="Assets\Tiles\FlipCycleTileLarge.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Tiles\FlipCycleTileMedium.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+    <Content Include="Assets\Tiles\FlipCycleTileSmall.png">
+      <CopyToOutputDirectory>PreserveNewest</CopyToOutputDirectory>
+    </Content>
+  </ItemGroup>
+  <ItemGroup>
+    <EmbeddedResource Include="Resources\AppResources.resx">
+      <Generator>PublicResXFileCodeGenerator</Generator>
+      <LastGenOutput>AppResources.Designer.cs</LastGenOutput>
+    </EmbeddedResource>
+  </ItemGroup>
+  <ItemGroup>
+    <Reference Include="HtmlAgilityPack">
+      <HintPath>..\packages\HtmlAgilityPack.1.4.6\lib\sl3-wp\HtmlAgilityPack.dll</HintPath>
+    </Reference>
+    <Reference Include="Microsoft.Phone.Controls.Toolkit">
+      <HintPath>..\packages\WPtoolkit.4.2012.10.30\lib\wp8\Microsoft.Phone.Controls.Toolkit.dll</HintPath>
+    </Reference>
+    <Reference Include="Newtonsoft.Json">
+      <HintPath>..\packages\Newtonsoft.Json.4.5.11\lib\sl3-wp\Newtonsoft.Json.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http">
+      <HintPath>..\packages\Microsoft.Net.Http.2.1.3-beta\lib\sl4-windowsphone71\System.Net.Http.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Extensions">
+      <HintPath>..\packages\Microsoft.Net.Http.2.1.3-beta\lib\sl4-windowsphone71\System.Net.Http.Extensions.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Net.Http.Primitives">
+      <HintPath>..\packages\Microsoft.Net.Http.2.1.3-beta\lib\sl4-windowsphone71\System.Net.Http.Primitives.dll</HintPath>
+    </Reference>
+    <Reference Include="System.Windows.Interactivity, Version=3.9.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
+  </ItemGroup>
+  <ItemGroup />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
+  <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
+  <!-- To modify your build process, add your task inside one of the targets below and uncomment it.
+       Other similar extension points exist, see Microsoft.Common.targets.
+  <Target Name="BeforeBuild">
+  </Target>
+  <Target Name="AfterBuild">
+  </Target>
+  -->
+  <ProjectExtensions />
+  <Import Project="..\packages\Microsoft.Bcl.Build.1.0.5\tools\Microsoft.Bcl.Build.targets" />
+</Project>

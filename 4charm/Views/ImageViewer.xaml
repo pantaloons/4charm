@@ -1,0 +1,30 @@
+﻿<phone:PhoneApplicationPage
+    x:Class="_4charm.Views.ImageViewer"
+    xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
+    xmlns:phone="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone"
+    xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
+    xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
+    xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:controls="clr-namespace:Microsoft.Phone.Controls"
+    FontFamily="{StaticResource PhoneFontFamilyNormal}"
+    FontSize="{StaticResource PhoneFontSizeNormal}"
+    Foreground="{StaticResource PhoneForegroundBrush}"
+    SupportedOrientations="Portrait" Orientation="Portrait"
+    mc:Ignorable="d"
+    shell:SystemTray.IsVisible="False">
+
+    <Grid x:Name="LayoutRoot" Background="Transparent" Margin="0">
+        <controls:MediaViewer
+            x:Name="MediaViewer"
+            Items="{Binding ImagePosts}"
+            ItemZoomed="MediaViewer_ItemZoomed"
+            ItemUnzoomed="MediaViewer_ItemUnzoomed"
+            InitiallyDisplayedElement="First"/>
+        <Grid VerticalAlignment="Top">
+            <ProgressBar IsIndeterminate="True"
+                         Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
+        </Grid>
+    </Grid>
+
+</phone:PhoneApplicationPage>
