@@ -6,6 +6,7 @@ using System.Linq;
 using System;
 using System.Threading.Tasks;
 using System.Windows.Navigation;
+using System.Windows.Media;
 
 namespace _4charm.ViewModels
 {
@@ -20,6 +21,12 @@ namespace _4charm.ViewModels
         public bool IsLoading
         {
             get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
+        public ReplyViewModel ReplyViewModel
+        {
+            get { return GetProperty<ReplyViewModel>(); }
             set { SetProperty(value); }
         }
 
@@ -56,6 +63,7 @@ namespace _4charm.ViewModels
             ImagePosts = new ObservableCollection<PostViewModel>();
             SelectedPosts = new ObservableCollection<PostViewModel>();
             PivotTitle = "/" + boardName + "/ - " + (string.IsNullOrEmpty(_thread.Subject) ? _thread.Number + "" : _thread.Subject);
+            ReplyViewModel = new ReplyViewModel(_thread);
 
             _initialLoadTask = InsertPosts(_thread.Posts.Values.ToList());
             Update().ContinueWith(t => after(), TaskScheduler.FromCurrentSynchronizationContext());

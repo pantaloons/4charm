@@ -133,6 +133,15 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to reply.
+        /// </summary>
+        public static string ApplicationBar_Reply {
+            get {
+                return ResourceManager.GetString("ApplicationBar_Reply", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to save.
         /// </summary>
         public static string ApplicationBar_Save {
@@ -147,6 +156,15 @@ namespace _4charm.Resources {
         public static string ApplicationBar_ScrollToBottom {
             get {
                 return ResourceManager.GetString("ApplicationBar_ScrollToBottom", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to send.
+        /// </summary>
+        public static string ApplicationBar_Send {
+            get {
+                return ResourceManager.GetString("ApplicationBar_Send", resourceCulture);
             }
         }
         

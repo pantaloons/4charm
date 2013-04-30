@@ -98,6 +98,7 @@
     <Compile Include="Converters\IndexOrientationConverter.cs" />
     <Compile Include="Converters\NullVisibleConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
+    <Compile Include="Models\API\APICaptcha.cs" />
     <Compile Include="Models\API\APIPage.cs" />
     <Compile Include="Models\API\APIPost.cs" />
     <Compile Include="Models\API\APIThread.cs" />
@@ -138,6 +139,7 @@
     <Compile Include="ViewModels\ImageViewerPageViewModel.cs" />
     <Compile Include="ViewModels\PostsPageViewModel.cs" />
     <Compile Include="ViewModels\PostViewModel.cs" />
+    <Compile Include="ViewModels\ReplyViewModel.cs" />
     <Compile Include="ViewModels\SettingsPageViewModel.cs" />
     <Compile Include="ViewModels\ThreadsPageViewModel.cs" />
     <Compile Include="ViewModels\ThreadViewModel.cs" />

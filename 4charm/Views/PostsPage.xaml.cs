@@ -18,7 +18,7 @@ namespace _4charm.Views
     {
         private PostsPageViewModel _viewModel;
 
-        private ApplicationBarIconButton _watch;
+        private ApplicationBarIconButton _watch, _reply, _send;
         private ApplicationBarMenuItem _orientLock;
 
         private Thread _thread;
@@ -49,6 +49,21 @@ namespace _4charm.Views
                 else SettingsManager.Current.Watchlist.Add(new ThreadViewModel(_thread));
 
                 UpdateWatchButton();
+            };
+
+            _reply = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.reply.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Reply };
+            _reply.Click += (sender, e) =>
+            {
+                TransitionToState(BackState.Reply);
+            };
+
+            _send = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.send.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Send };
+            _send.Click += async (sender, e) =>
+            {
+                // Focus and then dispatch to ensure the two-way binding updates
+                Focus();
+                Dispatcher.BeginInvoke(async () => await _viewModel.ReplyViewModel.Submit());
+                TransitionToState(BackState.None);
             };
 
             ApplicationBarMenuItem bottom = new ApplicationBarMenuItem(AppResources.ApplicationBar_ScrollToBottom);
@@ -83,6 +98,7 @@ namespace _4charm.Views
             };
 
             ApplicationBar = new ApplicationBar();
+            ApplicationBar.Buttons.Add(_reply);
             ApplicationBar.Buttons.Add(_watch);
             ApplicationBar.MenuItems.Add(bottom);
             ApplicationBar.MenuItems.Add(_orientLock);
@@ -114,9 +130,6 @@ namespace _4charm.Views
                 _watch.IconUri = new Uri("Assets/Appbar/appbar.eye.png", UriKind.Relative);
                 _watch.Text = AppResources.ApplicationBar_Watch;
             }
-
-            //if (new Random().Next() % 2 == 1) ExpandStoryboard.Begin();
-            //else CollapseStoryboard.Begin();
         }
 
         private bool _initialized;
@@ -183,26 +196,130 @@ namespace _4charm.Views
                     case BackState.Quotes:
                         (TextLLS.RenderTransform as CompositeTransform).TranslateY = 224;
                         TextLLS.Margin = new Thickness(12, 0, 0, 0);
-                        CollapseStoryboard.Begin();
+                        CollapseSelectionStoryboard.Begin();
                         _backState = BackState.None;
                         e.Cancel = true;
                         break;
                     case BackState.Reply:
+                        (TextLLS.RenderTransform as CompositeTransform).TranslateY = 224;
+                        TextLLS.Margin = new Thickness(12, 0, 0, 0);
+                        CollapseReplyStoryboard.Begin();
+                        _backState = BackState.None;
+                        e.Cancel = true;
                         break;
                     case BackState.None:
                         break;
                 }
             }
+
+            UpdateApplicationBar();
+        }
+
+        private void TransitionToState(BackState desired)
+        {
+            switch (_backState)
+            {
+                case BackState.None:
+                    TransitionFromNone(desired);
+                    break;
+                case BackState.Quotes:
+                    TransitionFromQuotes(desired);
+                    break;
+                case BackState.Reply:
+                    TransitionFromReply(desired);
+                    break;
+            }
+
+            if (desired == BackState.Reply)
+            {
+                _viewModel.ReplyViewModel.UnloadImage();
+                _viewModel.ReplyViewModel.Load();
+            }
+        }
+
+        private void TransitionFromNone(BackState desired)
+        {
+            switch (desired)
+            {
+                case BackState.None:
+                    break;
+                case BackState.Quotes:
+                    TextLLS.Margin = new Thickness(12, 0, 0, 0);
+                    ExpandSelectionStoryboard.Begin();
+                    _backState = BackState.Quotes;
+                    break;
+                case BackState.Reply:
+                    TextLLS.Margin = new Thickness(12, 0, 0, 0);
+                    ExpandReplyStoryboard.Begin();
+                    _backState = BackState.Reply;
+                    UpdateApplicationBar();
+                    break;
+            }
+        }
+
+        private void TransitionFromQuotes(BackState desired)
+        {
+            switch (desired)
+            {
+                case BackState.None:
+                    (TextLLS.RenderTransform as CompositeTransform).TranslateY = 224;
+                    TextLLS.Margin = new Thickness(12, 0, 0, 0);
+                    CollapseSelectionStoryboard.Begin();
+                    _backState = BackState.None;
+                    break;
+                case BackState.Quotes:
+                    break;
+                case BackState.Reply:
+                    HideSelectionStoryboard.Begin();
+                    ShowReplyStoryboard.Begin();
+                    _backState = BackState.Reply;
+                    UpdateApplicationBar();
+                    _viewModel.ReplyViewModel.LoadImage();
+                    break;
+            }
+        }
+
+        private void TransitionFromReply(BackState desired)
+        {
+            switch (desired)
+            {
+                case BackState.None:
+                    (TextLLS.RenderTransform as CompositeTransform).TranslateY = 224;
+                    TextLLS.Margin = new Thickness(12, 0, 0, 0);
+                    CollapseReplyStoryboard.Begin();
+                    _backState = BackState.None;
+                    UpdateApplicationBar();
+                    break;
+                case BackState.Quotes:
+                    HideReplyStoryboard.Begin();
+                    ShowSelectionStoryboard.Begin();
+                    _backState = BackState.Quotes;
+                    UpdateApplicationBar();
+                    break;
+                case BackState.Reply:
+                    break;
+            }
+        }
+
+        private void UpdateApplicationBar()
+        {
+            ApplicationBar.Buttons.Clear();
+            switch (_backState)
+            {
+                case BackState.None:
+                case BackState.Quotes:
+                    ApplicationBar.Buttons.Add(_reply);
+                    ApplicationBar.Buttons.Add(_watch);
+                    break;
+                case BackState.Reply:
+                    ApplicationBar.Buttons.Add(_send);
+                    break;
+            }
         }
 
         private void FilterApplied()
         {
-            if (_backState != BackState.Quotes)
-            {
-                TextLLS.Margin = new Thickness(12, 0, 0, 0);
-                ExpandStoryboard.Begin();
-                _backState = BackState.Quotes;
-            }
+            TransitionToState(BackState.Quotes);
         }
 
         private void LLS_ItemRealized(object sender, ItemRealizationEventArgs e)

@@ -20,6 +20,8 @@ namespace _4charm.Models
         public bool IsFavorite { get { return SettingsManager.Current.Favorites.Count(x => x.Name == Name) > 0; } }
 
         public Brush Brush { get { return IsNSFW ? App.Current.Resources["NSFWBrush"] as SolidColorBrush : App.Current.Resources["SFWBrush"] as SolidColorBrush; } }
+        public Brush ReplyBackBrush { get { return IsNSFW ? App.Current.Resources["NSFWReplyBackBrush"] as SolidColorBrush : App.Current.Resources["SFWReplyBackBrush"] as SolidColorBrush; } }
+        public Brush ReplyForeBrush { get { return IsNSFW ? App.Current.Resources["NSFWReplyForeBrush"] as SolidColorBrush : App.Current.Resources["SFWReplyForeBrush"] as SolidColorBrush; } }
         public Uri IconURI { get { return new Uri(Path.Combine("", "Assets", "Boards", "Icons", Name + ".jpg"), UriKind.Relative); } }
         public Uri WideURI { get { return new Uri(Path.Combine("", "Assets", "Boards", "Fanart", Name + ".jpg"), UriKind.Relative); } }
 

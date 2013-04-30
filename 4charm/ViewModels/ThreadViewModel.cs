@@ -25,6 +25,11 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public Brush Background
+        {
+            get { return _thread.Board.Brush; }
+        }
+
         public PostViewModel InitialPost
         {
             get { return GetProperty<PostViewModel>(); }

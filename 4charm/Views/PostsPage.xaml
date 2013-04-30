@@ -182,7 +182,7 @@
             <phone:PivotItem x:Name="TextPivot">
                 <Grid>
                     <Grid.Resources>
-                        <Storyboard x:Name="ExpandStoryboard" Completed="ExpandStoryboardCompleted">
+                        <Storyboard x:Name="ExpandSelectionStoryboard" Completed="ExpandStoryboardCompleted">
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS" Storyboard.TargetProperty="Visibility">
                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
                             </ObjectAnimationUsingKeyFrames>
@@ -202,7 +202,7 @@
                             </DoubleAnimation>
                         </Storyboard>
 
-                        <Storyboard x:Name="CollapseStoryboard">
+                        <Storyboard x:Name="CollapseSelectionStoryboard">
                             <DoubleAnimation From="0" To="-224" Duration="0:0:0.15"
                                              Storyboard.TargetName="SelectionLLS"
                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
@@ -218,25 +218,237 @@
                                 </DoubleAnimation.EasingFunction>
                             </DoubleAnimation>
                         </Storyboard>
+
+                        <Storyboard x:Name="ExpandReplyStoryboard" Completed="ExpandStoryboardCompleted">
+                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea" Storyboard.TargetProperty="Visibility">
+                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
+                            </ObjectAnimationUsingKeyFrames>
+                            <DoubleAnimation From="-224" To="0" Duration="0:0:0.75"
+                                             Storyboard.TargetName="ReplyArea"
+                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DoubleAnimation.EasingFunction>
+                                    <ElasticEase EasingMode="EaseOut" Oscillations="3" Springiness="7"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation From="0" To="224" Duration="0:0:0.75"
+                                             Storyboard.TargetName="TextLLS"
+                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DoubleAnimation.EasingFunction>
+                                    <ElasticEase EasingMode="EaseOut" Oscillations="3" Springiness="7"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+                        
+                        <Storyboard x:Name="DetailReplyStoryboard">
+                            
+                        </Storyboard>
+                        
+                        <Storyboard x:Name="CollapseReplyStoryboard">
+                            <DoubleAnimation From="0" To="-224" Duration="0:0:0.15"
+                                             Storyboard.TargetName="ReplyArea"
+                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DoubleAnimation.EasingFunction>
+                                    <ExponentialEase EasingMode="EaseOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                            <DoubleAnimation From="224" To="0" Duration="0:0:0.15"
+                                             Storyboard.TargetName="TextLLS"
+                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DoubleAnimation.EasingFunction>
+                                    <ExponentialEase EasingMode="EaseOut"/>
+                                </DoubleAnimation.EasingFunction>
+                            </DoubleAnimation>
+                        </Storyboard>
+
+                        <Storyboard x:Name="HideSelectionStoryboard">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS"
+                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DiscreteDoubleKeyFrame KeyTime="0" Value="-224" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Name="ShowSelectionStoryboard">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS"
+                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+
+                        <Storyboard x:Name="HideReplyStoryboard">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea"
+                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DiscreteDoubleKeyFrame KeyTime="0" Value="-224" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
+                        <Storyboard x:Name="ShowReplyStoryboard">
+                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea"
+                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
+                                <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
+                            </DoubleAnimationUsingKeyFrames>
+                        </Storyboard>
                     </Grid.Resources>
                     
                     <Grid>
                         <Grid.Clip>
                             <RectangleGeometry Rect="0,0,2048,2048"/>
                         </Grid.Clip>
-                        <phone:LongListSelector Visibility="Collapsed"
-                                                Height="200"
-                                                VerticalAlignment="Top"
-                                                x:Name="SelectionLLS"
-                                                Style="{StaticResource OverlaidScrollbarLLS}"
-                                                ItemTemplate="{StaticResource PostItemTemplate}"
-                                                Margin="12,0,0,0" ItemsSource="{Binding SelectedPosts}"
-                                                ItemRealized="SelectionLLS_ItemRealized"
-                                                ItemUnrealized="LLS_ItemUnrealized">
-                            <phone:LongListSelector.RenderTransform>
+                        <Grid>
+                            <phone:LongListSelector x:Name="SelectionLLS"
+                                                    Visibility="Collapsed"
+                                                    Height="200"
+                                                    VerticalAlignment="Top"
+                                                    Style="{StaticResource OverlaidScrollbarLLS}"
+                                                    ItemTemplate="{StaticResource PostItemTemplate}"
+                                                    Margin="12,0,0,0" ItemsSource="{Binding SelectedPosts}"
+                                                    ItemRealized="SelectionLLS_ItemRealized"
+                                                    ItemUnrealized="LLS_ItemUnrealized">
+                                <phone:LongListSelector.RenderTransform>
+                                    <CompositeTransform/>
+                                </phone:LongListSelector.RenderTransform>
+                            </phone:LongListSelector>
+                        </Grid>
+
+                        
+                        <Grid x:Name="ReplyArea"
+                              DataContext="{Binding ReplyViewModel}"
+                              Visibility="Collapsed"
+                              Background="{Binding Background}"
+                              VerticalAlignment="Top"
+                              Margin="12,0,12,0">
+                            <Grid.RenderTransform>
                                 <CompositeTransform/>
-                            </phone:LongListSelector.RenderTransform>
-                        </phone:LongListSelector>
+                            </Grid.RenderTransform>
+                            <Grid Margin="12">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="108"/>
+                                    <ColumnDefinition Width="6"/>
+                                    <ColumnDefinition Width="*"/>
+                                </Grid.ColumnDefinitions>
+                                <Grid.RowDefinitions>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                    <RowDefinition Height="auto"/>
+                                </Grid.RowDefinitions>
+
+                                <Rectangle Grid.Column="0" Fill="{Binding ReplyBackBrush}" Visibility="Collapsed"/>
+                                <Border Grid.Row="0" BorderThickness="2" BorderBrush="Black" Visibility="Collapsed">
+                                    <TextBlock Text="name" Style="{StaticResource PhoneTextNormalStyle}"
+                                               FontSize="{StaticResource PhoneFontSizeSmall}"
+                                               Foreground="{Binding ReplyForeBrush}"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBox FontSize="{StaticResource PhoneFontSizeSmall}"
+                                         Visibility="Collapsed"
+                                         Grid.Column="2"
+                                         Background="White"
+                                         Margin="-12"/>
+                                
+                                <Rectangle Grid.Row="1" Height="6" Visibility="Collapsed"/>
+
+                                <Rectangle Grid.Row="2" Fill="{Binding ReplyBackBrush}" Visibility="Collapsed"/>
+                                <Border Grid.Row="2" BorderThickness="2" BorderBrush="Black" Visibility="Collapsed">
+                                    <TextBlock Text="e-mail" Style="{StaticResource PhoneTextNormalStyle}"
+                                               Visibility="Collapsed"
+                                               FontSize="{StaticResource PhoneFontSizeSmall}"
+                                               Foreground="{Binding ReplyForeBrush}"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBox FontSize="{StaticResource PhoneFontSizeSmall}" Visibility="Collapsed"
+                                         Grid.Row="2" Grid.Column="2"
+                                         Background="White"
+                                         Margin="-12"/>
+
+                                <Rectangle Grid.Row="3" Height="6" Visibility="Collapsed"/>
+
+                                <Rectangle Grid.Row="4" Fill="{Binding ReplyBackBrush}" Visibility="Collapsed"/>
+                                <Border Grid.Row="4" BorderThickness="2" BorderBrush="Black" Visibility="Collapsed">
+                                    <TextBlock Text="subject" Style="{StaticResource PhoneTextNormalStyle}"
+                                                    FontSize="{StaticResource PhoneFontSizeSmall}"
+                                                    Foreground="{Binding ReplyForeBrush}"
+                                                    VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBox FontSize="{StaticResource PhoneFontSizeSmall}"
+                                         Visibility="Collapsed"
+                                         Grid.Row="4" Grid.Column="2"
+                                         Background="White"
+                                         Margin="-12"/>
+
+                                <Rectangle Grid.Row="5" Height="6" Visibility="Collapsed"/>
+
+                                <Rectangle Grid.Row="6" Fill="{Binding ReplyBackBrush}"/>
+                                <Border Grid.Row="6" BorderThickness="2" BorderBrush="Black">
+                                    <TextBlock Text="comment" Style="{StaticResource PhoneTextNormalStyle}"
+                                            FontSize="{StaticResource PhoneFontSizeSmall}"
+                                            Foreground="{Binding ReplyForeBrush}"
+                                            VerticalAlignment="Center"/>
+                                </Border>
+                                <TextBox FontSize="{StaticResource PhoneFontSizeSmall}"
+                                         Text="{Binding Comment, Mode=TwoWay}"
+                                         Grid.Row="6" Grid.Column="2"
+                                         AcceptsReturn="True"
+                                         MinHeight="100" MaxHeight="100"
+                                         Background="White"
+                                         Margin="-12" />
+
+                                <Rectangle Grid.Row="7" Height="6" Visibility="Visible"/>
+
+                                <Rectangle Grid.Row="8" Fill="{Binding ReplyBackBrush}"/>
+                                <Border Grid.Row="8" BorderThickness="2" BorderBrush="Black">
+                                    <TextBlock Text="captcha" Style="{StaticResource PhoneTextNormalStyle}"
+                                               FontSize="{StaticResource PhoneFontSizeSmall}"
+                                               Foreground="{Binding ReplyForeBrush}"
+                                               VerticalAlignment="Center"/>
+                                </Border>
+                                <StackPanel Grid.Row="8" Grid.Column="2">
+                                    <Image Source="{Binding CaptchaImage}" Height="56">
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Tap">
+                                                <i:InvokeCommandAction Command="{Binding ReloadCaptcha}" />
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                    </Image>
+                                    <TextBox FontSize="{StaticResource PhoneFontSizeSmall}"
+                                             Text="{Binding CaptchaText, Mode=TwoWay}"
+                                             Background="White"
+                                             Margin="-12,-6,-12,-12"/>
+                                </StackPanel>
+
+                                <!--<Rectangle Grid.Row="9" Height="6" Visibility="Collapsed"/>
+
+                                <Rectangle Grid.Row="10" Fill="{Binding ReplyBackBrush}" Visibility="Collapsed"/>
+                                <Border Grid.Row="10" BorderThickness="2" BorderBrush="Black" Visibility="Collapsed">
+                                    <Grid Margin="0,6,0,6">
+                                        <TextBlock Text="file" Style="{StaticResource PhoneTextNormalStyle}"
+                                                   Visibility="Collapsed"
+                                                   FontSize="{StaticResource PhoneFontSizeSmall}"
+                                                   Foreground="{Binding ReplyForeBrush}"
+                                                   VerticalAlignment="Center"/>
+                                    </Grid>
+                                </Border>
+                                <Grid Grid.Row="10" Grid.Column="3" Background="#01000000" Visibility="Collapsed">
+                                    <TextBlock
+                                            Foreground="Black"
+                                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                                            VerticalAlignment="Center"
+                                            Text="{Binding FileName}"/>
+                                    <Grid Visibility="{Binding ImageFile, Converter={StaticResource NullVisibleConverter}, ConverterParameter=flip}">
+                                        <Button Foreground="Black"
+                                            FontSize="{StaticResource PhoneFontSizeNormal}"
+                                            Margin="-12"
+                                            BorderBrush="Black">
+                                            Choose File
+                                        </Button>
+                                    </Grid>
+                                </Grid>-->
+                            </Grid>
+                        </Grid>
                     </Grid>
                     <phone:LongListSelector x:Name="TextLLS"
                                             Style="{StaticResource OverlaidScrollbarLLS}"

@@ -35,7 +35,19 @@ namespace _4charm.Models
             return await client.GetStreamAsync(EnforceHTTPS(uri));
         }
 
-        private Uri EnforceHTTPS(Uri uri)
+        public async Task<string> GetStringAsync(Uri uri)
+        {
+            return await client.GetStringAsync(EnforceHTTPS(uri));
+        }
+
+        public async Task<HttpResponseMessage> PostAsync(Uri uri, Uri referrer, Dictionary<string, string> fields)
+        {
+            client.DefaultRequestHeaders.Referrer = EnforceHTTPS(referrer);
+            return await client.PostAsync(EnforceHTTPS(uri), new FormUrlEncodedContent(fields));
+            client.DefaultRequestHeaders.Referrer = null;
+        }
+
+        public Uri EnforceHTTPS(Uri uri)
         {
             Uri modURI = uri;
             if (SettingsManager.Current.EnableHTTPS && modURI.Scheme != "https")

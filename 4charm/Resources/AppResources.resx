@@ -221,4 +221,10 @@
   <data name="ApplicationBar_Save" xml:space="preserve">
     <value>save</value>
   </data>
+  <data name="ApplicationBar_Reply" xml:space="preserve">
+    <value>reply</value>
+  </data>
+  <data name="ApplicationBar_Send" xml:space="preserve">
+    <value>send</value>
+  </data>
 </root>

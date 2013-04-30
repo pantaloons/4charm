@@ -250,6 +250,7 @@ namespace _4charm.ViewModels
         private BitmapImage _loading;
         public void LoadImage()
         {
+            if (_loading != null) throw new Exception();
             _loading = new BitmapImage() { DecodePixelWidth = 100 };
             _loading.ImageOpened += ImageLoaded;
             _loading.CreateOptions = BitmapCreateOptions.BackgroundCreation;
@@ -292,11 +293,16 @@ namespace _4charm.ViewModels
         {
             if ((board == "" || board == _post.Thread.Board.Name) && newThread == _post.Thread.Number)
             {
-                if(_quoteTapped != null) _quoteTapped(post);
+                if (_quoteTapped != null) _quoteTapped(post);
             }
-            else if (BoardList.Boards.ContainsKey(board))
+            else
             {
-                Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}&post={2}", board, newThread, post), UriKind.Relative));
+                string newBoard = board;
+                if (newBoard == "") newBoard = _post.Thread.Board.Name;
+                if (BoardList.Boards.ContainsKey(newBoard))
+                {
+                    Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}&post={2}", newBoard, newThread, post), UriKind.Relative));
+                }
             }
         }
 
