@@ -3,12 +3,8 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
-using System.IO;
 using System.Linq;
-using System.Net.Http;
-using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Navigation;
 
 namespace _4charm.ViewModels

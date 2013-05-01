@@ -126,6 +126,7 @@
     <Compile Include="Models\Thread.cs" />
     <Compile Include="Models\ThreadCache.cs" />
     <Compile Include="Models\ThreadID.cs" />
+    <Compile Include="Models\UriMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AppResources.Designer.cs">
       <AutoGen>True</AutoGen>

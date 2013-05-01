@@ -1,12 +1,5 @@
 ﻿using _4charm.Models;
-using System;
-using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Collections.Specialized;
-using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
-using System.Windows;
 using System.Windows.Navigation;
 
 namespace _4charm.ViewModels
@@ -33,12 +26,6 @@ namespace _4charm.ViewModels
             get { return SettingsManager.Current.Boards; }
         }
 
-        public BoardViewModel SelectedBoard
-        {
-            get { return GetProperty<BoardViewModel>(); }
-            set { SetProperty(value); }
-        }
-
         public TilePickerViewModel TilePicker
         {
             get { return GetProperty<TilePickerViewModel>(); }
@@ -47,7 +34,6 @@ namespace _4charm.ViewModels
 
         public BoardsPageViewModel()
         {
-            SelectedBoard = null;
             TilePicker = new TilePickerViewModel();
         }
 

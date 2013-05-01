@@ -90,6 +90,7 @@ namespace _4charm.Models
         private const string sessionStateFilename = "_sessionState.xml";
         private Task _restoreTask = null, _rebuildTask = null;
         private Task<Task> _saveTask = null;
+        private Task _queuedTask = null;
         private List<Type> _knownTypes = new List<Type>() { typeof(List<string>), typeof(List<ThreadID>), typeof(SupportedPageOrientation) };
 
         private ObservableCollection<BoardViewModel> _favorites, _boards;
@@ -114,7 +115,19 @@ namespace _4charm.Models
                 _saveTask = new Task<Task>(SaveAsyncImpl);
                 _saveTask.Start(TaskScheduler.FromCurrentSynchronizationContext());
             }
-            else _saveTask = _saveTask.Unwrap().ContinueWith(t => SaveAsyncImpl(), TaskScheduler.FromCurrentSynchronizationContext());
+            else if (_queuedTask == null || (_queuedTask.Status != TaskStatus.WaitingForActivation &&
+                                             _queuedTask.Status != TaskStatus.WaitingForChildrenToComplete &&
+                                             _queuedTask.Status != TaskStatus.WaitingToRun))
+            {
+                _queuedTask = new Task<Task>(SaveAsyncImpl);
+                _saveTask = _saveTask.Unwrap().ContinueWith(t => _queuedTask, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            else
+            {
+                // The _saveTask is running, and there is a continuation _queuedTask which has not yet started execution.
+                // The continuation will also save whatever changes generated this call to save, so we can safely drop the
+                // call.
+            }
             return _saveTask;
         }
 

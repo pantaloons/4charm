@@ -1,12 +1,11 @@
 ﻿using _4charm.Models.API;
 using System;
-using System.Linq;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Runtime.Serialization.Json;
-using System.Windows;
-using System.Windows.Media;
 using System.Threading.Tasks;
+using System.Windows.Media;
 
 namespace _4charm.Models
 {

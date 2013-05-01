@@ -1,10 +1,8 @@
 ﻿using _4charm.Models.API;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
 using System.Linq;
-using System.Runtime.CompilerServices;
 using System.Runtime.Serialization.Json;
 using System.Threading.Tasks;
 using System.Windows;

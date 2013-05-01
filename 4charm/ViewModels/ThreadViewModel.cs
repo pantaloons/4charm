@@ -1,9 +1,5 @@
 ﻿using _4charm.Models;
-using _4charm.Models.API;
-using System;
 using System.Linq;
-using System.Windows;
-using System.Windows.Input;
 using System.Windows.Media;
 
 namespace _4charm.ViewModels

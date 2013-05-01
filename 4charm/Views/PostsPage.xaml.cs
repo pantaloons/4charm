@@ -9,6 +9,7 @@ using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
+using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
 
@@ -61,9 +62,54 @@ namespace _4charm.Views
             _send.Click += async (sender, e) =>
             {
                 // Focus and then dispatch to ensure the two-way binding updates
+                if (FocusManager.GetFocusedElement() is TextBox)
+                {
+                    var binding = (FocusManager.GetFocusedElement() as TextBox).GetBindingExpression(TextBox.TextProperty);
+                    binding.UpdateSource();
+                }
+
+                HighlightCaptchaStoryboard.Stop();
+                HighlightCommentStoryboard.Stop();
                 Focus();
-                Dispatcher.BeginInvoke(async () => await _viewModel.ReplyViewModel.Submit());
-                TransitionToState(BackState.None);
+
+                MainPivot.IsLocked = true;
+                _send.IsEnabled = false;
+                BeginPostingStoryboard.Begin();
+                ReplyScroller.IsHitTestVisible = false;
+                SubmitResult result = await _viewModel.ReplyViewModel.Submit();
+                MainPivot.IsLocked = false;
+                _send.IsEnabled = true;
+                BeginPostingStoryboard.Stop();
+                ReplyScroller.IsHitTestVisible = true;
+
+                switch(result.ResultType)
+                {
+                    case SubmitResultType.Success:
+                        TransitionToState(BackState.None);
+                        ReplyScroller.ScrollToVerticalOffset(0);
+                        await _viewModel.Update();
+                        TextLLS.ScrollTo(_viewModel.AllPosts.Last());
+                        break;
+                    case SubmitResultType.EmptyCaptchaError:
+                    case SubmitResultType.WrongCatpchaError:
+                        HighlightCaptchaStoryboard.Begin();
+                        CaptchaTextBox.Focus();
+                        ReplyScroller.ScrollToVerticalOffset(60);
+                        CaptchaTextBox.Text = "";
+                        if(result.ResultType == SubmitResultType.WrongCatpchaError) _viewModel.ReplyViewModel.ReloadCaptcha.Execute(null);
+                        break;
+                    case SubmitResultType.EmptyCommentError:
+                        HighlightCommentStoryboard.Begin();
+                        CommentTextBox.Focus();
+                        ReplyScroller.ScrollToVerticalOffset(0);
+                        break;
+                    case SubmitResultType.KnownError:
+                        MessageBox.Show(result.ErrorMessage);
+                        break;
+                    case SubmitResultType.UnknownError:
+                        MessageBox.Show("Unknown error encountered submitting post.");
+                        break;
+                }
             };
 
             ApplicationBarMenuItem bottom = new ApplicationBarMenuItem(AppResources.ApplicationBar_ScrollToBottom);
@@ -194,17 +240,8 @@ namespace _4charm.Views
                 switch (_backState)
                 {
                     case BackState.Quotes:
-                        (TextLLS.RenderTransform as CompositeTransform).TranslateY = 224;
-                        TextLLS.Margin = new Thickness(12, 0, 0, 0);
-                        CollapseSelectionStoryboard.Begin();
-                        _backState = BackState.None;
-                        e.Cancel = true;
-                        break;
                     case BackState.Reply:
-                        (TextLLS.RenderTransform as CompositeTransform).TranslateY = 224;
-                        TextLLS.Margin = new Thickness(12, 0, 0, 0);
-                        CollapseReplyStoryboard.Begin();
-                        _backState = BackState.None;
+                        TransitionToState(BackState.None);
                         e.Cancel = true;
                         break;
                     case BackState.None:
@@ -217,6 +254,13 @@ namespace _4charm.Views
 
         private void TransitionToState(BackState desired)
         {
+            if (_viewModel.ReplyViewModel.IsPosting) return;
+
+            if (_backState == BackState.Reply)
+            {
+                _viewModel.ReplyViewModel.UnloadImage();
+            }
+
             switch (_backState)
             {
                 case BackState.None:
@@ -232,7 +276,7 @@ namespace _4charm.Views
 
             if (desired == BackState.Reply)
             {
-                _viewModel.ReplyViewModel.UnloadImage();
+                ReplyScroller.ScrollToVerticalOffset(0);
                 _viewModel.ReplyViewModel.Load();
             }
         }
@@ -320,6 +364,14 @@ namespace _4charm.Views
         private void FilterApplied()
         {
             TransitionToState(BackState.Quotes);
+        }
+
+        private void RootGridTap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            if (_backState != BackState.Reply || _viewModel.ReplyViewModel.IsPosting) return;
+
+            CommentTextBox.Text += ">>" + ((sender as FrameworkElement).DataContext as PostViewModel).Number + "\n";
+            CommentTextBox.SelectionStart = CommentTextBox.Text.Length;
         }
 
         private void LLS_ItemRealized(object sender, ItemRealizationEventArgs e)

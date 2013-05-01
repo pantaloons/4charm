@@ -1,12 +1,10 @@
 ﻿using _4charm.Models;
+using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
-using System.Windows;
 using System.Linq;
-using System;
 using System.Threading.Tasks;
 using System.Windows.Navigation;
-using System.Windows.Media;
 
 namespace _4charm.ViewModels
 {

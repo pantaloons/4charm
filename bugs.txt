@@ -1,6 +1,7 @@
 Bugs:
 10 Upgrade compat / transition
 auto updating
+remove all debug / diagnostics / messagebox / debugger / break / console / log / etc usage
 
 Features:
 Image saving

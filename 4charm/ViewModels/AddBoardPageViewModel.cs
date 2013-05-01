@@ -1,11 +1,7 @@
 ﻿using _4charm.Models;
 using _4charm.Resources;
 using _4charm.Views;
-using System;
-using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 using System.Windows.Navigation;
 
 namespace _4charm.ViewModels
