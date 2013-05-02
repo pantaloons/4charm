@@ -29,6 +29,12 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public bool IsError
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
         public ObservableCollection<ThreadViewModel> Threads
         {
             get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
@@ -54,8 +60,8 @@ namespace _4charm.ViewModels
                 PivotTitle = _board.DisplayName;
                 Name = _board.Name;
                 IsLoading = false;
-                Watchlist = new ObservableCollection<ThreadViewModel>(SettingsManager.Current.Watchlist.Where(x => x.BoardName == _board.Name));
-                SettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
+                Watchlist = new ObservableCollection<ThreadViewModel>(TransitorySettingsManager.Current.Watchlist.Where(x => x.BoardName == _board.Name));
+                TransitorySettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
 
                 Threads = new ObservableCollection<ThreadViewModel>();
 
@@ -76,7 +82,7 @@ namespace _4charm.ViewModels
 
         public void OnRemovedFromJournal()
         {
-            SettingsManager.Current.Watchlist.CollectionChanged -= Watchlist_CollectionChanged;
+            TransitorySettingsManager.Current.Watchlist.CollectionChanged -= Watchlist_CollectionChanged;
         }
 
         public Task Reload()
@@ -98,15 +104,17 @@ namespace _4charm.ViewModels
             catch
             {
                 IsLoading = false;
+                IsError = true;
                 return;
             }
 
             IsLoading = false;
+            IsError = false;
 
             int j = 0;
             foreach (Thread thread in threads)
             {
-                if (!thread.IsSticky || SettingsManager.Current.ShowStickies)
+                if (!thread.IsSticky || CriticalSettingsManager.Current.ShowStickies)
                 {
                     Threads.Add(new ThreadViewModel(thread));
                     if (j < 15) await Task.Delay(100);
@@ -132,7 +140,6 @@ namespace _4charm.ViewModels
                     
                     break;
                 default:
-                    // TODO: Remove me?
                     throw new NotImplementedException();
             }
         }

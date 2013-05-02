@@ -179,7 +179,9 @@ namespace _4charm.ViewModels
             catch
             {
                 MessageBox.Show("Captcha data is corrupt.");
+                return;
             }
+
             UnloadImage();
             LoadImage();
         }
@@ -211,7 +213,7 @@ namespace _4charm.ViewModels
 
         private async Task<SubmitResult> SubmitInternal()
         {
-            if (string.IsNullOrEmpty(Comment)) return new SubmitResult() { ResultType = SubmitResultType.EmptyCommentError };
+            if (string.IsNullOrEmpty(Comment) && !HasImage) return new SubmitResult() { ResultType = SubmitResultType.EmptyCommentError };
             else if (string.IsNullOrEmpty(CaptchaText)) return new SubmitResult() { ResultType = SubmitResultType.EmptyCaptchaError };
 
             Uri uri = new Uri("https://sys.4chan.org/" + _thread.Board.Name +"/post");
@@ -228,8 +230,7 @@ namespace _4charm.ViewModels
                     {"sub", Subject},
                     {"com", Comment},
                     {"recaptcha_challenge_field", _token},
-                    {"recaptcha_response_field", CaptchaText},
-                    {"pwd", "7byqT4KP"}
+                    {"recaptcha_response_field", CaptchaText}
                 };
 
                 HttpResponseMessage message;
@@ -289,7 +290,7 @@ namespace _4charm.ViewModels
         private BitmapImage _loading;
         public void LoadImage()
         {
-            if (_loading != null) throw new Exception();
+            //if (_loading != null) throw new Exception();
             _loading = new BitmapImage() { DecodePixelWidth = 100 };
             _loading.ImageOpened += ImageLoaded;
             _loading.CreateOptions = BitmapCreateOptions.BackgroundCreation;

@@ -536,11 +536,15 @@
                                         </Grid>
                                     </Border>
                                     <Grid Grid.Row="10" Grid.Column="3" Background="#01000000">
-                                        <TextBlock
-                                                Foreground="Black"
-                                                FontSize="{StaticResource PhoneFontSizeNormal}"
-                                                VerticalAlignment="Center"
-                                                Text="{Binding FileName}"/>
+                                        <i:Interaction.Triggers>
+                                            <i:EventTrigger EventName="Tap">
+                                                <i:InvokeCommandAction Command="{Binding SelectImage}"/>
+                                            </i:EventTrigger>
+                                        </i:Interaction.Triggers>
+                                        <TextBlock Foreground="Black"
+                                                   FontSize="{StaticResource PhoneFontSizeNormal}"
+                                                   VerticalAlignment="Center"
+                                                   Text="{Binding FileName}"/>
                                         <Grid Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=flip}">
                                             <Button Foreground="Black"
                                                 FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -562,6 +566,7 @@
                             </Grid>
                         </Grid>
                     </Grid>
+                    
                     <phone:LongListSelector x:Name="TextLLS"
                                             Style="{StaticResource OverlaidScrollbarLLS}"
                                             ItemTemplate="{StaticResource PostItemTemplate}"
@@ -577,6 +582,14 @@
                             </DataTemplate>
                         </phone:LongListSelector.ListFooterTemplate>
                     </phone:LongListSelector>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Visibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
+                               Margin="24,0,24,0"
+                               FontSize="{StaticResource PhoneFontSizeLarge}"
+                               Foreground="{StaticResource PhoneSubtleBrush}"
+                               FontFamily="Segoe WP Light"
+                               Text="There was an error retrieving the posts :("/>
                 </Grid>
             </phone:PivotItem>
 

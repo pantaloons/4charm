@@ -95,15 +95,14 @@ namespace _4charm.ViewModels
 
         ~BoardViewModel()
         {
-            // TODO: Remove this
-            if (Image != null) throw new System.Exception();
-            if (Icon != null) throw new System.Exception();
+            //if (Image != null) throw new System.Exception();
+            //if (Icon != null) throw new System.Exception();
         }
 
         private BitmapImage _loading, _loadingIcon;
         public void LoadImage()
         {
-            if (_loading != null) throw new Exception();
+            //if (_loading != null) throw new Exception();
             _loading = new BitmapImage() { DecodePixelWidth = 440 };
             _loading.ImageOpened += ImageLoaded;
             _loading.CreateOptions = BitmapCreateOptions.BackgroundCreation;
@@ -162,21 +161,22 @@ namespace _4charm.ViewModels
 
         private void DoAddToFavorites()
         {
-            BoardViewModel bvm = SettingsManager.Current.Favorites.FirstOrDefault(x => x.Name == Name);
+            BoardViewModel bvm = CriticalSettingsManager.Current.Favorites.FirstOrDefault(x => x.Name == Name);
             if (bvm == null)
             {
-                SettingsManager.Current.Favorites.Add(this);
+                BoardViewModel fav = new BoardViewModel(_board);
+                CriticalSettingsManager.Current.Favorites.Add(fav);
                 NotifyPropertyChanged("IsFavorite");
-                NewBoardAdded(this, _board);
+                NewBoardAdded(fav, _board);
             }
         }
 
         private void DoRemoveFromFavorites()
         {
-            BoardViewModel bvm = SettingsManager.Current.Favorites.FirstOrDefault(x => x.Name == Name);
+            BoardViewModel bvm = CriticalSettingsManager.Current.Favorites.FirstOrDefault(x => x.Name == Name);
             if (bvm != null)
             {
-                SettingsManager.Current.Favorites.Remove(bvm);
+                CriticalSettingsManager.Current.Favorites.Remove(bvm);
                 NotifyPropertyChanged("IsFavorite");
             }
         }

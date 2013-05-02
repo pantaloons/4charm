@@ -80,7 +80,7 @@ namespace _4charm.Models
         public Uri EnforceHTTPS(Uri uri)
         {
             Uri modURI = uri;
-            if (SettingsManager.Current.EnableHTTPS && modURI.Scheme != "https")
+            if (CriticalSettingsManager.Current.EnableHTTPS && modURI.Scheme != "https")
             {
                 string x = modURI.AbsoluteUri;
                 if (!x.StartsWith("http://"))

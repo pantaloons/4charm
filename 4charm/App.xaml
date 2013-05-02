@@ -13,6 +13,7 @@
         <converters:BoolVisibleConverter x:Key="BoolVisibleConverter" />
         <converters:NullVisibleConverter x:Key="NullVisibleConverter" />
         <converters:CapCodeColorConverter x:Key="CapCodeColorConverter" />
+        <converters:EmptyCollectionVisibleConverter x:Key="EmptyCollectionVisibleConverter" />
 
         <Color x:Key="SFWColor">#D6DAF0</Color>
         <Color x:Key="NSFWColor">#F0E0D6</Color>
@@ -30,10 +31,10 @@
         <SolidColorBrush x:Key="NSFWReplyForeBrush" Color="#880000"/>
         <SolidColorBrush x:Key="SFWReplyBackBrush" Color="#9988EE"/>
         <SolidColorBrush x:Key="SFWReplyForeBrush" Color="#000000"/>
-        <Color x:Key="AdminColor">#FF0000</Color>
-        <Color x:Key="ModColor">#800080</Color>
-        <Color x:Key="DeveloperColor">#0000F0</Color>
-        <Color x:Key="NormalColor">#117743</Color>
+        <SolidColorBrush x:Key="AdminBrush" Color="#FF0000"/>
+        <SolidColorBrush x:Key="ModBrush" Color="#800080"/>
+        <SolidColorBrush x:Key="DeveloperBrush" Color="#0000F0"/>
+        <SolidColorBrush x:Key="NormalBrush" Color="#117743"/>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>

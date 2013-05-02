@@ -13,7 +13,7 @@ namespace _4charm.ViewModels
         }
         public bool IsWatchlisted
         {
-            get { return SettingsManager.Current.Watchlist.Count(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number) > 0; }
+            get { return TransitorySettingsManager.Current.Watchlist.Count(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number) > 0; }
         }
         public ulong Number
         {
@@ -47,7 +47,7 @@ namespace _4charm.ViewModels
 
         ~ThreadViewModel()
         {
-            System.Diagnostics.Debug.WriteLine("Disposing thread VM");
+            //System.Diagnostics.Debug.WriteLine("Disposing thread VM");
         }
 
         public void LoadImage()

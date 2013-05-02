@@ -22,6 +22,12 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public bool IsError
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
         public ReplyViewModel ReplyViewModel
         {
             get { return GetProperty<ReplyViewModel>(); }
@@ -89,10 +95,12 @@ namespace _4charm.ViewModels
             catch
             {
                 IsLoading = false;
+                IsError = true;
                 return;
             }
 
             IsLoading = false;
+            IsError = false;
             await _initialLoadTask.ContinueWith(t => InsertPosts(posts), TaskScheduler.FromCurrentSynchronizationContext());
         }
 

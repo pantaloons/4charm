@@ -211,28 +211,58 @@
                      Title="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
                      SelectionChanged="RootPivotChanged">
             <phone:PivotItem Header="{Binding Path=LocalizedResources.BoardsPage_Favorites, Source={StaticResource LocalizedStrings}}">
-                <phone:LongListSelector x:Name="Favorites"
-                                        Style="{StaticResource NoScrollbarLLS}"
-                                        ItemsSource="{Binding Favorites}"
-                                        ItemTemplate="{StaticResource ThickBoardTemplate}"
-                                        ItemRealized="BoardRealized"
-                                        ItemUnrealized="BoardUnrealized"/>
+                <Grid>
+                    <phone:LongListSelector x:Name="Favorites"
+                                            Style="{StaticResource NoScrollbarLLS}"
+                                            ItemsSource="{Binding Favorites}"
+                                            ItemTemplate="{StaticResource ThickBoardTemplate}"
+                                            ItemRealized="BoardRealized"
+                                            ItemUnrealized="BoardUnrealized"/>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Visibility="{Binding HasFavorites, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=flip}"
+                               Margin="24,0,24,0"
+                               FontSize="{StaticResource PhoneFontSizeLarge}"
+                               Foreground="{StaticResource PhoneSubtleBrush}"
+                               FontFamily="Segoe WP Light"
+                               Text="Tap and hold boards on the all boards list to add favorites!"/>
+                </Grid>
             </phone:PivotItem>
             <phone:PivotItem Header="{Binding Path=LocalizedResources.BoardsPage_Watchlist, Source={StaticResource LocalizedStrings}}">
-                <phone:LongListSelector x:Name="Watchlist"
+                <Grid>
+                    <phone:LongListSelector x:Name="Watchlist"
                                         Margin="12,0,0,0"
                                         ItemsSource="{Binding Watchlist}"
                                         ItemTemplate="{StaticResource ThreadItemTemplate}"
                                         ItemRealized="ThreadRealized"
                                         ItemUnrealized="ThreadUnrealized"/>
+                    
+                    <TextBlock TextWrapping="Wrap"
+                               Visibility="{Binding HasWatchlist, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=flip}"
+                               Margin="24,0,24,0"
+                               FontSize="{StaticResource PhoneFontSizeLarge}"
+                               Foreground="{StaticResource PhoneSubtleBrush}"
+                               FontFamily="Segoe WP Light"
+                               Text="Watchlist is empty. Add some threads!"/>
+                </Grid>
             </phone:PivotItem>
             <phone:PivotItem Header="{Binding Path=LocalizedResources.BoardsPage_History, Source={StaticResource LocalizedStrings}}">
-                <phone:LongListSelector x:Name="History"
-                                        Margin="12,0,0,0"
-                                        ItemsSource="{Binding History}"
-                                        ItemTemplate="{StaticResource ThreadItemTemplate}"
-                                        ItemRealized="ThreadRealized"
-                                        ItemUnrealized="ThreadUnrealized"/>
+                <Grid>
+                    <phone:LongListSelector x:Name="History"
+                                            Margin="12,0,0,0"
+                                            ItemsSource="{Binding HasHistory, Converter={StaticResource BoolVisibleConverter}}"
+                                            ItemTemplate="{StaticResource ThreadItemTemplate}"
+                                            ItemRealized="ThreadRealized"
+                                            ItemUnrealized="ThreadUnrealized"/>
+
+                    <TextBlock TextWrapping="Wrap"
+                               Visibility="{Binding HasHistory, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=flip}"
+                               Margin="24,0,24,0"
+                               FontSize="{StaticResource PhoneFontSizeLarge}"
+                               Foreground="{StaticResource PhoneSubtleBrush}"
+                               FontFamily="Segoe WP Light"
+                               Text="No history at the moment."/>
+                </Grid>
             </phone:PivotItem>
             <phone:PivotItem Header="{Binding Path=LocalizedResources.BoardsPage_All, Source={StaticResource LocalizedStrings}}">
                 <phone:LongListSelector x:Name="All"

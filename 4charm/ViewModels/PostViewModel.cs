@@ -218,13 +218,11 @@ namespace _4charm.ViewModels
 
         ~PostViewModel()
         {
-            System.Diagnostics.Debug.WriteLine("Diposed Post VM");
-            // TODO: Remove this
-            if (Image != null)
-            {
-                System.Diagnostics.Debugger.Break();
-                throw new System.Exception();
-            }
+            //if (Image != null)
+            //{
+            //    System.Diagnostics.Debugger.Break();
+            //    throw new System.Exception();
+            //}
         }
 
         private void DoThreadNavigated()
@@ -252,7 +250,7 @@ namespace _4charm.ViewModels
         {
             if (_post.RenamedFileName == 0 || _post.FileDeleted) return;
 
-            if (_loading != null) throw new Exception();
+            //if (_loading != null) throw new Exception();
             _loading = new BitmapImage() { DecodePixelWidth = 100 };
             _loading.ImageOpened += ImageLoaded;
             _loading.CreateOptions = BitmapCreateOptions.BackgroundCreation;

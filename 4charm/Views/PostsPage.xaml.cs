@@ -21,6 +21,7 @@ namespace _4charm.Views
 
         private ApplicationBarIconButton _watch, _reply, _send;
         private ApplicationBarMenuItem _orientLock;
+        private System.Threading.Timer _refreshTimer;
 
         private Thread _thread;
         private enum BackState
@@ -45,9 +46,9 @@ namespace _4charm.Views
             _watch = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.eye.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Watch };
             _watch.Click += (sender, e) =>
             {
-                ThreadViewModel tvm = SettingsManager.Current.Watchlist.FirstOrDefault(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number);
-                if (tvm != null) SettingsManager.Current.Watchlist.Remove(tvm);
-                else SettingsManager.Current.Watchlist.Add(new ThreadViewModel(_thread));
+                ThreadViewModel tvm = TransitorySettingsManager.Current.Watchlist.FirstOrDefault(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number);
+                if (tvm != null) TransitorySettingsManager.Current.Watchlist.Remove(tvm);
+                else TransitorySettingsManager.Current.Watchlist.Add(new ThreadViewModel(_thread));
 
                 UpdateWatchButton();
             };
@@ -128,17 +129,17 @@ namespace _4charm.Views
             _orientLock = new ApplicationBarMenuItem(AppResources.ApplicationBar_LockOrientation);
             _orientLock.Click += (sender, e) =>
             {
-                if (SettingsManager.Current.LockOrientation == SupportedPageOrientation.PortraitOrLandscape)
+                if (CriticalSettingsManager.Current.LockOrientation == SupportedPageOrientation.PortraitOrLandscape)
                 {
                     bool isPortrait =
                         Orientation == PageOrientation.Portrait || Orientation == PageOrientation.PortraitDown ||
                         Orientation == PageOrientation.PortraitUp;
 
-                    SettingsManager.Current.LockOrientation = isPortrait ? SupportedPageOrientation.Portrait : SupportedPageOrientation.Landscape;
+                    CriticalSettingsManager.Current.LockOrientation = isPortrait ? SupportedPageOrientation.Portrait : SupportedPageOrientation.Landscape;
                 }
                 else
                 {
-                    SettingsManager.Current.LockOrientation = SupportedPageOrientation.PortraitOrLandscape;
+                    CriticalSettingsManager.Current.LockOrientation = SupportedPageOrientation.PortraitOrLandscape;
                 }
                 OrientationLockChanged();
             };
@@ -152,7 +153,7 @@ namespace _4charm.Views
 
         private void OrientationLockChanged()
         {
-            this.SupportedOrientations = SettingsManager.Current.LockOrientation;
+            this.SupportedOrientations = CriticalSettingsManager.Current.LockOrientation;
             if (this.SupportedOrientations == SupportedPageOrientation.PortraitOrLandscape)
             {
                 _orientLock.Text = AppResources.ApplicationBar_LockOrientation;
@@ -165,7 +166,7 @@ namespace _4charm.Views
 
         private void UpdateWatchButton()
         {
-            bool watchlisted = SettingsManager.Current.Watchlist.Count(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number) > 0;
+            bool watchlisted = TransitorySettingsManager.Current.Watchlist.Count(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number) > 0;
             if (watchlisted)
             {
                 _watch.IconUri = new Uri("Assets/Appbar/appbar.eye.check.png", UriKind.Relative);
@@ -210,16 +211,21 @@ namespace _4charm.Views
                             TextLLS.ScrollTo(pvm);
                         }
                     }
-                }, FilterApplied);
 
-                ThreadViewModel tvm = SettingsManager.Current.History.FirstOrDefault(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number);
-                if (tvm != null) SettingsManager.Current.History.Remove(tvm);
-                SettingsManager.Current.History.Insert(0, new ThreadViewModel(_thread));
+                    ThreadViewModel tvm = TransitorySettingsManager.Current.History.FirstOrDefault(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number);
+                    if (tvm != null) TransitorySettingsManager.Current.History.Remove(tvm);
+                    TransitorySettingsManager.Current.History.Insert(0, new ThreadViewModel(_thread));
+                }, FilterApplied);
 
                 UpdateWatchButton();
 
                 _initialized = true;
             }
+
+            _refreshTimer = new System.Threading.Timer(state =>
+            {
+                Dispatcher.BeginInvoke(async () => await _viewModel.Update());
+            }, null, 30 * 1000, 30 * 1000);
 
             OrientationLockChanged();
         }
@@ -227,6 +233,9 @@ namespace _4charm.Views
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedFrom(e);
+
+            if (_refreshTimer != null) _refreshTimer.Dispose();
+            _refreshTimer = null;
 
             _viewModel.OnNavigatedFrom(e);
         }

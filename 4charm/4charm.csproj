@@ -19,7 +19,7 @@
     </SupportedCultures>
     <XapOutputs>true</XapOutputs>
     <GenerateSilverlightManifest>true</GenerateSilverlightManifest>
-    <XapFilename>_4charm_$(Configuration)_$(Platform).xap</XapFilename>
+    <XapFilename>4charm.xap</XapFilename>
     <SilverlightManifestTemplate>Properties\AppManifest.xml</SilverlightManifestTemplate>
     <SilverlightAppEntry>_4charm.App</SilverlightAppEntry>
     <ValidateXaml>true</ValidateXaml>
@@ -95,6 +95,7 @@
     </Compile>
     <Compile Include="Converters\BoolVisibleConverter.cs" />
     <Compile Include="Converters\CapCodeColorConverter.cs" />
+    <Compile Include="Converters\EmptyCollectionVisibilityConverter.cs" />
     <Compile Include="Converters\IndexOrientationConverter.cs" />
     <Compile Include="Converters\NullVisibleConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
@@ -106,6 +107,7 @@
     <Compile Include="Models\Board.cs" />
     <Compile Include="Models\BoardID.cs" />
     <Compile Include="Models\BoardList.cs" />
+    <Compile Include="Models\CriticalSettingsManager.cs" />
     <Compile Include="Models\MediaViewer\DragState.cs" />
     <Compile Include="Models\MediaViewer\GIFViewer.cs" />
     <Compile Include="Models\MediaViewer\IDisplayableImage.cs" />
@@ -115,6 +117,8 @@
     <Compile Include="Models\MediaViewer\ThumbnailedImageViewer.cs" />
     <Compile Include="Models\MediaViewer\UnloadedVisibleConverter.cs" />
     <Compile Include="Models\MediaViewer\VirtualizedItem.cs" />
+    <Compile Include="Models\Migration\SettingsManager1_1.cs" />
+    <Compile Include="Models\Migration\VersionMigrator.cs" />
     <Compile Include="Models\ModelCommand.cs" />
     <Compile Include="Models\PNG\ToolStackCRCLib.cs" />
     <Compile Include="Models\PNG\ToolStackPNGWriterLib.cs" />
@@ -126,6 +130,7 @@
     <Compile Include="Models\Thread.cs" />
     <Compile Include="Models\ThreadCache.cs" />
     <Compile Include="Models\ThreadID.cs" />
+    <Compile Include="Models\TransitorySettingsManager.cs" />
     <Compile Include="Models\UriMapper.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AppResources.Designer.cs">

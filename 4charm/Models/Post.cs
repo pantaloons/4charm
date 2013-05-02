@@ -61,7 +61,7 @@ namespace _4charm.Models
         {
             get
             {
-                if (SettingsManager.Current.EnableHTTPS)
+                if (CriticalSettingsManager.Current.EnableHTTPS)
                 {
                     return new Uri("https://thumbs.4chan.org/" + Thread.Board.Name + "/thumb/" + RenamedFileName + "s.jpg");
                 }
@@ -76,7 +76,7 @@ namespace _4charm.Models
         {
             get
             {
-                if (SettingsManager.Current.EnableHTTPS)
+                if (CriticalSettingsManager.Current.EnableHTTPS)
                 {
                     return new Uri("https://images.4chan.org/" + Thread.Board.Name + "/src/" + RenamedFileName + "." + FileType);
                 }
@@ -182,7 +182,7 @@ namespace _4charm.Models
                     case APIPost.CapCodes.mod:
                         cc = " ## Mod"; break;
                 }
-                return Name + cc + " " + (SettingsManager.Current.ShowTripcodes ? Tripcode : "");
+                return Name + cc + " " + (CriticalSettingsManager.Current.ShowTripcodes ? Tripcode : "");
             }
         }
 

@@ -1,5 +1,6 @@
 ﻿using _4charm.Models;
 using System.Collections.ObjectModel;
+using System.Collections.Specialized;
 using System.Windows.Navigation;
 
 namespace _4charm.ViewModels
@@ -8,22 +9,40 @@ namespace _4charm.ViewModels
     {
         public ObservableCollection<BoardViewModel> Favorites
         {
-            get { return SettingsManager.Current.Favorites; }
+            get { return CriticalSettingsManager.Current.Favorites; }
         }
 
         public ObservableCollection<ThreadViewModel> Watchlist
         {
-            get { return SettingsManager.Current.Watchlist; }
+            get { return TransitorySettingsManager.Current.Watchlist; }
         }
 
         public ObservableCollection<ThreadViewModel> History
         {
-            get { return SettingsManager.Current.History; }
+            get { return TransitorySettingsManager.Current.History; }
         }
 
         public ObservableCollection<BoardViewModel> All
         {
-            get { return SettingsManager.Current.Boards; }
+            get { return CriticalSettingsManager.Current.Boards; }
+        }
+
+        public bool HasFavorites
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
+        public bool HasWatchlist
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
+        public bool HasHistory
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
         }
 
         public TilePickerViewModel TilePicker
@@ -37,8 +56,28 @@ namespace _4charm.ViewModels
             TilePicker = new TilePickerViewModel();
         }
 
+        public void OnNavigatedTo()
+        {
+            Favorites.CollectionChanged += ViewedCollectionChanged;
+            Watchlist.CollectionChanged += ViewedCollectionChanged;
+            History.CollectionChanged += ViewedCollectionChanged;
+
+            ViewedCollectionChanged(null, null);
+        }
+
+        void ViewedCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
+        {
+            HasFavorites = Favorites.Count > 0;
+            HasHistory = History.Count > 0;
+            HasWatchlist = Watchlist.Count > 0;
+        }
+
         public void OnNavigatedFrom(NavigationEventArgs e)
         {
+            Favorites.CollectionChanged -= ViewedCollectionChanged;
+            Watchlist.CollectionChanged -= ViewedCollectionChanged;
+            History.CollectionChanged -= ViewedCollectionChanged;
+
             if (e.IsNavigationInitiator)
             {
                 foreach (BoardViewModel bvm in Favorites) bvm.UnloadImage();

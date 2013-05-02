@@ -1,4 +1,5 @@
-﻿using _4charm.Resources;
+﻿using _4charm.Models;
+using _4charm.Resources;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System;
@@ -86,10 +87,10 @@ namespace _4charm
         private static System.Threading.Timer t;
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
-            t = new System.Threading.Timer((state) =>
-            {
-                System.Diagnostics.Debug.WriteLine(((long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage") / (1024.0 * 1024)) + " MB");
-            }, null, 0, 500);
+            //t = new System.Threading.Timer((state) =>
+            //{
+            //    System.Diagnostics.Debug.WriteLine(((long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage") / (1024.0 * 1024)) + " MB");
+            //}, null, 0, 500);
         }
 
         // Code to execute when the application is activated (brought to foreground)
@@ -102,12 +103,16 @@ namespace _4charm
         // This code will not execute when the application is closing
         private void Application_Deactivated(object sender, DeactivatedEventArgs e)
         {
+            CriticalSettingsManager.Current.WaitForPartialWrites();
+            TransitorySettingsManager.Current.WaitForPartialWrites();
         }
 
         // Code to execute when the application is closing (eg, user hit Back)
         // This code will not execute when the application is deactivated
         private void Application_Closing(object sender, ClosingEventArgs e)
         {
+            CriticalSettingsManager.Current.WaitForPartialWrites();
+            TransitorySettingsManager.Current.WaitForPartialWrites();
         }
 
         // Code to execute if a navigation fails
@@ -128,10 +133,9 @@ namespace _4charm
                 // An unhandled exception has occurred; break into the debugger
                 Debugger.Break();
             }
-            // TODO: Remove
-            MessageBox.Show(((long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage") / (1024.0 * 1024)) + " MB");
-            MessageBox.Show(e.ExceptionObject.Message);
-            MessageBox.Show(e.ExceptionObject.StackTrace);
+            //MessageBox.Show(((long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage") / (1024.0 * 1024)) + " MB");
+            //MessageBox.Show(e.ExceptionObject.Message);
+            //MessageBox.Show(e.ExceptionObject.StackTrace);
         }
 
         #region Phone application initialization

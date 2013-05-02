@@ -38,17 +38,17 @@ namespace _4charm.Views
             _orientLock = new ApplicationBarMenuItem(AppResources.ApplicationBar_LockOrientation);
             _orientLock.Click += (sender, e) =>
             {
-                if (SettingsManager.Current.LockOrientation == SupportedPageOrientation.PortraitOrLandscape)
+                if (CriticalSettingsManager.Current.LockOrientation == SupportedPageOrientation.PortraitOrLandscape)
                 {
                     bool isPortrait =
                         Orientation == PageOrientation.Portrait || Orientation == PageOrientation.PortraitDown ||
                         Orientation == PageOrientation.PortraitUp;
 
-                    SettingsManager.Current.LockOrientation = isPortrait ? SupportedPageOrientation.Portrait : SupportedPageOrientation.Landscape;
+                    CriticalSettingsManager.Current.LockOrientation = isPortrait ? SupportedPageOrientation.Portrait : SupportedPageOrientation.Landscape;
                 }
                 else
                 {
-                    SettingsManager.Current.LockOrientation = SupportedPageOrientation.PortraitOrLandscape;
+                    CriticalSettingsManager.Current.LockOrientation = SupportedPageOrientation.PortraitOrLandscape;
                 }
                 OrientationLockChanged();
             };
@@ -94,11 +94,11 @@ namespace _4charm.Views
 
                 _viewModel.OnNavigatedTo(boardName, threadID, skipped);
 
-                ThreadViewModel tvm = SettingsManager.Current.History.FirstOrDefault(x => x.BoardName == t.Board.Name && x.Number == t.Number);
+                ThreadViewModel tvm = TransitorySettingsManager.Current.History.FirstOrDefault(x => x.BoardName == t.Board.Name && x.Number == t.Number);
                 if (tvm != null)
                 {
-                    SettingsManager.Current.History.Remove(tvm);
-                    SettingsManager.Current.History.Insert(0, tvm);
+                    TransitorySettingsManager.Current.History.Remove(tvm);
+                    TransitorySettingsManager.Current.History.Insert(0, tvm);
                 }
 
                 _initialized = true;
@@ -147,7 +147,7 @@ namespace _4charm.Views
 
         private void OrientationLockChanged()
         {
-            this.SupportedOrientations = SettingsManager.Current.LockOrientation;
+            this.SupportedOrientations = CriticalSettingsManager.Current.LockOrientation;
             if (this.SupportedOrientations == SupportedPageOrientation.PortraitOrLandscape)
             {
                 _orientLock.Text = AppResources.ApplicationBar_LockOrientation;

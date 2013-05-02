@@ -16,7 +16,7 @@ namespace _4charm.Models
         public bool IsNSFW { get; set; }
 
         public string DisplayName { get { return "/" + Name + "/"; } }
-        public bool IsFavorite { get { return SettingsManager.Current.Favorites.Count(x => x.Name == Name) > 0; } }
+        public bool IsFavorite { get { return CriticalSettingsManager.Current.Favorites.Count(x => x.Name == Name) > 0; } }
 
         public Brush Brush { get { return IsNSFW ? App.Current.Resources["NSFWBrush"] as SolidColorBrush : App.Current.Resources["SFWBrush"] as SolidColorBrush; } }
         public Brush ReplyBackBrush { get { return IsNSFW ? App.Current.Resources["NSFWReplyBackBrush"] as SolidColorBrush : App.Current.Resources["SFWReplyBackBrush"] as SolidColorBrush; } }

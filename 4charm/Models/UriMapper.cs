@@ -12,7 +12,7 @@ namespace _4charm.Models
             string link = uri.ToString();
 
             Match m = r.Match(link);
-            if (m.Success) return new Uri("/Views/ThreadsPage.xaml?board=" + m.Groups[1].Value);
+            if (m.Success) return new Uri("/Views/ThreadsPage.xaml?board=" + m.Groups[1].Value, UriKind.Relative);
             else return uri;
         }
     }

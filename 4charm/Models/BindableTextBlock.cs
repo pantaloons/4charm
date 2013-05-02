@@ -117,7 +117,7 @@ namespace _4charm.Models
                             }
                             else
                             {
-                                Debug.WriteLine(_node.OuterHtml);
+                                //Debug.WriteLine(_node.OuterHtml);
                                 para.Inlines.Add(WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ","));
                             }
                         }
@@ -234,7 +234,7 @@ namespace _4charm.Models
                 }
                 else
                 {
-                    Debug.WriteLine(_node.OuterHtml);
+                    //Debug.WriteLine(_node.OuterHtml);
                     para.Inlines.Add(WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ","));
                 }
             }

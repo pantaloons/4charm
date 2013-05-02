@@ -43,9 +43,9 @@ namespace _4charm.ViewModels
         {
             if(!HasBoard) return;
 
-            if (SettingsManager.Current.Boards.Count(x => x.Name == _board.Name) != 1)
+            if (CriticalSettingsManager.Current.Boards.Count(x => x.Name == _board.Name) != 1)
             {
-                SettingsManager.Current.Boards.Add(new BoardViewModel(_board));
+                CriticalSettingsManager.Current.Boards.Add(new BoardViewModel(_board));
             }
 
             BoardsPage.SetBoard = Board;

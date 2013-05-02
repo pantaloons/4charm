@@ -41,7 +41,7 @@ namespace _4charm.Views
             };
             _clear.Click += (sender, e) =>
             {
-                SettingsManager.Current.History.Clear();
+                TransitorySettingsManager.Current.History.Clear();
             };
 
             _create = new ApplicationBarIconButton(new Uri("/Assets/Appbar/appbar.add.png", UriKind.Relative))
@@ -109,6 +109,8 @@ namespace _4charm.Views
                 }
             }
             SetBoard = null;
+
+            _viewModel.OnNavigatedTo();
         }
 
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)

@@ -37,11 +37,11 @@ namespace _4charm.Views
             _clear = new ApplicationBarIconButton(new Uri("/Assets/Appbar/appbar.delete.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Clear };
             _clear.Click += (sender, e) =>
             {
-                for (int i = 0; i < SettingsManager.Current.History.Count; i++)
+                for (int i = 0; i < TransitorySettingsManager.Current.History.Count; i++)
                 {
-                    if (SettingsManager.Current.History[i].BoardName == _viewModel.Name)
+                    if (TransitorySettingsManager.Current.History[i].BoardName == _viewModel.Name)
                     {
-                        SettingsManager.Current.History.RemoveAt(i);
+                        TransitorySettingsManager.Current.History.RemoveAt(i);
                         i--;
                     }
                 }
@@ -50,17 +50,17 @@ namespace _4charm.Views
             _orientLock = new ApplicationBarMenuItem(AppResources.ApplicationBar_LockOrientation);
             _orientLock.Click += (sender, e) =>
             {
-                if (SettingsManager.Current.LockOrientation == SupportedPageOrientation.PortraitOrLandscape)
+                if (CriticalSettingsManager.Current.LockOrientation == SupportedPageOrientation.PortraitOrLandscape)
                 {
                     bool isPortrait =
                         Orientation == PageOrientation.Portrait || Orientation == PageOrientation.PortraitDown ||
                         Orientation == PageOrientation.PortraitUp;
 
-                    SettingsManager.Current.LockOrientation = isPortrait ? SupportedPageOrientation.Portrait : SupportedPageOrientation.Landscape;
+                    CriticalSettingsManager.Current.LockOrientation = isPortrait ? SupportedPageOrientation.Portrait : SupportedPageOrientation.Landscape;
                 }
                 else
                 {
-                    SettingsManager.Current.LockOrientation = SupportedPageOrientation.PortraitOrLandscape;
+                    CriticalSettingsManager.Current.LockOrientation = SupportedPageOrientation.PortraitOrLandscape;
                 }
                 OrientationLockChanged();
             };
@@ -72,7 +72,7 @@ namespace _4charm.Views
 
         private void OrientationLockChanged()
         {
-            this.SupportedOrientations = SettingsManager.Current.LockOrientation;
+            this.SupportedOrientations = CriticalSettingsManager.Current.LockOrientation;
             if (this.SupportedOrientations == SupportedPageOrientation.PortraitOrLandscape)
             {
                 _orientLock.Text = AppResources.ApplicationBar_LockOrientation;
