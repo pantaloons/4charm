@@ -62,8 +62,16 @@ namespace _4charm.Views
                     {
                         (ssender as BitmapImage).ImageOpened -= opened;
                         (ssender as BitmapImage).ImageFailed -= failed;
-                        
-                        DownloadImageOpened(ssender as BitmapImage, _viewModel.ImagePosts[index]);
+
+                        try
+                        {
+                            DownloadImageOpened(ssender as BitmapImage, _viewModel.ImagePosts[index]);
+                        }
+                        catch
+                        {
+                            failed(ssender, null);
+                            return;
+                        }
 
                         progress.Text = "Done.";
                         await Task.Delay(400);
@@ -75,8 +83,6 @@ namespace _4charm.Views
                     {
                         (ssender as BitmapImage).ImageOpened -= opened;
                         (ssender as BitmapImage).ImageFailed -= failed;
-
-                        DownloadImageFailed(ssender as BitmapImage, _viewModel.ImagePosts[index]);
 
                         progress.Text = "Image download failed.";
                         await Task.Delay(1000);
@@ -200,16 +206,26 @@ namespace _4charm.Views
         private void DownloadImageOpened(BitmapImage bmp, PostViewModel item)
         {
             WriteableBitmap wbmp = new WriteableBitmap(bmp);
-            using (MemoryStream ms = new MemoryStream())
+            try
             {
-                wbmp.SaveJpeg(ms, bmp.PixelWidth, bmp.PixelHeight, 0, 95);
-                ms.Seek(0, SeekOrigin.Begin);
-                new MediaLibrary().SavePicture(item.RenamedFileName + "", ms);
+                using (MemoryStream ms = new MemoryStream())
+                {
+                    wbmp.SaveJpeg(ms, bmp.PixelWidth, bmp.PixelHeight, 0, 95);
+                    ms.Seek(0, SeekOrigin.Begin);
+                    new MediaLibrary().SavePicture(item.RenamedFileName + "", ms);
+                }
             }
-        }
+            catch
+            {
+                bmp.UriSource = null;
+                bmp = null;
 
-        private void DownloadImageFailed(BitmapImage bmp, PostViewModel item)
-        {
+                throw;
+            }
+            wbmp = null;
+
+            bmp.UriSource = null;
+            bmp = null;
         }
 
         private void MediaViewer_ItemZoomed(object sender, EventArgs e)
