@@ -250,7 +250,7 @@
                 <Grid>
                     <phone:LongListSelector x:Name="History"
                                             Margin="12,0,0,0"
-                                            ItemsSource="{Binding HasHistory, Converter={StaticResource BoolVisibleConverter}}"
+                                            ItemsSource="{Binding History}"
                                             ItemTemplate="{StaticResource ThreadItemTemplate}"
                                             ItemRealized="ThreadRealized"
                                             ItemUnrealized="ThreadUnrealized"/>

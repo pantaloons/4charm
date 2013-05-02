@@ -1,7 +1,6 @@
 Bugs:
 
 Features:
-Image saving
 Link clicking
 Rating reminder
 Image download cancellation

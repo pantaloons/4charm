@@ -13,6 +13,7 @@ using _4charm.ViewModels;
 using Microsoft.Xna.Framework.Media;
 using System.Windows.Media.Imaging;
 using System.IO;
+using System.Threading.Tasks;
 
 namespace _4charm.Views
 {
@@ -20,7 +21,8 @@ namespace _4charm.Views
     {
         private ImageViewerPageViewModel _viewModel;
 
-        private ApplicationBarMenuItem _orientLock, _saveImage;
+        private ApplicationBarIconButton _saveImage;
+        private ApplicationBarMenuItem _orientLock;
         
         public ImageViewer()
         {
@@ -35,6 +37,59 @@ namespace _4charm.Views
 
         private void InitializeApplicationBar()
         {
+            _saveImage = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.download.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Save };
+            _saveImage.Click += (sender, e) =>
+            {
+                int index = MediaViewer.DisplayedItemIndex;
+                if (index >= 0 && _viewModel.ImagePosts.Count > index)
+                {
+                    BitmapImage bi = new BitmapImage() { CreateOptions = BitmapCreateOptions.BackgroundCreation };
+                    EventHandler<RoutedEventArgs> opened = null;
+                    EventHandler<ExceptionRoutedEventArgs> failed = null;
+
+                    ProgressIndicator progress = new ProgressIndicator
+                    {
+                        IsVisible = true,
+                        IsIndeterminate = true,
+                        Text = "Saving to Saved Pictures..."
+                    };
+
+                    SystemTray.SetOpacity(this, 0.99);
+                    SystemTray.SetIsVisible(this, true);
+                    SystemTray.SetProgressIndicator(this, progress);
+
+                    opened = async (ssender, se) =>
+                    {
+                        (ssender as BitmapImage).ImageOpened -= opened;
+                        (ssender as BitmapImage).ImageFailed -= failed;
+                        
+                        DownloadImageOpened(ssender as BitmapImage, _viewModel.ImagePosts[index]);
+
+                        progress.Text = "Done.";
+                        await Task.Delay(400);
+                        SystemTray.SetProgressIndicator(this, null);
+                        SystemTray.SetIsVisible(this, false);
+                    };
+
+                    failed = async (ssender, se) =>
+                    {
+                        (ssender as BitmapImage).ImageOpened -= opened;
+                        (ssender as BitmapImage).ImageFailed -= failed;
+
+                        DownloadImageFailed(ssender as BitmapImage, _viewModel.ImagePosts[index]);
+
+                        progress.Text = "Image download failed.";
+                        await Task.Delay(1000);
+                        SystemTray.SetProgressIndicator(this, null);
+                        SystemTray.SetIsVisible(this, false);
+                    };
+
+                    bi.ImageOpened += opened;
+                    bi.ImageFailed += failed;
+                    bi.UriSource = _viewModel.ImagePosts[index].ImageSrc;
+                }
+            };
+
             _orientLock = new ApplicationBarMenuItem(AppResources.ApplicationBar_LockOrientation);
             _orientLock.Click += (sender, e) =>
             {
@@ -53,28 +108,12 @@ namespace _4charm.Views
                 OrientationLockChanged();
             };
 
-            _saveImage = new ApplicationBarMenuItem(AppResources.ApplicationBar_Save);
-            _saveImage.Click += (sender, e) =>
-            {
-                int index = MediaViewer.DisplayedItemIndex;
-                if(index >= 0 && _viewModel.ImagePosts.Count > index)
-                {
-                    //BitmapImage bi = new BitmapImage() { CreateOptions = BitmapCreateOptions.BackgroundCreation };
-                    //using (MemoryStream ms = new MemoryStream())
-                    //{
-                    //    bmp.SaveJpeg(ms, bmp.PixelWidth, bmp.PixelHeight, 0, 95);
-                    //    ms.Seek(0, SeekOrigin.Begin);
-                    //    //new MediaLibrary().SavePicture(_viewModel.ImagePosts[index].RenamedFileName + "", ms);
-                    //}
-                }
-            };
-
             ApplicationBar = new ApplicationBar();
             ApplicationBar.Opacity = 0.0;
-            ApplicationBar.MenuItems.Add(_saveImage);
+            ApplicationBar.Buttons.Add(_saveImage);
             ApplicationBar.MenuItems.Add(_orientLock);
-            ApplicationBar.Mode = ApplicationBarMode.Minimized;
         }
+
         private ulong _postID;
 
         private bool _initialized;
@@ -156,6 +195,21 @@ namespace _4charm.Views
             {
                 _orientLock.Text = AppResources.ApplicationBar_UnlockOrientation;
             }
+        }
+
+        private void DownloadImageOpened(BitmapImage bmp, PostViewModel item)
+        {
+            WriteableBitmap wbmp = new WriteableBitmap(bmp);
+            using (MemoryStream ms = new MemoryStream())
+            {
+                wbmp.SaveJpeg(ms, bmp.PixelWidth, bmp.PixelHeight, 0, 95);
+                ms.Seek(0, SeekOrigin.Begin);
+                new MediaLibrary().SavePicture(item.RenamedFileName + "", ms);
+            }
+        }
+
+        private void DownloadImageFailed(BitmapImage bmp, PostViewModel item)
+        {
         }
 
         private void MediaViewer_ItemZoomed(object sender, EventArgs e)

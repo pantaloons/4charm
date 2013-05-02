@@ -37,11 +37,11 @@ namespace _4charm.Views
             _clear = new ApplicationBarIconButton(new Uri("/Assets/Appbar/appbar.delete.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Clear };
             _clear.Click += (sender, e) =>
             {
-                for (int i = 0; i < TransitorySettingsManager.Current.History.Count; i++)
+                for (int i = 0; i < TransitorySettingsManager.Current.Watchlist.Count; i++)
                 {
-                    if (TransitorySettingsManager.Current.History[i].BoardName == _viewModel.Name)
+                    if (TransitorySettingsManager.Current.Watchlist[i].BoardName == _viewModel.Name)
                     {
-                        TransitorySettingsManager.Current.History.RemoveAt(i);
+                        TransitorySettingsManager.Current.Watchlist.RemoveAt(i);
                         i--;
                     }
                 }
