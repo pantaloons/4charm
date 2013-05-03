@@ -452,6 +452,7 @@
                                     </Border>
                                     <TextBox x:Name="CommentTextBox"
                                              FontSize="{StaticResource PhoneFontSizeSmall}"
+                                             InputScope="Chat"
                                              Style="{StaticResource WhiteTextBox}"
                                              Text="{Binding Comment, Mode=TwoWay}"
                                              Grid.Row="0" Grid.Column="2"

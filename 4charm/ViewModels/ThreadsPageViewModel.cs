@@ -73,7 +73,7 @@ namespace _4charm.ViewModels
 
         public void OnNavigatedFrom(NavigationEventArgs e)
         {
-            if (e.IsNavigationInitiator)
+            if (e.NavigationMode == NavigationMode.Back || e.NavigationMode == NavigationMode.Refresh || e.NavigationMode == NavigationMode.Reset)
             {
                 foreach (ThreadViewModel tvm in Threads) tvm.UnloadImage();
                 foreach (ThreadViewModel tvm in Watchlist) tvm.UnloadImage();

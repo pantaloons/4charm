@@ -6,6 +6,7 @@ using Microsoft.Phone.Shell;
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Controls.Primitives;
@@ -22,6 +23,8 @@ namespace _4charm.Views
         private ApplicationBarIconButton _watch, _reply, _send;
         private ApplicationBarMenuItem _orientLock;
         private System.Threading.Timer _refreshTimer;
+
+        private Task _threadLoadTask;
 
         private Thread _thread;
         private enum BackState
@@ -116,14 +119,17 @@ namespace _4charm.Views
             ApplicationBarMenuItem bottom = new ApplicationBarMenuItem(AppResources.ApplicationBar_ScrollToBottom);
             bottom.Click += (sender, e) =>
             {
-                if (MainPivot.SelectedIndex == 0)
+                _threadLoadTask.ContinueWith(t =>
                 {
-                    TextLLS.ScrollTo(_viewModel.AllPosts.Last());
-                }
-                else
-                {
-                    ImageLLS.ScrollTo(_viewModel.ImagePosts.Last());
-                }
+                    if (MainPivot.SelectedIndex == 0)
+                    {
+                        TextLLS.ScrollTo(_viewModel.AllPosts.Last());
+                    }
+                    else
+                    {
+                        ImageLLS.ScrollTo(_viewModel.ImagePosts.Last());
+                    }
+                }, TaskScheduler.FromCurrentSynchronizationContext());
             };
 
             _orientLock = new ApplicationBarMenuItem(AppResources.ApplicationBar_LockOrientation);
@@ -199,11 +205,11 @@ namespace _4charm.Views
                     scrollTo = ulong.Parse(NavigationContext.QueryString["post"]);
                 }
 
-                _viewModel.OnNavigatedTo(boardName, threadID, () =>
+                _threadLoadTask = _viewModel.OnNavigatedTo(boardName, threadID, doScroll, () =>
                 {
                     if (doScroll)
                     {
-                        PostViewModel pvm = _viewModel.AllPosts.First(x => x.Number == scrollTo);
+                        PostViewModel pvm = _viewModel.AllPosts.FirstOrDefault(x => x.Number == scrollTo);
                         if (pvm != null)
                         {
                             MainPivot.SelectedIndex = 0;
@@ -315,6 +321,7 @@ namespace _4charm.Views
             switch (desired)
             {
                 case BackState.None:
+                    ExpandSelectionStoryboard.Stop();
                     (TextLLS.RenderTransform as CompositeTransform).TranslateY = 224;
                     TextLLS.Margin = new Thickness(12, 0, 0, 0);
                     CollapseSelectionStoryboard.Begin();
@@ -337,6 +344,7 @@ namespace _4charm.Views
             switch (desired)
             {
                 case BackState.None:
+                    ExpandReplyStoryboard.Stop();
                     (TextLLS.RenderTransform as CompositeTransform).TranslateY = 224;
                     TextLLS.Margin = new Thickness(12, 0, 0, 0);
                     CollapseReplyStoryboard.Begin();
@@ -403,11 +411,11 @@ namespace _4charm.Views
 
         private void LLS_ItemUnrealized(object sender, ItemRealizationEventArgs e)
         {
-            if (e.ItemKind == LongListSelectorItemKind.Item)
-            {
-                PostViewModel p = e.Container.DataContext as PostViewModel;
-                p.UnloadImage();
-            }
+            //if (e.ItemKind == LongListSelectorItemKind.Item)
+            //{
+            //    PostViewModel p = e.Container.DataContext as PostViewModel;
+            //    p.UnloadImage();
+            //}
         }
 
         private void MainPivotSelectionChanged(object sender, SelectionChangedEventArgs e)

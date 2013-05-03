@@ -57,7 +57,7 @@ namespace _4charm.ViewModels
         private Task _initialLoadTask = null;
         private Action _filtered;
 
-        public void OnNavigatedTo(string boardName, ulong threadID, Action after, Action filtered)
+        public Task OnNavigatedTo(string boardName, ulong threadID, bool doScroll, Action after, Action filtered)
         {
             _thread = ThreadCache.Current.EnforceBoard(boardName).EnforceThread(threadID);
             _seenPosts = new HashSet<ulong>();
@@ -69,13 +69,13 @@ namespace _4charm.ViewModels
             PivotTitle = "/" + boardName + "/ - " + (string.IsNullOrEmpty(_thread.Subject) ? _thread.Number + "" : _thread.Subject);
             ReplyViewModel = new ReplyViewModel(_thread);
 
-            _initialLoadTask = InsertPosts(_thread.Posts.Values.ToList());
-            Update().ContinueWith(t => after(), TaskScheduler.FromCurrentSynchronizationContext());
+            _initialLoadTask = InsertPosts(_thread.Posts.Values.ToList(), doScroll);
+            return Update(doScroll).ContinueWith(t => after(), TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public void OnNavigatedFrom(NavigationEventArgs e)
         {
-            if (e.IsNavigationInitiator)
+            if (e.NavigationMode == NavigationMode.Back || e.NavigationMode == NavigationMode.Refresh || e.NavigationMode == NavigationMode.Reset)
             {
                 foreach (PostViewModel pvm in AllPosts) pvm.UnloadImage();
                 foreach (PostViewModel pvm in ImagePosts) pvm.UnloadImage();
@@ -83,7 +83,7 @@ namespace _4charm.ViewModels
             }
         }
 
-        public async Task Update()
+        public async Task Update(bool bulkInsert = false)
         {
             IsLoading = true;
 
@@ -95,13 +95,15 @@ namespace _4charm.ViewModels
             catch
             {
                 IsLoading = false;
-                IsError = true;
+                IsError = AllPosts.Count == 0;
                 return;
             }
 
             IsLoading = false;
             IsError = false;
-            await _initialLoadTask.ContinueWith(t => InsertPosts(posts), TaskScheduler.FromCurrentSynchronizationContext());
+
+            await _initialLoadTask;
+            await InsertPosts(posts, bulkInsert);
         }
 
         private void Filter(ulong post)
@@ -110,7 +112,7 @@ namespace _4charm.ViewModels
             _filtered();
         }
 
-        private async Task InsertPosts(List<Post> posts)
+        private async Task InsertPosts(List<Post> posts, bool bulkInsert)
         {
             int i = 0;
             foreach(Post post in posts)
@@ -123,8 +125,11 @@ namespace _4charm.ViewModels
                     AllPosts.Add(pvm);
                     if (pvm.HasImage) ImagePosts.Add(new PostViewModel(post, null));
 
-                    if (i < 15) await Task.Delay(100);
-                    else if (i % 10 == 0) await Task.Delay(1);
+                    if (!bulkInsert)
+                    {
+                        if (i < 15) await Task.Delay(100);
+                        else if (i % 10 == 0) await Task.Delay(1);
+                    }
                     i++;
                 }
             }

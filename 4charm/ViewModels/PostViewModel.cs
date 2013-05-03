@@ -248,7 +248,7 @@ namespace _4charm.ViewModels
         private BitmapImage _loading;
         public void LoadImage()
         {
-            if (_post.RenamedFileName == 0 || _post.FileDeleted) return;
+            if (_post.RenamedFileName == 0 || _post.FileDeleted || _loading != null) return;
 
             //if (_loading != null) throw new Exception();
             _loading = new BitmapImage() { DecodePixelWidth = 100 };
