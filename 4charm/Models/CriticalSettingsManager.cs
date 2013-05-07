@@ -15,15 +15,11 @@ namespace _4charm.Models
         private const string DefaultSettingsFileName = "CriticalSettings.xml";
         private static readonly List<Type> KnownTypes = new List<Type>() { typeof(List<string>), typeof(SupportedPageOrientation) };
 
-        private static CriticalSettingsManager _current;
+        private static CriticalSettingsManager _current = new CriticalSettingsManager();
         public static CriticalSettingsManager Current
         {
             get
             {
-                if (_current == null)
-                {
-                    _current = new CriticalSettingsManager();
-                }
                 return _current;
             }
         }

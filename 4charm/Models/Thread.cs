@@ -48,10 +48,6 @@ namespace _4charm.Models
                 if (Posts.ContainsKey(p.Number)) Posts[p.Number].Merge(p);
                 else Posts[p.Number] = p;
             }
-            Deployment.Current.Dispatcher.BeginInvoke(() =>
-            {
-                //NotifyPropertiesChanged();
-            });
         }
 
         public void Merge(Post op)
@@ -107,11 +103,6 @@ namespace _4charm.Models
         {
             if (Posts.Count == 0 || other.Posts.Count == 0) return Posts.Count.CompareTo(other.Posts.Count);
             else return Posts.First().Value.CompareTo(other.Posts.First().Value);
-        }
-
-        public void WatchlistChanged()
-        {
-            //NotifyPropertyChanged("IsWatchlisted");
         }
     }
 }

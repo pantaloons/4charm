@@ -16,7 +16,8 @@ namespace _4charm.Views
 
         private ApplicationBarIconButton _refresh, _clear;
         private ApplicationBarMenuItem _orientLock;
-        private int lastUpdate = 0;
+        private int _lastUpdate = 0;
+        private bool _watchlistNavigated = false;
 
         public ThreadsPage()
         {
@@ -116,9 +117,9 @@ namespace _4charm.Views
         private void PivotChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             int index = ((Pivot)sender).SelectedIndex;
-            if (index == lastUpdate) return;
+            if (index == _lastUpdate) return;
 
-            lastUpdate = index;
+            _lastUpdate = index;
             ApplicationBar.Buttons.Clear();
             if (index == 0)
             {
@@ -127,6 +128,14 @@ namespace _4charm.Views
             else
             {
                 ApplicationBar.Buttons.Add(_clear);
+
+                if (!_watchlistNavigated)
+                {
+                    _watchlistNavigated = true;
+
+                    WatchlistLLS.Visibility = System.Windows.Visibility.Visible;
+                    _viewModel.OnWatchlistNavigated();
+                }
             }
         }
 

@@ -60,15 +60,19 @@ namespace _4charm.ViewModels
                 PivotTitle = _board.DisplayName;
                 Name = _board.Name;
                 IsLoading = false;
-                Watchlist = new ObservableCollection<ThreadViewModel>(TransitorySettingsManager.Current.Watchlist.Where(x => x.BoardName == _board.Name));
-                TransitorySettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
-
+                Watchlist = new ObservableCollection<ThreadViewModel>();
                 Threads = new ObservableCollection<ThreadViewModel>();
 
                 Reload();
 
                 _initialized = true;
             }
+        }
+
+        public void OnWatchlistNavigated()
+        {
+            Watchlist = new ObservableCollection<ThreadViewModel>(TransitorySettingsManager.Current.Watchlist.Where(x => x.BoardName == _board.Name));
+            TransitorySettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
         }
 
         public void OnNavigatedFrom(NavigationEventArgs e)

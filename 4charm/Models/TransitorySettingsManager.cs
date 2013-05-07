@@ -13,15 +13,11 @@ namespace _4charm.Models
         private const string DefaultSettingsFileName = "TransitorySettings.xml";
         private static readonly List<Type> KnownTypes = new List<Type>() { typeof(List<ThreadID>) };
 
-        private static TransitorySettingsManager _current;
+        private static TransitorySettingsManager _current = new TransitorySettingsManager();
         public static TransitorySettingsManager Current
         {
             get
             {
-                if (_current == null)
-                {
-                    _current = new TransitorySettingsManager();
-                }
                 return _current;
             }
         }

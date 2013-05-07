@@ -231,16 +231,19 @@ namespace _4charm.Models
                 var ts = new TimeSpan(now.Ticks - post.Ticks);
                 double delta = ts.TotalSeconds;
 
+                var realNow = DateTime.Now;
+                var real = realNow.Subtract(ts);
+
                 if (delta < 0) return "right now";
                 else if (delta < 1 * MINUTE) return ts.Seconds == 1 ? "one second ago" : ts.Seconds + " seconds ago";
                 else if (delta < 2 * MINUTE) return "a minute ago";
                 else if (delta < 60 * MINUTE) return ts.Minutes + " minutes ago";
                 else if (delta < 100 * MINUTE) return "about an hour ago";
-                else if (now.Date == post.Date) return new TimeSpan(now.AddMinutes(20).Ticks - post.Ticks).Hours + " hours ago";
-                else if (now.Date == post.Date.AddDays(1)) return "yesterday at " + post.ToString("hh:mm");
-                else if (now.Date <= post.Date.AddDays(3)) return now.Date.DayOfWeek + " at " + post.ToString("hh:mm");
-                else if (now.Year == post.Year) return post.ToString("dd MMMM") + " at " + post.ToString("hh:mm");
-                else return post.ToString("dd MMMM yyyy") + " at " + post.ToString("hh:mm");
+                else if (realNow.Date == real.Date) return new TimeSpan(now.AddMinutes(20).Ticks - post.Ticks).Hours + " hours ago";
+                else if (realNow.Date == real.Date.AddDays(1)) return "yesterday at " + real.ToString("hh:mm");
+                else if (realNow.Date <= real.Date.AddDays(3)) return real.Date.DayOfWeek + " at " + real.ToString("hh:mm");
+                else if (realNow.Year == real.Year) return real.ToString("dd MMMM") + " at " + real.ToString("hh:mm");
+                else return real.ToString("dd MMMM yyyy") + " at " + real.ToString("hh:mm");
             }
         }
 

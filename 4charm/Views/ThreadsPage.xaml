@@ -144,10 +144,12 @@
                 </Grid>
             </phone:PivotItem>
             <phone:PivotItem Header="watchlist">
-                <phone:LongListSelector ItemsSource="{Binding Watchlist}"
+                <phone:LongListSelector x:Name="WatchlistLLS"
+                                        ItemsSource="{Binding Watchlist}"
                                         ItemTemplate="{StaticResource ThreadItemTemplate}"
                                         ItemRealized="ThreadRealized"
-                                        ItemUnrealized="ThreadUnrealized">
+                                        ItemUnrealized="ThreadUnrealized"
+                                        Visibility="Collapsed">
                 </phone:LongListSelector>
             </phone:PivotItem>
         </phone:Pivot>
