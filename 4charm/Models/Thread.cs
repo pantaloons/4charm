@@ -23,8 +23,6 @@ namespace _4charm.Models
         
         public SortedDictionary<ulong, Post> Posts { get; set; }
 
-        private object loadLock = new object();
-
         public Thread(Board board, APIPost op)
         {
             Board = board;

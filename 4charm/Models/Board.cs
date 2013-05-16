@@ -26,8 +26,6 @@ namespace _4charm.Models
 
         public Dictionary<ulong, Thread> Threads { get; set; }
 
-        private object loadLock;
-
         public Board(string name, string description, bool isNSFW)
         {
             Name = name;
@@ -35,7 +33,6 @@ namespace _4charm.Models
             IsNSFW = isNSFW;
 
             Threads = new Dictionary<ulong, Thread>();
-            loadLock = new object();
         }
 
         public void Merge(Board b)

@@ -322,6 +322,15 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to copy text.
+        /// </summary>
+        public static string PostTemplate_CopyText {
+            get {
+                return ResourceManager.GetString("PostTemplate_CopyText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to LeftToRight.
         /// </summary>
         public static string ResourceFlowDirection {

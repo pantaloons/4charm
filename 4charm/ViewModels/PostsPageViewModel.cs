@@ -52,6 +52,8 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public bool ForceFastLoading { get; set; }
+
         private Thread _thread;
         private HashSet<ulong> _seenPosts;
         private Task _initialLoadTask = null;
@@ -125,7 +127,7 @@ namespace _4charm.ViewModels
                     AllPosts.Add(pvm);
                     if (pvm.HasImage) ImagePosts.Add(new PostViewModel(post, null));
 
-                    if (!bulkInsert)
+                    if (!bulkInsert && !ForceFastLoading)
                     {
                         if (i < 15) await Task.Delay(100);
                         else if (i % 10 == 0) await Task.Delay(1);

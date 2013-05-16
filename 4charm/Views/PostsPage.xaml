@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
+    xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:models="clr-namespace:_4charm.Models"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -30,6 +31,13 @@
                         </BeginStoryboard>
                     </EventTrigger>
                 </Grid.Triggers>
+
+                <toolkit:ContextMenuService.ContextMenu>
+                    <toolkit:ContextMenu Opened="ContextMenuOpened">
+                        <toolkit:MenuItem Header="{Binding Path=LocalizedResources.PostTemplate_CopyText, Source={StaticResource LocalizedStrings}}"
+                                          Command="{Binding TextCopied}"/>
+                    </toolkit:ContextMenu>
+                </toolkit:ContextMenuService.ContextMenu>
 
                 <Grid.Resources>
                     <Storyboard x:Key="FlashStoryboard">
@@ -264,9 +272,6 @@
                 <Grid>
                     <Grid.Resources>
                         <Storyboard x:Name="ExpandSelectionStoryboard" Completed="ExpandStoryboardCompleted">
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS" Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                            </ObjectAnimationUsingKeyFrames>
                             <DoubleAnimation From="-224" To="0" Duration="0:0:0.75"
                                              Storyboard.TargetName="SelectionLLS"
                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
@@ -284,7 +289,7 @@
                         </Storyboard>
 
                         <Storyboard x:Name="CollapseSelectionStoryboard">
-                            <DoubleAnimation From="0" To="-224" Duration="0:0:0.15"
+                            <DoubleAnimation From="0" To="-223" Duration="0:0:0.15"
                                              Storyboard.TargetName="SelectionLLS"
                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                 <DoubleAnimation.EasingFunction>
@@ -301,9 +306,6 @@
                         </Storyboard>
 
                         <Storyboard x:Name="ExpandReplyStoryboard" Completed="ExpandStoryboardCompleted">
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea" Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                            </ObjectAnimationUsingKeyFrames>
                             <DoubleAnimation From="-224" To="0" Duration="0:0:0.75"
                                              Storyboard.TargetName="ReplyArea"
                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
@@ -321,7 +323,7 @@
                         </Storyboard>
                         
                         <Storyboard x:Name="CollapseReplyStoryboard">
-                            <DoubleAnimation From="0" To="-224" Duration="0:0:0.15"
+                            <DoubleAnimation From="0" To="-223" Duration="0:0:0.15"
                                              Storyboard.TargetName="ReplyArea"
                                              Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                 <DoubleAnimation.EasingFunction>
@@ -340,13 +342,10 @@
                         <Storyboard x:Name="HideSelectionStoryboard">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS"
                                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DiscreteDoubleKeyFrame KeyTime="0" Value="-224" />
+                                <DiscreteDoubleKeyFrame KeyTime="0" Value="-223" />
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                         <Storyboard x:Name="ShowSelectionStoryboard">
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS" Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                            </ObjectAnimationUsingKeyFrames>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS"
                                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                 <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
@@ -356,13 +355,10 @@
                         <Storyboard x:Name="HideReplyStoryboard">
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea"
                                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DiscreteDoubleKeyFrame KeyTime="0" Value="-224" />
+                                <DiscreteDoubleKeyFrame KeyTime="0" Value="-223" />
                             </DoubleAnimationUsingKeyFrames>
                         </Storyboard>
                         <Storyboard x:Name="ShowReplyStoryboard">
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea" Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                            </ObjectAnimationUsingKeyFrames>
                             <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea"
                                                            Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
                                 <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
@@ -394,7 +390,7 @@
                                                     ItemRealized="SelectionLLS_ItemRealized"
                                                     ItemUnrealized="LLS_ItemUnrealized">
                                 <phone:LongListSelector.RenderTransform>
-                                    <CompositeTransform/>
+                                    <CompositeTransform TranslateY="-223"/>
                                 </phone:LongListSelector.RenderTransform>
                             </phone:LongListSelector>
                         </Grid>
@@ -420,10 +416,10 @@
                                 </Storyboard>
                             </Grid.Resources>
                             <Grid.RenderTransform>
-                                <CompositeTransform/>
+                                <CompositeTransform TranslateY="-223"/>
                             </Grid.RenderTransform>
                             <ScrollViewer x:Name="ReplyScroller">
-                                <Grid Margin="12">
+                                <Grid x:Name="InnerReplyGrid" Margin="12">
                                     <Grid.ColumnDefinitions>
                                         <ColumnDefinition Width="108"/>
                                         <ColumnDefinition Width="6"/>

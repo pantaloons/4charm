@@ -98,7 +98,7 @@ namespace _4charm.Views
                     case SubmitResultType.WrongCatpchaError:
                         HighlightCaptchaStoryboard.Begin();
                         CaptchaTextBox.Focus();
-                        ReplyScroller.ScrollToVerticalOffset(60);
+                        ReplyScroller.ScrollToVerticalOffset(InnerReplyGrid.RowDefinitions[0].ActualHeight - 10);
                         CaptchaTextBox.Text = "";
                         if(result.ResultType == SubmitResultType.WrongCatpchaError) _viewModel.ReplyViewModel.ReloadCaptcha.Execute(null);
                         break;
@@ -119,15 +119,16 @@ namespace _4charm.Views
             ApplicationBarMenuItem bottom = new ApplicationBarMenuItem(AppResources.ApplicationBar_ScrollToBottom);
             bottom.Click += (sender, e) =>
             {
+                _viewModel.ForceFastLoading = true;
                 _threadLoadTask.ContinueWith(t =>
                 {
                     if (MainPivot.SelectedIndex == 0)
                     {
-                        TextLLS.ScrollTo(_viewModel.AllPosts.Last());
+                        if(_viewModel.AllPosts.Count > 0) TextLLS.ScrollTo(_viewModel.AllPosts.Last());
                     }
                     else
                     {
-                        ImageLLS.ScrollTo(_viewModel.ImagePosts.Last());
+                        if(_viewModel.ImagePosts.Count > 0) ImageLLS.ScrollTo(_viewModel.ImagePosts.Last());
                     }
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             };
@@ -186,7 +187,7 @@ namespace _4charm.Views
         }
 
         private bool _initialized;
-        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        protected async override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -234,6 +235,11 @@ namespace _4charm.Views
             }, null, 30 * 1000, 30 * 1000);
 
             OrientationLockChanged();
+
+            await Task.Delay(100);
+
+            SelectionLLS.Visibility = Visibility.Visible;
+            ReplyArea.Visibility = Visibility.Visible;
         }
 
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
@@ -436,6 +442,13 @@ namespace _4charm.Views
         {
             (TextLLS.RenderTransform as CompositeTransform).TranslateY = 0;
             TextLLS.Margin = new Thickness(12, 224, 0, 0);
+        }
+
+        private void ContextMenuOpened(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var menu = (ContextMenu)sender;
+            var owner = (FrameworkElement)menu.Owner;
+            if (owner.DataContext != menu.DataContext) menu.DataContext = owner.DataContext;
         }
     }
 }

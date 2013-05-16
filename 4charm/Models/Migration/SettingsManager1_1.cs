@@ -27,6 +27,12 @@ namespace _4charm.Models.Migration
             }
         }
 
+        public void Clear()
+        {
+            IsolatedStorageSettings.ApplicationSettings.Clear();
+            IsolatedStorageSettings.ApplicationSettings.Save();
+        }
+
         private Dictionary<string, object> loaded = new Dictionary<string, object>();
         private T GetSetting<T>(string name)
         {

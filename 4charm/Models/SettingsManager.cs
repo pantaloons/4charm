@@ -183,6 +183,10 @@ namespace _4charm.Models
                 if (_fileName == CriticalSettingsManager.Current._fileName)
                 {
                     VersionMigrator.Migrate1_1to1_2(_settings);
+                    System.Windows.Deployment.Current.Dispatcher.BeginInvoke(async () =>
+                    {
+                        await Save();
+                    });
                 }
             }
             catch

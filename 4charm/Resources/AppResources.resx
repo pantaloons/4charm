@@ -227,4 +227,7 @@
   <data name="ApplicationBar_Send" xml:space="preserve">
     <value>send</value>
   </data>
+  <data name="PostTemplate_CopyText" xml:space="preserve">
+    <value>copy text</value>
+  </data>
 </root>

@@ -122,7 +122,8 @@
         <phone:Pivot Title="{Binding PivotTitle}" SelectionChanged="PivotChanged">
             <phone:PivotItem Header="threads">
                 <Grid>
-                    <phone:LongListSelector Margin="12,0,0,0"
+                    <phone:LongListSelector x:Name="ThreadsLLS"
+                                            Margin="12,0,0,0"
                                             ItemsSource="{Binding Threads}"
                                             ItemTemplate="{StaticResource ThreadItemTemplate}"
                                             ItemRealized="ThreadRealized"

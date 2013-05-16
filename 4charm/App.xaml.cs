@@ -84,7 +84,7 @@ namespace _4charm
 
         // Code to execute when the application is launching (eg, from Start)
         // This code will not execute when the application is reactivated
-        private static System.Threading.Timer t;
+        //private static System.Threading.Timer t;
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
             //t = new System.Threading.Timer((state) =>

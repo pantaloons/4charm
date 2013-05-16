@@ -1,6 +1,7 @@
 ﻿using _4charm.Models;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Threading.Tasks;
 using System.Windows.Navigation;
 
 namespace _4charm.ViewModels
@@ -12,14 +13,17 @@ namespace _4charm.ViewModels
             get { return CriticalSettingsManager.Current.Favorites; }
         }
 
+        // This one uses a settable property since we delay-load to improve startup perf
         public ObservableCollection<ThreadViewModel> Watchlist
         {
-            get { return TransitorySettingsManager.Current.Watchlist; }
+            get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
+            set { SetProperty(value); }
         }
 
         public ObservableCollection<ThreadViewModel> History
         {
-            get { return TransitorySettingsManager.Current.History; }
+            get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
+            set { SetProperty(value); }
         }
 
         public ObservableCollection<BoardViewModel> All
@@ -54,10 +58,19 @@ namespace _4charm.ViewModels
         public BoardsPageViewModel()
         {
             TilePicker = new TilePickerViewModel();
+            Watchlist = new ObservableCollection<ThreadViewModel>();
+            History = new ObservableCollection<ThreadViewModel>();
         }
 
-        public void OnNavigatedTo()
+        public async void OnNavigatedTo()
         {
+            ViewedCollectionChanged(null, null);
+
+            await Task.Delay(200);
+
+            Watchlist = TransitorySettingsManager.Current.Watchlist;
+            History = TransitorySettingsManager.Current.History;
+
             Favorites.CollectionChanged += ViewedCollectionChanged;
             Watchlist.CollectionChanged += ViewedCollectionChanged;
             History.CollectionChanged += ViewedCollectionChanged;

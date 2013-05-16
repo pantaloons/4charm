@@ -1,5 +1,6 @@
 ﻿using _4charm.Models;
 using _4charm.Models.API;
+using HtmlAgilityPack;
 using Microsoft.Phone.Controls;
 using System;
 using System.Windows;
@@ -132,6 +133,11 @@ namespace _4charm.ViewModels
             get { return GetProperty<ulong>(); }
             set { SetProperty(value); }
         }
+        public string LongNumber
+        {
+            get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
 
         public ICommand ThreadNavigated
         {
@@ -146,6 +152,12 @@ namespace _4charm.ViewModels
         }
 
         public ICommand NumberTapped
+        {
+            get { return GetProperty<ICommand>(); }
+            set { SetProperty(value); }
+        }
+
+        public ICommand TextCopied
         {
             get { return GetProperty<ICommand>(); }
             set { SetProperty(value); }
@@ -208,12 +220,14 @@ namespace _4charm.ViewModels
             CounterText = p.PostCount + " " + posts + " and " + p.ImageCount + " " + images + ".";
 
             Number = p.Number;
+            LongNumber = p.LongNumber;
 
             HasImage = _post.RenamedFileName != 0;
 
             ThreadNavigated = new ModelCommand(DoThreadNavigated);
             ImageNavigated = new ModelCommand(DoImageNavigated);
             NumberTapped = new ModelCommand(DoNumberTapped);
+            TextCopied = new ModelCommand(DoTextCopied);
         }
 
         ~PostViewModel()
@@ -243,6 +257,13 @@ namespace _4charm.ViewModels
         private void DoNumberTapped()
         {
             if (_quoteTapped != null) _quoteTapped(Number);
+        }
+
+        private void DoTextCopied()
+        {
+            HtmlDocument doc = new HtmlDocument();
+            doc.LoadHtml(Comment.Replace("<br>", "\n"));
+            Clipboard.SetText(doc.DocumentNode.InnerText);
         }
 
         private BitmapImage _loading;

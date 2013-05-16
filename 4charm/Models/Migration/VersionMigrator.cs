@@ -57,6 +57,8 @@ namespace _4charm.Models.Migration
             {
                 target["Boards"] = new List<string>(boards.Select(x => x.Name));
             }
+
+            SettingsManager1_1.Current.Clear();
         }
     }
 }

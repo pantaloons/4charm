@@ -1,6 +1,8 @@
 ﻿using _4charm.ViewModels;
 using HtmlAgilityPack;
+using Microsoft.Phone.Tasks;
 using System;
+using System.Collections.Generic;
 using System.Diagnostics;
 using System.Net;
 using System.Text.RegularExpressions;
@@ -42,7 +44,7 @@ namespace _4charm.Models
             if (value == null) return;
 
             HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(value);
+            doc.LoadHtml(value.Replace("<wbr>", ""));
             Paragraph para = new Paragraph();
             foreach (var node in doc.DocumentNode.ChildNodes)
             {
@@ -230,7 +232,9 @@ namespace _4charm.Models
                 //Regular text
                 else if (_node.Name == "#text")
                 {
-                    para.Inlines.Add(WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ","));
+                    //para.Inlines.Add(WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ","));
+                    List<Inline> inlines = MarkupLinks(WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ","));
+                    foreach (Inline inline in inlines) para.Inlines.Add(inline);
                 }
                 else
                 {
@@ -238,7 +242,66 @@ namespace _4charm.Models
                     para.Inlines.Add(WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ","));
                 }
             }
+
             textBlock.Blocks.Add(para);
+        }
+
+        private static List<Inline> MarkupLinks(string text)
+        {
+            List<Inline> inlines = new List<Inline>();
+
+            int filledIndex = 0;
+            int index = 0;
+            while (true)
+            {
+                int httpIndex = text.IndexOf("http", index);
+                int wwwIndex = text.IndexOf("www", index);
+
+                bool isWWW = false;
+                int minIndex = httpIndex;
+                if ((wwwIndex >= 0 && wwwIndex < httpIndex) || minIndex < 0)
+                {
+                    isWWW = true;
+                    minIndex = wwwIndex;
+                }
+                if (minIndex < 0)
+                {
+                    inlines.Add(new Run() { Text = text.Substring(filledIndex, text.Length - filledIndex) });
+                    break;
+                }
+
+                int nextSpaceIndex = text.IndexOf(' ', minIndex);
+                if (nextSpaceIndex < 0) nextSpaceIndex = text.Length;
+                string link = (isWWW ? "http://" : "") + text.Substring(minIndex, nextSpaceIndex - minIndex);
+
+                Uri uri;
+                if (Uri.TryCreate(link, UriKind.Absolute, out uri))
+                {
+                    Hyperlink h = new Hyperlink();
+                    h.Inlines.Add(new Run()
+                    {
+                        Text = text.Substring(minIndex, nextSpaceIndex - minIndex),
+                        Foreground = App.Current.Resources["LinkBrush"] as SolidColorBrush
+                    });
+                    h.Click += (sender, e) =>
+                    {
+                        App.RootFrame.IsHitTestVisible = false;
+                        new WebBrowserTask() { Uri = uri }.Show();
+                        Deployment.Current.Dispatcher.BeginInvoke(() => App.RootFrame.IsHitTestVisible = true);
+                    };
+                    inlines.Add(new Run() { Text = text.Substring(filledIndex, minIndex - filledIndex) });
+                    inlines.Add(h);
+
+                    filledIndex = nextSpaceIndex;
+                    index = nextSpaceIndex;
+                }
+                else
+                {
+                    index = minIndex + 1;
+                }
+            }
+
+            return inlines;
         }
     }
 }

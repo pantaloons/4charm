@@ -67,7 +67,7 @@
                                    HorizontalAlignment="Right"
                                    FontSize="17"
                                    Foreground="Black"
-                                   Text="{Binding Number}"/>
+                                   Text="{Binding LongNumber}"/>
                         </Grid>
 
                         <Grid>

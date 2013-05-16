@@ -255,6 +255,14 @@ namespace _4charm.Models
             }
         }
 
+        public string LongNumber
+        {
+            get
+            {
+                return Thread.Board.DisplayName + " - " + Number;
+            }
+        }
+
         public int CompareTo(Post other)
         {
             if (Thread.Board.Name == other.Thread.Board.Name) return Number.CompareTo(other.Number);
