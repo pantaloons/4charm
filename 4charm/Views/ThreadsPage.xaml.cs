@@ -209,10 +209,10 @@ namespace _4charm.Views
 
         private void ThreadUnrealized(object sender, ItemRealizationEventArgs e)
         {
-            if (e.ItemKind == LongListSelectorItemKind.Item)
-            {
-                (e.Container.Content as ThreadViewModel).UnloadImage();
-            }
+            //if (e.ItemKind == LongListSelectorItemKind.Item)
+            //{
+            //    (e.Container.Content as ThreadViewModel).UnloadImage();
+            //}
         }
     }
 }
