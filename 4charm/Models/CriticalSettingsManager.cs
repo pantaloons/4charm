@@ -24,6 +24,12 @@ namespace _4charm.Models
             }
         }
 
+        public bool EnableManualRefresh
+        {
+            get { return GetSetting<bool>(MethodBase.GetCurrentMethod().Name.Substring(4), false); }
+            set { SetSetting<bool>(MethodBase.GetCurrentMethod().Name.Substring(4), value); }
+        }
+
         public bool ShowStickies
         {
             get { return GetSetting<bool>(MethodBase.GetCurrentMethod().Name.Substring(4), true); }

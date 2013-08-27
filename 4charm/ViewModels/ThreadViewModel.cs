@@ -50,9 +50,9 @@ namespace _4charm.ViewModels
             //System.Diagnostics.Debug.WriteLine("Disposing thread VM");
         }
 
-        public void LoadImage()
+        public void LoadImage(int displayWidth = 100)
         {
-            if (InitialPost != null) InitialPost.LoadImage();
+            if (InitialPost != null) InitialPost.LoadImage(displayWidth);
         }
 
         public void UnloadImage()

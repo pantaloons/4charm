@@ -15,59 +15,22 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="False">
 
-    <phone:PhoneApplicationPage.Resources>
-        <DataTemplate x:Key="ThickBoardSingleTemplate">
-            <Grid>
-                <!--<toolkit:ContextMenuService.ContextMenu>
-                    <toolkit:ContextMenu>
-                        <toolkit:MenuItem Header="{Binding Path=LocalizedResources.BoardTemplate_AddToFavorites, Source={StaticResource LocalizedStrings}}"
-                                      Visibility="{Binding IsFavorite, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=invert}"
-                                      Command="{Binding AddToFavorites}"/>
-                        <toolkit:MenuItem Header="{Binding Path=LocalizedResources.BoardTemplate_RemoveFromFavorites, Source={StaticResource LocalizedStrings}}"
-                                      Visibility="{Binding IsFavorite, Converter={StaticResource BoolVisibleConverter}}"
-                                      Command="{Binding RemoveFromFavorites}"/>
-                        <toolkit:MenuItem Header="{Binding Path=LocalizedResources.BoardTemplate_PinToStart, Source={StaticResource LocalizedStrings}}"
-                                      Command="{Binding PinToStart}"/>
-                    </toolkit:ContextMenu>
-                </toolkit:ContextMenuService.ContextMenu>-->
-
-                <Grid toolkit:TiltEffect.IsTiltEnabled="True" Height="213">
-                    <i:Interaction.Triggers>
-                        <i:EventTrigger EventName="Tap">
-                            <i:InvokeCommandAction Command="{Binding Navigated}" />
-                        </i:EventTrigger>
-                    </i:Interaction.Triggers>
-                    <Image Width="440" Stretch="UniformToFill" Source="{Binding Image}" />
-
-                    <Grid Height="60" VerticalAlignment="Bottom">
-                        <Grid Background="Black" Opacity="0.3"/>
-                        <TextBlock Text="{Binding Description}"
-                               Foreground="White"
-                               VerticalAlignment="Center"
-                               Style="{StaticResource PhoneTextLargeStyle}"
-                               FontWeight="Bold"
-                               FontSize="32"/>
-                    </Grid>
-                </Grid>
-            </Grid>
-        </DataTemplate>
-    </phone:PhoneApplicationPage.Resources>
-
-    <Grid Background="Transparent">
+    <Grid Background="Transparent" d:DataContext="{d:DesignData Source=../SampleData/SampleAddBoardPageViewModel.xaml}">
         <Grid.RowDefinitions>
             <RowDefinition Height="Auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="add board" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock Text="{Binding Path=LocalizedResources.AddBoardPage_Title, Source={StaticResource LocalizedStrings}}"
+                       Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" Margin="12,0,12,0">
             <TextBlock Text="{Binding Path=LocalizedResources.AddBoardPage_Name, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource PhoneTextNormalStyle}"
                        FontSize="{StaticResource PhoneFontSizeLarge}"/>
-            <TextBox Height="NaN" TextChanged="NameChanged" KeyDown="NameKeyDown"/>
+            <TextBox TextChanged="NameChanged" KeyDown="NameKeyDown"/>
             <TextBlock Text="{Binding Path=LocalizedResources.AddBoardPage_Description, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource PhoneTextNormalStyle}"
                        FontSize="{StaticResource PhoneFontSizeLarge}"/>
@@ -83,11 +46,30 @@
                 <Border.BorderBrush>
                     <SolidColorBrush Opacity="0.5" Color="{StaticResource PhoneForegroundColor}"/>
                 </Border.BorderBrush>
-                <ContentPresenter Content="{Binding Board}" ContentTemplate="{StaticResource ThickBoardSingleTemplate}"/>
+
+                <Grid toolkit:TiltEffect.IsTiltEnabled="True" Height="213">
+                    <i:Interaction.Triggers>
+                        <i:EventTrigger EventName="Tap">
+                            <i:InvokeCommandAction Command="{Binding Board.Navigated}" />
+                        </i:EventTrigger>
+                    </i:Interaction.Triggers>
+
+                    <Image Width="440" Stretch="UniformToFill" Source="{Binding Board.Image}" />
+
+                    <Grid Height="60" VerticalAlignment="Bottom">
+                        <Grid Background="Black" Opacity="0.3"/>
+                        <TextBlock Text="{Binding Board.Description}"
+                            Foreground="White"
+                            VerticalAlignment="Center"
+                            Style="{StaticResource PhoneTextLargeStyle}"
+                            FontWeight="Bold"
+                            FontSize="32"/>
+                    </Grid>
+                </Grid>
             </Border>
 
             <Button Content="{Binding Path=LocalizedResources.AddBoardPage_Add, Source={StaticResource LocalizedStrings}}"
-                    Click="AddBoard_Click"
+                    Command="{Binding AddBoard}"
                     IsEnabled="{Binding HasBoard}"/>
         </StackPanel>
     </Grid>

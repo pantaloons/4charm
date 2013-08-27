@@ -1,7 +1,6 @@
 Bugs:
 
 Features:
-Link clicking
 Rating reminder
 Image download cancellation
 Refactoring GIFs/mediaviewer

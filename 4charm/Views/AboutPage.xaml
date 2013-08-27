@@ -21,9 +21,9 @@
         </Style>
     </phone:PhoneApplicationPage.Resources>
 
-    <Grid Background="Transparent">
+    <Grid Background="Transparent" d:DataContext="{d:DesignData Source=../SampleData/SampleAddBoardPageViewModel.xaml}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
@@ -33,57 +33,61 @@
                        Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
-        <Grid Grid.Row="1" Margin="12,0,12,0">
-            <StackPanel>
-                <StackPanel Orientation="Horizontal">
-                    <Image Source="\Assets\ApplicationIcon.png" Width="99" Height="99"
-                           HorizontalAlignment="Left"
-                           Margin="12,0,0,0"
-                           Visibility="{StaticResource PhoneDarkThemeVisibility}"/>
-                    <Image Source="\Assets\ApplicationIcon.dark.png" Width="99" Height="99"
-                           HorizontalAlignment="Left"
-                           Margin="12,0,0,0"
-                           Visibility="{StaticResource PhoneLightThemeVisibility}"/>
-                    <StackPanel>
-                        <TextBlock Text="{Binding Title}"
-                                   VerticalAlignment="Center"
-                                   Style="{StaticResource PhoneTextNormalStyle}"
-                                   FontSize="{StaticResource PhoneFontSizeExtraLarge}"/>
-                        <TextBlock Text="{Binding Version}"
-                                   Foreground="{StaticResource PhoneTextMidContrastBrush}"
-                                   Style="{StaticResource PhoneTextNormalStyle}"
-                                   FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-                    </StackPanel>
+        <StackPanel Grid.Row="1" Margin="12,0">
+            <StackPanel Orientation="Horizontal">
+                <Image Source="\Assets\ApplicationIcon.png" Width="99" Height="99"
+                       HorizontalAlignment="Left"
+                       Margin="12,0,0,0"
+                       Visibility="{StaticResource PhoneDarkThemeVisibility}"/>
+                <Image Source="\Assets\ApplicationIcon.dark.png" Width="99" Height="99"
+                       HorizontalAlignment="Left"
+                       Margin="12,0,0,0"
+                       Visibility="{StaticResource PhoneLightThemeVisibility}"/>
+                <StackPanel>
+                    <TextBlock Text="{Binding Title}"
+                               VerticalAlignment="Center"
+                               Style="{StaticResource PhoneTextNormalStyle}"
+                               FontSize="{StaticResource PhoneFontSizeExtraLarge}"/>
+                    <TextBlock Text="{Binding Version}"
+                               Foreground="{StaticResource PhoneTextMidContrastBrush}"
+                               Style="{StaticResource PhoneTextNormalStyle}"
+                               FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
                 </StackPanel>
-                <TextBlock Text="Publisher"
-                           Style="{StaticResource PhoneTextNormalStyle}"
-                           FontSize="{StaticResource PhoneFontSizeLarge}"/>
-                <TextBlock Text="{Binding Publisher}"
-                           Foreground="{StaticResource PhoneTextMidContrastBrush}"
-                           Style="{StaticResource PhoneTextNormalStyle}"
-                           FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
-                <TextBlock Text="Credits"
-                           Style="{StaticResource PhoneTextNormalStyle}"
-                           FontSize="{StaticResource PhoneFontSizeLarge}"/>
-                <TextBlock Text="4chan API" Style="{StaticResource CreditStyle}"/>
-                <TextBlock Text="HtmlAgilityPack" Style="{StaticResource CreditStyle}"/>
-                <TextBlock Text="Silverlight Toolkit" Style="{StaticResource CreditStyle}"/>
-                <TextBlock Text="Silverlight MediaViewer" Style="{StaticResource CreditStyle}"/>
-                <TextBlock Text="ToolStack C# PNG Writer" Style="{StaticResource CreditStyle}"/>
-                <RichTextBox TextWrapping="Wrap" Margin="0,12,0,12"
-                             Foreground="{StaticResource PhoneTextMidContrastBrush}"
-                             FontSize="{StaticResource PhoneFontSizeSmall}">
-                    <Paragraph>
-                        Content is sourced from
-                        <Hyperlink TargetName="_blank" NavigateUri="https://www.4chan.org">4chan</Hyperlink>
-                        <LineBreak/>
-                    </Paragraph>
-                    <Paragraph>
-                        All title and intellectual property rights in and to the content which may be accessed through use of the 4charm is the property of the respective content owner and may be protected by applicable copyright or other intellectual property laws and treaties. Use of this application grants you no rights to use such content.
-                    </Paragraph>
-                </RichTextBox>
             </StackPanel>
-        </Grid>
+            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_Publisher, Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource PhoneTextNormalStyle}"
+                       FontSize="{StaticResource PhoneFontSizeLarge}"/>
+            <TextBlock Text="{Binding Publisher}"
+                       Foreground="{StaticResource PhoneTextMidContrastBrush}"
+                       Style="{StaticResource PhoneTextNormalStyle}"
+                       FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
+            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_Credits, Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource PhoneTextNormalStyle}"
+                       FontSize="{StaticResource PhoneFontSizeLarge}"/>
+            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_4chanAPI, Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource CreditStyle}"/>
+            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_HtmlAgilityPack, Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource CreditStyle}"/>
+            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_SilverlightToolkit, Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource CreditStyle}"/>
+            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_SilverlightMediaViewer, Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource CreditStyle}"/>
+            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_ToolkstackPNG, Source={StaticResource LocalizedStrings}}"
+                       Style="{StaticResource CreditStyle}"/>
+            <RichTextBox TextWrapping="Wrap" Margin="0"
+                         Foreground="{StaticResource PhoneTextMidContrastBrush}"
+                         FontSize="{StaticResource PhoneFontSizeSmall}">
+                <Paragraph>
+                    <Run Text="{Binding Path=LocalizedResources.AboutPage_ContentSourcedFrom, Source={StaticResource LocalizedStrings}}" />
+                    <Hyperlink TargetName="_blank" NavigateUri="https://www.4chan.org">
+                        <Run Text="{Binding Path=LocalizedResources.AboutPage_4chan, Source={StaticResource LocalizedStrings}}" />
+                    </Hyperlink>
+                    <LineBreak/>
+                </Paragraph>
+                <Paragraph>
+                    <Run Text="{Binding Path=LocalizedResources.AboutPage_Disclaimer, Source={StaticResource LocalizedStrings}}" />
+                </Paragraph>
+            </RichTextBox>
+        </StackPanel>
     </Grid>
-
 </phone:PhoneApplicationPage>

@@ -79,6 +79,10 @@ namespace _4charm.ViewModels
 
         private Board _board;
 
+        public BoardViewModel()
+        {
+        }
+
         public BoardViewModel(Board b)
         {
             _board = b;

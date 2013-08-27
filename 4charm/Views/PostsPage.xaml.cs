@@ -13,6 +13,7 @@ using System.Windows.Controls.Primitives;
 using System.Windows.Input;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
+using System.Windows.Navigation;
 
 namespace _4charm.Views
 {
@@ -20,11 +21,13 @@ namespace _4charm.Views
     {
         private PostsPageViewModel _viewModel;
 
-        private ApplicationBarIconButton _watch, _reply, _send;
+        private ApplicationBarIconButton _refresh, _watch, _reply, _send;
         private ApplicationBarMenuItem _orientLock;
         private System.Threading.Timer _refreshTimer;
 
         private Task _threadLoadTask;
+
+        private bool _scrollTop;
 
         private Thread _thread;
         private enum BackState
@@ -46,6 +49,12 @@ namespace _4charm.Views
 
         private void InitializeApplicationBar()
         {
+            _refresh = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.refresh.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Refresh };
+            _refresh.Click += async (sender, e) =>
+            {
+                await _viewModel.Update();
+            };
+
             _watch = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.eye.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Watch };
             _watch.Click += (sender, e) =>
             {
@@ -110,6 +119,7 @@ namespace _4charm.Views
                     case SubmitResultType.KnownError:
                         MessageBox.Show(result.ErrorMessage);
                         break;
+                    case SubmitResultType.NoImageError:
                     case SubmitResultType.UnknownError:
                         MessageBox.Show("Unknown error encountered submitting post.");
                         break;
@@ -124,12 +134,22 @@ namespace _4charm.Views
                 {
                     if (MainPivot.SelectedIndex == 0)
                     {
-                        if(_viewModel.AllPosts.Count > 0) TextLLS.ScrollTo(_viewModel.AllPosts.Last());
+                        if (_viewModel.AllPosts.Count > 0)
+                        {
+                            if (_scrollTop) TextLLS.ScrollTo(_viewModel.AllPosts.First());
+                            else TextLLS.ScrollTo(_viewModel.AllPosts.Last());
+                        }
                     }
                     else
                     {
-                        if(_viewModel.ImagePosts.Count > 0) ImageLLS.ScrollTo(_viewModel.ImagePosts.Last());
+                        if (_viewModel.ImagePosts.Count > 0)
+                        {
+                            if (_scrollTop) ImageLLS.ScrollTo(_viewModel.ImagePosts.First());
+                            else ImageLLS.ScrollTo(_viewModel.ImagePosts.Last());
+                        }
                     }
+                    //_scrollTop = !_scrollTop;
+                    //bottom.Text = _scrollTop ? AppResources.ApplicationBar_ScrollToTop : AppResources.ApplicationBar_ScrollToBottom;
                 }, TaskScheduler.FromCurrentSynchronizationContext());
             };
 
@@ -152,6 +172,10 @@ namespace _4charm.Views
             };
 
             ApplicationBar = new ApplicationBar();
+            if (CriticalSettingsManager.Current.EnableManualRefresh)
+            {
+                ApplicationBar.Buttons.Add(_refresh);
+            }
             ApplicationBar.Buttons.Add(_reply);
             ApplicationBar.Buttons.Add(_watch);
             ApplicationBar.MenuItems.Add(bottom);
@@ -187,7 +211,7 @@ namespace _4charm.Views
         }
 
         private bool _initialized;
-        protected async override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -229,17 +253,15 @@ namespace _4charm.Views
                 _initialized = true;
             }
 
-            _refreshTimer = new System.Threading.Timer(state =>
+            if (!CriticalSettingsManager.Current.EnableManualRefresh)
             {
-                Dispatcher.BeginInvoke(async () => await _viewModel.Update());
-            }, null, 30 * 1000, 30 * 1000);
+                _refreshTimer = new System.Threading.Timer(state =>
+                {
+                    Dispatcher.BeginInvoke(async () => await _viewModel.Update());
+                }, null, 30 * 1000, 30 * 1000);
+            }
 
             OrientationLockChanged();
-
-            await Task.Delay(100);
-
-            SelectionLLS.Visibility = Visibility.Visible;
-            ReplyArea.Visibility = Visibility.Visible;
         }
 
         protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
@@ -256,18 +278,15 @@ namespace _4charm.Views
         {
             base.OnBackKeyPress(e);
 
-            if (MainPivot.SelectedIndex == 0)
+            switch (_backState)
             {
-                switch (_backState)
-                {
-                    case BackState.Quotes:
-                    case BackState.Reply:
-                        TransitionToState(BackState.None);
-                        e.Cancel = true;
-                        break;
-                    case BackState.None:
-                        break;
-                }
+                case BackState.Quotes:
+                case BackState.Reply:
+                    TransitionToState(BackState.None);
+                    e.Cancel = true;
+                    break;
+                case BackState.None:
+                    break;
             }
 
             UpdateApplicationBar();
@@ -375,10 +394,18 @@ namespace _4charm.Views
             {
                 case BackState.None:
                 case BackState.Quotes:
+                    if (CriticalSettingsManager.Current.EnableManualRefresh)
+                    {
+                        ApplicationBar.Buttons.Add(_refresh);
+                    }
                     ApplicationBar.Buttons.Add(_reply);
                     ApplicationBar.Buttons.Add(_watch);
                     break;
                 case BackState.Reply:
+                    if (CriticalSettingsManager.Current.EnableManualRefresh)
+                    {
+                        ApplicationBar.Buttons.Add(_refresh);
+                    }
                     ApplicationBar.Buttons.Add(_send);
                     break;
             }
@@ -395,6 +422,20 @@ namespace _4charm.Views
 
             CommentTextBox.Text += ">>" + ((sender as FrameworkElement).DataContext as PostViewModel).Number + "\n";
             CommentTextBox.SelectionStart = CommentTextBox.Text.Length;
+        }
+
+        private void RootGridDoubleTap(object sender, System.Windows.Input.GestureEventArgs e)
+        {
+            if (_backState == BackState.Reply || _viewModel.ReplyViewModel.IsPosting)
+            {
+                e.Handled = true;
+                return;
+            }
+
+            CommentTextBox.Text = ">>" + ((sender as FrameworkElement).DataContext as PostViewModel).Number + "\n";
+            CommentTextBox.SelectionStart = CommentTextBox.Text.Length;
+
+            TransitionToState(BackState.Reply);
         }
 
         private void LLS_ItemRealized(object sender, ItemRealizationEventArgs e)

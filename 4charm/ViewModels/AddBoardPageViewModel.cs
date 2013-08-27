@@ -2,12 +2,19 @@
 using _4charm.Resources;
 using _4charm.Views;
 using System.Linq;
+using System.Windows.Input;
 using System.Windows.Navigation;
 
 namespace _4charm.ViewModels
 {
     class AddBoardPageViewModel : ViewModelBase
     {
+        public bool HasBoard
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
         public BoardViewModel Board
         {
             get { return GetProperty<BoardViewModel>(); }
@@ -20,70 +27,47 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public bool HasBoard
+        public ICommand AddBoard
         {
-            get { return GetProperty<bool>(); }
+            get { return GetProperty<ICommand>(); }
             set { SetProperty(value); }
         }
 
-
-        private Board _board;
-
-        public void OnNavigatedTo()
+        public AddBoardPageViewModel()
         {
-            if (Board != null) Board.LoadImage();
+            AddBoard = new ModelCommand(DoAddBoard);
         }
 
-        public void OnNavigatedFrom(NavigationEventArgs e)
+        public void DoAddBoard()
         {
-            if(e.IsNavigationInitiator) UnloadBoard();
-        }
+            if (!HasBoard) return;
 
-        public void Complete()
-        {
-            if(!HasBoard) return;
-
-            if (CriticalSettingsManager.Current.Boards.Count(x => x.Name == _board.Name) != 1)
+            if (CriticalSettingsManager.Current.Boards.Count(x => x.Name == Board.Name) != 1)
             {
-                CriticalSettingsManager.Current.Boards.Add(new BoardViewModel(_board));
+                CriticalSettingsManager.Current.Boards.Add(Board);
             }
 
             BoardsPage.SetBoard = Board;
-            ClearBoard();
             GoBack();
         }
 
-        public void TextUpdated(string text)
-        {
-            if(BoardList.Boards.ContainsKey(text))
-            {
-                _board = new Board(BoardList.Boards[text].Name, BoardList.Boards[text].Description, BoardList.Boards[text].IsNSFW);
-                SetBoard(_board);
-            }
-            else ClearBoard();
-        }
-
-        private void SetBoard(Board b)
-        {
-            Board = new BoardViewModel(b);
-            Board.LoadImage();
-            NSFWText = b.IsNSFW ? AppResources.AddBoardPage_NSFW : "";
-            HasBoard = true;
-        }
-
-        private void UnloadBoard()
+        public void TextChanged(string text)
         {
             if (Board != null) Board.UnloadImage();
-        }
 
-        private void ClearBoard()
-        {
-            UnloadBoard();
-            Board = null;
-
-            _board = null;
-            NSFWText = "";
-            HasBoard = false;
+            if (BoardList.Boards.ContainsKey(text))
+            {
+                Board = new BoardViewModel(new Board(BoardList.Boards[text].Name, BoardList.Boards[text].Description, BoardList.Boards[text].IsNSFW));
+                Board.LoadImage();
+                NSFWText = Board.IsNSFW ? AppResources.AddBoardPage_NSFW : string.Empty;
+                HasBoard = true;
+            }
+            else
+            {
+                Board = null;
+                NSFWText = "";
+                HasBoard = false;
+            }
         }
     }
 }

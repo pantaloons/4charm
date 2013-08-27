@@ -108,10 +108,21 @@ namespace _4charm.ViewModels
             await InsertPosts(posts, bulkInsert);
         }
 
-        private void Filter(ulong post)
+        private async void Filter(ulong post)
         {
-            SelectedPosts = new ObservableCollection<PostViewModel>(AllPosts.Where(x => x.Number == post || x.QuotesPost(post)).Select(x => new PostViewModel(x._post, Filter)));
+            IEnumerable<PostViewModel> posts = AllPosts.Where(x => x.Number == post || x.QuotesPost(post)).Select(x => new PostViewModel(x._post, Filter)).ToList();
+            
+            SelectedPosts = new ObservableCollection<PostViewModel>();
             _filtered();
+
+            int j = 0;
+            foreach(PostViewModel pvm in posts)
+            {
+                SelectedPosts.Add(pvm);
+                if (j < 15) await Task.Delay(100);
+                else if (j % 10 == 0) await Task.Delay(30);
+                j++;
+            }
         }
 
         private async Task InsertPosts(List<Post> posts, bool bulkInsert)
@@ -130,7 +141,7 @@ namespace _4charm.ViewModels
                     if (!bulkInsert && !ForceFastLoading)
                     {
                         if (i < 15) await Task.Delay(100);
-                        else if (i % 10 == 0) await Task.Delay(1);
+                        else if (i % 10 == 0) await Task.Delay(30);
                     }
                     i++;
                 }

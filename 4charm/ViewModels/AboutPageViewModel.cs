@@ -24,6 +24,10 @@ namespace _4charm.ViewModels
 
         public AboutPageViewModel()
         {
+        }
+
+        public void OnNavigatedTo()
+        {
             Version = GetAppAttribute("Version");
             Title = GetAppAttribute("Title");
             Publisher = GetAppAttribute("Publisher");

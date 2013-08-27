@@ -4,6 +4,7 @@ using Microsoft.Phone.Tasks;
 using System;
 using System.Collections.Generic;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -11,54 +12,25 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media;
 using System.Windows.Media.Imaging;
-using System.Windows.Threading;
 
 namespace _4charm.ViewModels
 {
-    enum SubmitResultType
+    class NewThreadPageViewModel : ViewModelBase
     {
-        Success,
-        EmptyCaptchaError,
-        WrongCatpchaError,
-        EmptyCommentError,
-        NoImageError,
-        KnownError,
-        UnknownError
-    };
+        public bool HasMoreDetails
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
 
-    class SubmitResult
-    {
-        public SubmitResultType ResultType { get; set; }
-        public string ErrorMessage { get; set; }
-        public ulong ThreadID { get; set; }
-    };
-
-    class ReplyViewModel : ViewModelBase
-    {
         public bool IsPosting
         {
             get { return GetProperty<bool>(); }
             set { SetProperty(value); }
         }
 
-        public Brush Background
-        {
-            get { return _thread.Board.Brush; }
-        }
-
-        public Brush ReplyBackBrush
-        {
-            get { return _thread.Board.ReplyBackBrush; }
-        }
-
-        public Brush ReplyForeBrush
-        {
-            get { return _thread.Board.ReplyForeBrush; }
-        }
-
-        public string Comment
+        public string PageTitle
         {
             get { return GetProperty<string>(); }
             set { SetProperty(value); }
@@ -70,13 +42,7 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public string Name
-        {
-            get { return GetProperty<string>(); }
-            set { SetProperty(value); }
-        }
-
-        public string Email
+        public string Comment
         {
             get { return GetProperty<string>(); }
             set { SetProperty(value); }
@@ -88,7 +54,13 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public string FileName
+        public string Board
+        {
+            get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
+
+        public string Name
         {
             get { return GetProperty<string>(); }
             set { SetProperty(value); }
@@ -97,6 +69,18 @@ namespace _4charm.ViewModels
         public bool HasImage
         {
             get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
+        public string FileName
+        {
+            get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
+
+        public string Email
+        {
+            get { return GetProperty<string>(); }
             set { SetProperty(value); }
         }
 
@@ -112,64 +96,47 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public ICommand SelectImage
+        public ICommand AddImage
         {
             get { return GetProperty<ICommand>(); }
             set { SetProperty(value); }
         }
 
-        private Thread _thread;
+        public ICommand MoreDetails
+        {
+            get { return GetProperty<ICommand>(); }
+            set { SetProperty(value); }
+        }
+
+        private Action _imageChanged;
+
         private string _token;
         private byte[] _imageData;
 
-        private static Regex ErrorRegex = new Regex("<span id=\"errmsg\" style=\"color: red;\">(Error: [^<]+)<");
-        private static Regex SuccessRegex = new Regex("<title>Post successful!</title>");
-
-        public ReplyViewModel(Thread thread)
+        public NewThreadPageViewModel(Action imageChanged)
         {
-            _thread = thread;
+            _imageChanged = imageChanged;
 
-            ReloadCaptcha = new ModelCommand(DoReloadCaptcha);
-            SelectImage = new ModelCommand(DoSelectImage);
+            ReloadCaptcha = new ModelCommand(() => Load());
+            AddImage = new ModelCommand(() => DoAddImage());
+            MoreDetails = new ModelCommand(() => HasMoreDetails = true);
 
-            CaptchaText = "";
             Comment = "";
+            CaptchaText = "";
+            Subject = "";
             Name = "";
             Email = "";
-            Subject = "";
         }
 
-        private void DoReloadCaptcha()
+        public void OnNavigatedTo(string boardName)
         {
+            Board = boardName;
+            ThreadIDRegex = new Regex("<meta http-equiv=\"refresh\" content=\"1;URL=http://boards\\.4chan\\.org/" + Board + "/res/(\\d+)\">");
+
+            PageTitle = "NEW THREAD - /" + boardName + "/";
+            FileName = "choose file";
+
             Load();
-        }
-
-        private void DoSelectImage()
-        {
-            PhotoChooserTask task = new PhotoChooserTask() { ShowCamera = true };
-            task.Completed += ImageSelected;
-            task.Show();
-        }
-
-        private async void ImageSelected(object sender, PhotoResult e)
-        {
-            ((PhotoChooserTask)sender).Completed -= ImageSelected;
-
-            if (e.TaskResult == TaskResult.OK)
-            {
-                _imageData = new byte[e.ChosenPhoto.Length];
-                await e.ChosenPhoto.ReadAsync(_imageData, 0, (int)e.ChosenPhoto.Length);
-
-                HasImage = true;
-                FileName = Path.GetFileName(e.OriginalFileName);
-            }
-            else if (e.TaskResult == TaskResult.Cancel)
-            {
-                _imageData = null;
-
-                HasImage = false;
-                FileName = "";
-            }
         }
 
         public async void Load()
@@ -196,8 +163,8 @@ namespace _4charm.ViewModels
 
             int start = page.IndexOf("{");
             int end = page.LastIndexOf("}");
-            
-            using(MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(page.Substring(start, end - start + 1))))
+
+            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(page.Substring(start, end - start + 1))))
             {
                 DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(APICaptcha));
 
@@ -215,20 +182,23 @@ namespace _4charm.ViewModels
             return result;
         }
 
+        private static Regex ErrorRegex = new Regex("<span id=\"errmsg\" style=\"color: red;\">(Error: [^<]+)<");
+        private static Regex SuccessRegex = new Regex("<title>Post successful!</title>");
+        private Regex ThreadIDRegex;
         private async Task<SubmitResult> SubmitInternal()
         {
-            if (string.IsNullOrEmpty(Comment) && !HasImage) return new SubmitResult() { ResultType = SubmitResultType.EmptyCommentError };
-            else if (string.IsNullOrEmpty(CaptchaText)) return new SubmitResult() { ResultType = SubmitResultType.EmptyCaptchaError };
+            if (string.IsNullOrEmpty(CaptchaText)) return new SubmitResult() { ResultType = SubmitResultType.EmptyCaptchaError };
+            else if (!HasImage) return new SubmitResult() { ResultType = SubmitResultType.NoImageError };
 
-            Uri uri = new Uri("https://sys.4chan.org/" + _thread.Board.Name +"/post");
-            Uri referrer = new Uri("http://boards.4chan.org/" + _thread.Board.Name + "/res/" + _thread.Number);
+            Uri uri = new Uri("https://sys.4chan.org/" + Board + "/post");
+            Uri referrer = new Uri("http://boards.4chan.org/" + Board);
+
             try
             {
                 Dictionary<string, string> formFields = new Dictionary<string, string>()
                 {
                     {"MAX_FILE_SIZE", "3145728"},
                     {"mode", "regist"},
-                    {"resto", _thread.Number + ""},
                     {"name", Name},
                     {"email", Email},
                     {"sub", Subject},
@@ -237,22 +207,18 @@ namespace _4charm.ViewModels
                     {"recaptcha_response_field", CaptchaText}
                 };
 
-                HttpResponseMessage message;
-                if (HasImage)
-                {
-                    message = await RequestManager.Current.PostAsync(uri, referrer, formFields, FileName, _imageData);
-                }
-                else
-                {
-                    message = await RequestManager.Current.PostAsync(uri, referrer, formFields);
-                }
+                HttpResponseMessage message = await RequestManager.Current.PostAsync(uri, referrer, formFields, FileName, _imageData);
 
                 string result = await message.Content.ReadAsStringAsync();
                 Match m;
                 if (SuccessRegex.IsMatch(result))
                 {
-                    ResetFields();
-                    return new SubmitResult() { ResultType = SubmitResultType.Success };
+                    ulong thread = 0;
+                    if((m = ThreadIDRegex.Match(result)).Success)
+                    {
+                        ulong.TryParse(m.Groups[1].Value, out thread);
+                    }
+                    return new SubmitResult() { ResultType = SubmitResultType.Success, ThreadID = thread };
                 }
                 else if ((m = ErrorRegex.Match(result)).Success)
                 {
@@ -260,7 +226,7 @@ namespace _4charm.ViewModels
                     {
                         return new SubmitResult() { ResultType = SubmitResultType.EmptyCaptchaError };
                     }
-                    else if(m.Groups[1].Value.Contains("You seem to have mistyped the CAPTCHA"))
+                    else if (m.Groups[1].Value.Contains("You seem to have mistyped the CAPTCHA"))
                     {
                         return new SubmitResult() { ResultType = SubmitResultType.WrongCatpchaError };
                     }
@@ -280,22 +246,11 @@ namespace _4charm.ViewModels
             }
         }
 
-        private void ResetFields()
-        {
-            Comment = "";
-            CaptchaText = "";
-            Name = "";
-            Email = "";
-            Subject = "";
-            FileName = "";
-            HasImage = false;
-        }
-
         private BitmapImage _loading;
         public void LoadImage()
         {
             //if (_loading != null) throw new Exception();
-            _loading = new BitmapImage() { DecodePixelWidth = 480 };
+            _loading = new BitmapImage();
             _loading.ImageOpened += ImageLoaded;
             _loading.CreateOptions = BitmapCreateOptions.BackgroundCreation;
             _loading.UriSource = RequestManager.Current.EnforceHTTPS(new Uri("http://www.google.com/recaptcha/api/image?c=" + _token));
@@ -321,6 +276,36 @@ namespace _4charm.ViewModels
                 CaptchaImage.UriSource = null;
                 CaptchaImage = null;
             }
+        }
+
+        private void DoAddImage()
+        {
+            PhotoChooserTask task = new PhotoChooserTask() { ShowCamera = true };
+            task.Completed += ImageSelected;
+            task.Show();
+        }
+
+        private async void ImageSelected(object sender, PhotoResult e)
+        {
+            ((PhotoChooserTask)sender).Completed -= ImageSelected;
+
+            if (e.TaskResult == TaskResult.OK)
+            {
+                _imageData = new byte[e.ChosenPhoto.Length];
+                await e.ChosenPhoto.ReadAsync(_imageData, 0, (int)e.ChosenPhoto.Length);
+
+                HasImage = true;
+                FileName = Path.GetFileName(e.OriginalFileName);
+            }
+            else if (e.TaskResult == TaskResult.Cancel)
+            {
+                _imageData = null;
+
+                HasImage = false;
+                FileName = "choose file";
+            }
+
+            _imageChanged();
         }
     }
 }

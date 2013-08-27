@@ -14,5 +14,12 @@ namespace _4charm.Views
             _viewModel = new AboutPageViewModel();
             DataContext = _viewModel;
         }
+
+        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            _viewModel.OnNavigatedTo();
+        }
     }
 }

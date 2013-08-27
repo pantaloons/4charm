@@ -9,6 +9,9 @@ using System.Windows;
 
 namespace _4charm.Models
 {
+    /// <summary>
+    /// Data object for a thread. Contains a list of child posts
+    /// </summary>
     public class Thread : IComparable<Thread>
     {
         public Board Board { get; set; }

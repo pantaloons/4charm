@@ -10,7 +10,8 @@ namespace _4charm.ViewModels
     {
         public ObservableCollection<BoardViewModel> Favorites
         {
-            get { return CriticalSettingsManager.Current.Favorites; }
+            get { return GetProperty<ObservableCollection<BoardViewModel>>(); }
+            set { SetProperty(value); }
         }
 
         // This one uses a settable property since we delay-load to improve startup perf
@@ -28,7 +29,8 @@ namespace _4charm.ViewModels
 
         public ObservableCollection<BoardViewModel> All
         {
-            get { return CriticalSettingsManager.Current.Boards; }
+            get { return GetProperty<ObservableCollection<BoardViewModel>>(); }
+            set { SetProperty(value); }
         }
 
         public bool HasFavorites
@@ -58,8 +60,10 @@ namespace _4charm.ViewModels
         public BoardsPageViewModel()
         {
             TilePicker = new TilePickerViewModel();
+            Favorites = CriticalSettingsManager.Current.Favorites;
             Watchlist = new ObservableCollection<ThreadViewModel>();
             History = new ObservableCollection<ThreadViewModel>();
+            All = CriticalSettingsManager.Current.Boards;
         }
 
         public async void OnNavigatedTo()

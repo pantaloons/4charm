@@ -4,6 +4,12 @@ using System.Collections.ObjectModel;
 
 namespace _4charm.Models
 {
+    /// <summary>
+    /// Observable collection that maintains a sort order.
+    /// 
+    /// Mostly used for the PostsPage to ensure that posts do not get out of order.
+    /// </summary>
+    /// <typeparam name="T"></typeparam>
     class SortedObservableCollection<T> : ObservableCollection<T> where T : IComparable<T>
     {
         private bool useComparer;
@@ -52,7 +58,7 @@ namespace _4charm.Models
         protected override void InsertItem(int index, T item)
         {
             int pos = FindInsertPos(item);
-            if (pos == -1) return; //Duplicate element, do nothing
+            if (pos == -1) return; // Duplicate element, do nothing
             base.InsertItem(pos, item);
         }
 
@@ -66,7 +72,7 @@ namespace _4charm.Models
             else
             {
                 int pos = FindInsertPos(item);
-                if (pos >= 0) //Last post in the thread actually changed
+                if (pos >= 0) // Last post in the thread actually changed
                 {
                     base.Move(oldPos, pos);
                 }

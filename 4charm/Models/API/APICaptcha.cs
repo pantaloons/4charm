@@ -2,6 +2,9 @@
 
 namespace _4charm.Models.API
 {
+    /// <summary>
+    /// Captcha response type returned by ReCaptcha.
+    /// </summary>
     [DataContract]
     public class APICaptcha
     {

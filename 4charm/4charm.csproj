@@ -143,6 +143,7 @@
     <Compile Include="ViewModels\BoardsPageViewModel.cs" />
     <Compile Include="ViewModels\BoardViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerPageViewModel.cs" />
+    <Compile Include="ViewModels\NewThreadPageViewModel.cs" />
     <Compile Include="ViewModels\PostsPageViewModel.cs" />
     <Compile Include="ViewModels\PostViewModel.cs" />
     <Compile Include="ViewModels\ReplyViewModel.cs" />
@@ -163,6 +164,9 @@
     <Compile Include="Views\ImageViewer.xaml.cs">
       <DependentUpon>ImageViewer.xaml</DependentUpon>
       <SubType>Code</SubType>
+    </Compile>
+    <Compile Include="Views\NewThreadPage.xaml.cs">
+      <DependentUpon>NewThreadPage.xaml</DependentUpon>
     </Compile>
     <Compile Include="Views\PostsPage.xaml.cs">
       <DependentUpon>PostsPage.xaml</DependentUpon>
@@ -187,6 +191,15 @@
     <Content Include="Assets\Appbar\appbar.refresh.png" />
     <Content Include="Assets\Appbar\appbar.reply.png" />
     <Content Include="Assets\Appbar\appbar.send.png" />
+    <DesignData Include="SampleData\SampleAddBoardPageViewModel.xaml">
+      <SubType>Designer</SubType>
+    </DesignData>
+    <DesignData Include="SampleData\SampleAboutPageViewModel.xaml">
+      <SubType>Designer</SubType>
+    </DesignData>
+    <DesignData Include="SampleData\SampleBoardsPageViewModel.xaml">
+      <SubType>Designer</SubType>
+    </DesignData>
     <Page Include="Themes\generic.xaml">
       <SubType>Designer</SubType>
     </Page>
@@ -328,6 +341,10 @@
     <Content Include="Assets\Boards\Icons\x.jpg" />
     <Content Include="Assets\Boards\Icons\y.jpg" />
     <Page Include="Views\ImageViewer.xaml">
+      <SubType>Designer</SubType>
+      <Generator>MSBuild:Compile</Generator>
+    </Page>
+    <Page Include="Views\NewThreadPage.xaml">
       <SubType>Designer</SubType>
       <Generator>MSBuild:Compile</Generator>
     </Page>

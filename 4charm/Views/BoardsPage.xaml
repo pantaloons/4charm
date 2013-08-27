@@ -25,13 +25,6 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <Grid.Resources>
-                    <Storyboard x:Key="FadeInStoryboard">
-                        <DoubleAnimation Duration="0:0:0.5" From="0" To="1"
-                                     Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Opacity"/>
-                    </Storyboard>
-                </Grid.Resources>
-
                 <Grid Margin="{StaticResource PhoneHorizontalMargin}">
                     <StackPanel Margin="{StaticResource PhoneVerticalMargin}">
                         <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
@@ -91,7 +84,7 @@
                             </Grid>
 
                             <RichTextBox VerticalAlignment="Top" Grid.Column="1"
-                                     models:BindableTextBlock.FormattedText="{Binding Comment}"
+                                     models:BindableTextBlock.FormattedText="{Binding HtmlComment}"
                                      Margin="-12,0,-12,0"
                                      TextWrapping="Wrap"
                                      FontSize="17"
@@ -153,6 +146,7 @@
                         <i:InvokeCommandAction Command="{Binding Navigated}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
+                
                 <Image Width="440" Stretch="UniformToFill" Source="{Binding Image}" />
 
                 <Grid Height="60" VerticalAlignment="Bottom">
@@ -206,7 +200,7 @@
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
 
-    <Grid>
+    <Grid d:DataContext="{d:DesignData Source=../SampleData/SampleBoardsPageViewModel.xaml}">
         <phone:Pivot x:Name="RootPivot"
                      Title="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
                      SelectionChanged="RootPivotChanged">
@@ -221,7 +215,7 @@
 
                     <TextBlock TextWrapping="Wrap"
                                Visibility="{Binding HasFavorites, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=flip}"
-                               Margin="24,0,24,0"
+                               Margin="24,0"
                                FontSize="{StaticResource PhoneFontSizeLarge}"
                                Foreground="{StaticResource PhoneSubtleBrush}"
                                FontFamily="Segoe WP Light"
@@ -239,7 +233,7 @@
                     
                     <TextBlock TextWrapping="Wrap"
                                Visibility="{Binding HasWatchlist, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=flip}"
-                               Margin="24,0,24,0"
+                               Margin="24,0"
                                FontSize="{StaticResource PhoneFontSizeLarge}"
                                Foreground="{StaticResource PhoneSubtleBrush}"
                                FontFamily="Segoe WP Light"
@@ -257,7 +251,7 @@
 
                     <TextBlock TextWrapping="Wrap"
                                Visibility="{Binding HasHistory, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=flip}"
-                               Margin="24,0,24,0"
+                               Margin="24,0"
                                FontSize="{StaticResource PhoneFontSizeLarge}"
                                Foreground="{StaticResource PhoneSubtleBrush}"
                                FontFamily="Segoe WP Light"

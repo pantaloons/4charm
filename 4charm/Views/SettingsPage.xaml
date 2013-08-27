@@ -14,23 +14,22 @@
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="False">
-    
-    <phone:PhoneApplicationPage.Resources>
-        <converters:IndexOrientationConverter x:Key="IndexOrientationConverter" />
-    </phone:PhoneApplicationPage.Resources>
 
     <Grid Background="Transparent">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
-            <TextBlock Text="settings" Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
+            <TextBlock Text="{Binding Path=LocalizedResources.SettingsPage_Title, Source={StaticResource LocalizedStrings}}"
+                       Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
-        <Grid Grid.Row="1" Margin="12,0,12,0">
+        <Grid Grid.Row="1" Margin="12,0">
             <StackPanel>
+                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ManualRefresh, Source={StaticResource LocalizedStrings}}"
+                                      IsChecked="{Binding EnableManualRefresh, Mode=TwoWay}"/>
                 <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ShowTripcodes, Source={StaticResource LocalizedStrings}}"
                                       IsChecked="{Binding ShowTripcodes, Mode=TwoWay}"/>
                 <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ShowStickies, Source={StaticResource LocalizedStrings}}"
@@ -40,9 +39,9 @@
                 <toolkit:ListPicker Margin="12,0,12,0"
                                     Header="{Binding Path=LocalizedResources.SettingsPage_OrientationLock, Source={StaticResource LocalizedStrings}}"
                                     SelectedIndex="{Binding LockOrientation, Mode=TwoWay, Converter={StaticResource IndexOrientationConverter}}">
-                    <toolkit:ListPickerItem>Unlocked</toolkit:ListPickerItem>
-                    <toolkit:ListPickerItem>Portrait</toolkit:ListPickerItem>
-                    <toolkit:ListPickerItem>Landscape</toolkit:ListPickerItem>
+                    <toolkit:ListPickerItem Content="{Binding Path=LocalizedResources.SettingsPage_OrientationUnlocked, Source={StaticResource LocalizedStrings}}" />
+                    <toolkit:ListPickerItem Content="{Binding Path=LocalizedResources.SettingsPage_OrientationPortrait, Source={StaticResource LocalizedStrings}}" />
+                    <toolkit:ListPickerItem Content="{Binding Path=LocalizedResources.SettingsPage_OrientationLandscape, Source={StaticResource LocalizedStrings}}" />
                 </toolkit:ListPicker>
             </StackPanel>
         </Grid>

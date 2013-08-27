@@ -3,6 +3,8 @@ using _4charm.Models.API;
 using HtmlAgilityPack;
 using Microsoft.Phone.Controls;
 using System;
+using System.IO;
+using System.Net;
 using System.Windows;
 using System.Windows.Input;
 using System.Windows.Media;
@@ -69,9 +71,14 @@ namespace _4charm.ViewModels
             get { return GetProperty<string>(); }
             set { SetProperty(value); }
         }
-        public string Comment
+        public string SimpleComment
         {
             get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
+        public HtmlDocument HtmlComment
+        {
+            get { return GetProperty<HtmlDocument>(); }
             set { SetProperty(value); }
         }
         public string PrettyTime
@@ -80,6 +87,11 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
         public string CounterText
+        {
+            get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
+        public string TruncatedCounterText
         {
             get { return GetProperty<string>(); }
             set { SetProperty(value); }
@@ -102,6 +114,11 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
         public Thickness ThumbMargin
+        {
+            get { return GetProperty<Thickness>(); }
+            set { SetProperty(value); }
+        }
+        public Thickness ThumbMargin2
         {
             get { return GetProperty<Thickness>(); }
             set { SetProperty(value); }
@@ -163,6 +180,12 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public ICommand ViewQuotes
+        {
+            get { return GetProperty<ICommand>(); }
+            set { SetProperty(value); }
+        }
+
         public bool IsGIF
         {
             get { return GetProperty<bool>(); }
@@ -198,7 +221,9 @@ namespace _4charm.ViewModels
 
             Subject = p.Subject;
             AuthorName = p.DisplayName;
-            Comment = p.Comment;
+            HtmlComment = new HtmlDocument();
+            if (p.Comment != null) HtmlComment.LoadHtml(p.Comment.Replace("<wbr>", ""));
+            SimpleComment = WebUtility.HtmlDecode(HtmlComment.DocumentNode.InnerText).Replace("&#039;", "'").Replace("&#44;", ",");
             PrettyTime = p.PrettyTime;
 
             CapCode = p.CapCode;
@@ -206,6 +231,7 @@ namespace _4charm.ViewModels
             ThumbHeight = p.ThumbHeight;
             ThumbWidth = p.RenamedFileName != 0 ? 100 : 0;
             ThumbMargin = p.RenamedFileName != 0 ? new Thickness(0, 0, 12, 0) : new Thickness(0);
+            ThumbMargin2 = p.RenamedFileName != 0 ? new Thickness(0, 6, 12, 6) : new Thickness(0);
 
             RenamedFileName = p.RenamedFileName;
             ImageWidth = p.ImageWidth;
@@ -218,6 +244,7 @@ namespace _4charm.ViewModels
             string posts = p.PostCount != 1 ? "posts" : "post";
             string images = p.ImageCount != 1 ? "images" : "image";
             CounterText = p.PostCount + " " + posts + " and " + p.ImageCount + " " + images + ".";
+            TruncatedCounterText = p.PostCount + " / " + p.ImageCount;
 
             Number = p.Number;
             LongNumber = p.LongNumber;
@@ -228,6 +255,7 @@ namespace _4charm.ViewModels
             ImageNavigated = new ModelCommand(DoImageNavigated);
             NumberTapped = new ModelCommand(DoNumberTapped);
             TextCopied = new ModelCommand(DoTextCopied);
+            ViewQuotes = new ModelCommand(DoViewQuotes);
         }
 
         ~PostViewModel()
@@ -262,17 +290,22 @@ namespace _4charm.ViewModels
         private void DoTextCopied()
         {
             HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(Comment.Replace("<br>", "\n"));
+            doc.LoadHtml((_post.Comment ?? "").Replace("<br>", "\n"));
             Clipboard.SetText(doc.DocumentNode.InnerText);
         }
 
+        private void DoViewQuotes()
+        {
+            MessageBox.Show("Tap the post number in the top right corner to view quotes.");
+        }
+
         private BitmapImage _loading;
-        public void LoadImage()
+        public void LoadImage(int displayWidth = 100)
         {
             if (_post.RenamedFileName == 0 || _post.FileDeleted || _loading != null) return;
 
             //if (_loading != null) throw new Exception();
-            _loading = new BitmapImage() { DecodePixelWidth = 100 };
+            _loading = new BitmapImage() { DecodePixelWidth = displayWidth };
             _loading.ImageOpened += ImageLoaded;
             _loading.CreateOptions = BitmapCreateOptions.BackgroundCreation;
             _loading.UriSource = _post.ThumbnailSrc;
@@ -289,11 +322,31 @@ namespace _4charm.ViewModels
             {
                 _loading.ImageOpened -= ImageLoaded;
                 _loading.UriSource = null;
+                try
+                {
+                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
+                    {
+                        _loading.SetSource(ms);
+                    }
+                }
+                catch
+                {
+                }
                 _loading = null;
             }
 
             if (Image != null)
             {
+                try
+                {
+                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
+                    {
+                        Image.SetSource(ms);
+                    }
+                }
+                catch
+                {
+                }
                 Image.UriSource = null;
                 Image = null;
             }

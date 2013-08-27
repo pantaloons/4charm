@@ -5,6 +5,12 @@ namespace _4charm.ViewModels
 {
     class SettingsPageViewModel : ViewModelBase
     {
+        public bool EnableManualRefresh
+        {
+            get { return CriticalSettingsManager.Current.EnableManualRefresh; }
+            set { CriticalSettingsManager.Current.EnableManualRefresh = value; }
+        }
+
         public bool ShowTripcodes
         {
             get { return CriticalSettingsManager.Current.ShowTripcodes; }

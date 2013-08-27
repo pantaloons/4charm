@@ -1,0 +1,8 @@
+﻿<local:AboutPageViewModel
+    xmlns:local="clr-namespace:_4charm.ViewModels"
+    
+    Title="4charm"
+    Version="9.9.9.9"
+    Publisher="Michael McGee">
+    
+</local:AboutPageViewModel>

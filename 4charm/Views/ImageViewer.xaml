@@ -22,7 +22,7 @@
             ItemUnzoomed="MediaViewer_ItemUnzoomed"
             InitiallyDisplayedElement="First"/>
         <Grid VerticalAlignment="Top">
-            <ProgressBar IsIndeterminate="True"
+            <ProgressBar IsIndeterminate="{Binding IsLoading}"
                          Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
         </Grid>
     </Grid>

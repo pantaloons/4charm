@@ -4,6 +4,7 @@ using _4charm.ViewModels;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System;
+using System.Threading.Tasks;
 using System.Windows.Controls;
 using System.Windows.Media;
 using System.Windows.Media.Animation;
@@ -12,12 +13,20 @@ namespace _4charm.Views
 {
     public partial class ThreadsPage : PhoneApplicationPage
     {
+        // We use this hack to notify the threads page to reload
+        // after creating a new thread. The thread creation page
+        // calls GoBack() and then navigated to the new post page,
+        // but if the user hits back we want to show their thread
+        // at the top of the list.
+        internal static bool ForceReload = false;
+
         private ThreadsPageViewModel _viewModel;
 
         private ApplicationBarIconButton _refresh, _clear;
         private ApplicationBarMenuItem _orientLock;
         private int _lastUpdate = 0;
         private bool _watchlistNavigated = false;
+        private bool _catalogNavigated = false;
 
         public ThreadsPage()
         {
@@ -66,8 +75,15 @@ namespace _4charm.Views
                 OrientationLockChanged();
             };
 
+            ApplicationBarMenuItem newThread = new ApplicationBarMenuItem(AppResources.ApplicationBar_NewThread);
+            newThread.Click += (sender, e) =>
+            {
+                NavigationService.Navigate(new Uri(String.Format("/Views/NewThreadPage.xaml?board={0}", Uri.EscapeUriString(_viewModel.Name)), UriKind.Relative));
+            };
+
             ApplicationBar = new ApplicationBar();
             ApplicationBar.Buttons.Add(_refresh);
+            ApplicationBar.MenuItems.Add(newThread);
             ApplicationBar.MenuItems.Add(_orientLock);
         }
 
@@ -97,6 +113,12 @@ namespace _4charm.Views
                 _initialized = true;
             }
 
+            if (ForceReload)
+            {
+                ForceReload = false;
+                _viewModel.Reload();
+            }
+
             OrientationLockChanged();
         }
 
@@ -114,14 +136,14 @@ namespace _4charm.Views
             _viewModel.OnRemovedFromJournal();
         }
 
-        private void PivotChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
+        private async void PivotChanged(object sender, System.Windows.Controls.SelectionChangedEventArgs e)
         {
             int index = ((Pivot)sender).SelectedIndex;
             if (index == _lastUpdate) return;
 
             _lastUpdate = index;
             ApplicationBar.Buttons.Clear();
-            if (index == 0)
+            if (index == 0 || index == 2)
             {
                 ApplicationBar.Buttons.Add(_refresh);
             }
@@ -129,13 +151,20 @@ namespace _4charm.Views
             {
                 ApplicationBar.Buttons.Add(_clear);
 
-                if (!_watchlistNavigated)
+                await Task.Delay(500);                
+
+                if (!_watchlistNavigated && ((Pivot)sender).SelectedIndex == 1)
                 {
                     _watchlistNavigated = true;
-
                     WatchlistLLS.Visibility = System.Windows.Visibility.Visible;
                     _viewModel.OnWatchlistNavigated();
                 }
+            }
+
+            if (index == 2 && !_catalogNavigated)
+            {
+                _catalogNavigated = true;
+                CatalogLLS.Visibility = System.Windows.Visibility.Visible;
             }
         }
 
@@ -151,15 +180,39 @@ namespace _4charm.Views
                 {
                     ((VisualTreeHelper.GetChild(e.Container, 0) as Grid).Resources["FadeInStoryboard"] as Storyboard).Begin();
                 }
+
+                if (index == 14)
+                {
+                    _viewModel.FinishInsertingPosts();
+                }
+            }
+        }
+
+        private void ImageThreadRealized(object sender, ItemRealizationEventArgs e)
+        {
+            if (e.ItemKind == LongListSelectorItemKind.Item)
+            {
+                (e.Container.Content as ThreadViewModel).LoadImage(208);
+
+                ThreadViewModel t = e.Container.Content as ThreadViewModel;
+                int index = _viewModel.ImageThreads.IndexOf(t);
+                if (_viewModel.ImageThreads.Count < 10)
+                {
+                    ((VisualTreeHelper.GetChild(e.Container, 0) as Grid).Resources["FadeInStoryboard"] as Storyboard).Begin();
+                }
+                if (index == 14)
+                {
+                    _viewModel.FinishInsertingPosts();
+                }
             }
         }
 
         private void ThreadUnrealized(object sender, ItemRealizationEventArgs e)
         {
-            //if (e.ItemKind == LongListSelectorItemKind.Item)
-            //{
-            //    (e.Container.Content as ThreadViewModel).UnloadImage();
-            //}
+            if (e.ItemKind == LongListSelectorItemKind.Item)
+            {
+                (e.Container.Content as ThreadViewModel).UnloadImage();
+            }
         }
     }
 }

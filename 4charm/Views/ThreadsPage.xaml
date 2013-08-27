@@ -16,6 +16,40 @@
     shell:SystemTray.IsVisible="False">
 
     <phone:PhoneApplicationPage.Resources>
+        <Style x:Key="OverlaidScrollbarLLS" TargetType="phone:LongListSelector">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="phone:LongListSelector">
+                        <Grid Background="{TemplateBinding Background}" d:DesignWidth="480" d:DesignHeight="800">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="ScrollStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="00:00:00.5"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Scrolling">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="VerticalScrollBar"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="NotScrolling"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid Margin="{TemplateBinding Padding}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                </Grid.ColumnDefinitions>
+                                <ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                                <ScrollBar x:Name="VerticalScrollBar" Grid.Column="1" Margin="4,0,4,0" Opacity="0" Orientation="Vertical"/>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+        
         <DataTemplate x:Key="ThreadItemTemplate">
             <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24" DataContext="{Binding InitialPost}">
                 <i:Interaction.Triggers>
@@ -27,94 +61,135 @@
                 <Grid.Resources>
                     <Storyboard x:Key="FadeInStoryboard">
                         <DoubleAnimation Duration="0:0:0.5" From="0" To="1"
-                                     Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Opacity"/>
+                                         Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Opacity"/>
                     </Storyboard>
                 </Grid.Resources>
 
-                <Grid Margin="{StaticResource PhoneHorizontalMargin}">
-                    <StackPanel Margin="{StaticResource PhoneVerticalMargin}">
-                        <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                <Grid Margin="12">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="auto" />
+                    </Grid.RowDefinitions>
+                    <Grid.ColumnDefinitions>
+                        <ColumnDefinition Width="auto" />
+                        <ColumnDefinition Width="*" />
+                    </Grid.ColumnDefinitions>
+
+                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                Margin="0"
+                               Grid.ColumnSpan="2"
                                Visibility="{Binding Subject, Converter={StaticResource NullVisibleConverter}}"
                                FontSize="17"
                                Foreground="#0F0C5D"
                                TextWrapping="Wrap"
                                Text="{Binding Subject}"/>
-                        <Grid>
-                            <StackPanel HorizontalAlignment="Left" Orientation="Horizontal">
-                                <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
-                                       Margin="0"
-                                       Foreground="{Binding CapCode, Converter={StaticResource CapCodeColorConverter}}"
-                                       FontSize="17"
-                                       Text="{Binding AuthorName}"/>
-                                <Image Source="\Assets\Icons\sticky.gif"
-                                   Visibility="{Binding IsSticky, Converter={StaticResource BoolVisibleConverter}}"/>
-                                <Image Source="\Assets\Icons\closed.gif"
-                                   Visibility="{Binding IsClosed, Converter={StaticResource BoolVisibleConverter}}"/>
-                                <Image Source="\Assets\Icons\adminicon.gif"
-                                   Visibility="{Binding IsAdmin, Converter={StaticResource BoolVisibleConverter}}"/>
-                                <Image Source="\Assets\Icons\modicon.gif"
-                                   Visibility="{Binding IsMod, Converter={StaticResource BoolVisibleConverter}}"/>
-                                <Image Source="\Assets\Icons\evelopericon.gif"
-                                   Visibility="{Binding IsDeveloper, Converter={StaticResource BoolVisibleConverter}}"/>
-                                <Image Source="\Assets\Icons\filedeleted-res.gif"
-                                   Visibility="{Binding FileDeleted, Converter={StaticResource BoolVisibleConverter}}"/>
-                            </StackPanel>
-                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+
+                    <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2">
+                        <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                    Margin="0"
-                                   Grid.Column="1"
-                                   HorizontalAlignment="Right"
+                                   Foreground="{Binding CapCode, Converter={StaticResource CapCodeColorConverter}}"
                                    FontSize="17"
-                                   Foreground="Black"
-                                   Text="{Binding Number}"/>
-                        </Grid>
-
-                        <Grid>
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="auto"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-
-                            <Grid Margin="0,6,0,6">
-                                <Image VerticalAlignment="Top"
-                                   Width="{Binding ThumbWidth}"
-                                   Height="{Binding ThumbHeight}"
-                                   Margin="{Binding ThumbMargin}"
-                                   Source="{Binding Image}">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Tap">
-                                            <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </Image>
-                            </Grid>
-
-                            <RichTextBox VerticalAlignment="Top" Grid.Column="1"
-                                     models:BindableTextBlock.FormattedText="{Binding Comment}"
-                                     Margin="-12,0,-12,0"
-                                     TextWrapping="Wrap"
-                                     FontSize="17"
-                                     FontFamily="{StaticResource PhoneFontFamilyNormal}"
-                                     Foreground="Black"/>
-                        </Grid>
-
-                        <Grid>
-                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
-                                   Margin="0"
-                                   FontSize="17"
-                                   HorizontalAlignment="Left"
-                                   Foreground="#707070"
-                                   Text="{Binding PrettyTime}"/>
-                            <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
-                                   Margin="0"
-                                   FontSize="17"
-                                   HorizontalAlignment="Right"
-                                   Foreground="#707070"
-                                   Text="{Binding CounterText}"/>
-                        </Grid>
+                                   Text="{Binding AuthorName}"/>
+                        <Image Source="\Assets\Icons\sticky.gif"
+                               Visibility="{Binding IsSticky, Converter={StaticResource BoolVisibleConverter}}"/>
+                        <Image Source="\Assets\Icons\closed.gif"
+                               Visibility="{Binding IsClosed, Converter={StaticResource BoolVisibleConverter}}"/>
+                        <Image Source="\Assets\Icons\adminicon.gif"
+                               Visibility="{Binding IsAdmin, Converter={StaticResource BoolVisibleConverter}}"/>
+                        <Image Source="\Assets\Icons\modicon.gif"
+                               Visibility="{Binding IsMod, Converter={StaticResource BoolVisibleConverter}}"/>
+                        <Image Source="\Assets\Icons\evelopericon.gif"
+                               Visibility="{Binding IsDeveloper, Converter={StaticResource BoolVisibleConverter}}"/>
+                        <Image Source="\Assets\Icons\filedeleted-res.gif"
+                               Visibility="{Binding FileDeleted, Converter={StaticResource BoolVisibleConverter}}"/>
                     </StackPanel>
+
+                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                               Margin="0"
+                               Grid.Row="1" Grid.ColumnSpan="2"
+                               HorizontalAlignment="Right"
+                               FontSize="17"
+                               Foreground="Black"
+                               Text="{Binding Number}"/>
+
+                    <Image VerticalAlignment="Top"
+                           Grid.Row="2"
+                           Width="{Binding ThumbWidth}"
+                           Height="{Binding ThumbHeight}"
+                           Margin="{Binding ThumbMargin2}"
+                           Source="{Binding Image}">
+                        <i:Interaction.Triggers>
+                            <i:EventTrigger EventName="Tap">
+                                <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
+                            </i:EventTrigger>
+                        </i:Interaction.Triggers>
+                    </Image>
+
+                    <RichTextBox VerticalAlignment="Top" Grid.Column="1" Grid.Row="2"
+                                 models:BindableTextBlock.FormattedText="{Binding HtmlComment}"
+                                 Margin="-12,0,-12,0"
+                                 TextWrapping="Wrap"
+                                 FontSize="17"
+                                 FontFamily="{StaticResource PhoneFontFamilyNormal}"
+                                 Foreground="Black"/>
+
+                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                               Margin="0"
+                               Grid.Row="3" Grid.ColumnSpan="2"
+                               FontSize="17"
+                               HorizontalAlignment="Left"
+                               Foreground="#707070"
+                               Text="{Binding PrettyTime}"/>
+                    
+                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                               Grid.Row="3" Grid.ColumnSpan="2"
+                               Margin="0"
+                               FontSize="17"
+                               HorizontalAlignment="Right"
+                               Foreground="#707070"
+                               Text="{Binding CounterText}"/>
                 </Grid>
             </Grid>
+        </DataTemplate>
+
+        <DataTemplate x:Key="ImageItemTemplate">
+            <Grid x:Name="RootGrid" Margin="12,0,0,12" Width="208" Height="208" Background="Transparent">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Tap">
+                        <i:InvokeCommandAction Command="{Binding InitialPost.ThreadNavigated}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+
+                <Grid.Resources>
+                    <Storyboard x:Key="FadeInStoryboard">
+                        <DoubleAnimation Duration="0:0:0.5" From="0" To="1"
+                                         Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Opacity"/>
+                    </Storyboard>
+                </Grid.Resources>
+
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="*" />
+                    <RowDefinition Height="90" />
+                </Grid.RowDefinitions>
+                
+                <Image Source="{Binding InitialPost.Image}" Stretch="UniformToFill" Grid.RowSpan="2" />
+
+                <Rectangle Grid.Row="1" Fill="Black" Opacity="0.7" />
+                <TextBlock Grid.Row="1" MaxHeight="78" Margin="12"
+                           VerticalAlignment="Top" Foreground="White"
+                           Text="{Binding InitialPost.SimpleComment}"
+                           TextWrapping="Wrap" TextTrimming="WordEllipsis" />
+                <TextBlock Grid.Row="1"
+                           Margin="6,3,6,3"
+                           Style="{StaticResource PhoneTextSmallStyle}"
+                           FontSize="15"
+                           VerticalAlignment="Bottom" HorizontalAlignment="Right"
+                           Foreground="White"
+                           Text="{Binding InitialPost.TruncatedCounterText}" />
+            </Grid>
+
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
 
@@ -150,13 +225,24 @@
                                         ItemTemplate="{StaticResource ThreadItemTemplate}"
                                         ItemRealized="ThreadRealized"
                                         ItemUnrealized="ThreadUnrealized"
-                                        Visibility="Collapsed">
-                </phone:LongListSelector>
+                                        Visibility="Collapsed" />
+            </phone:PivotItem>
+            <phone:PivotItem Header="catalog">
+                <phone:LongListSelector x:Name="CatalogLLS"
+                                        Style="{StaticResource OverlaidScrollbarLLS}"
+                                        ItemsSource="{Binding ImageThreads}"
+                                        ItemTemplate="{StaticResource ImageItemTemplate}"
+                                        ItemRealized="ImageThreadRealized"
+                                        ItemUnrealized="ThreadUnrealized"
+                                        LayoutMode="Grid"
+                                        GridCellSize="220,220"
+                                        Visibility="Collapsed"/>
+                                        
             </phone:PivotItem>
         </phone:Pivot>
 
         <Grid VerticalAlignment="Top">
-            <ProgressBar IsIndeterminate="True"
+            <ProgressBar IsIndeterminate="{Binding IsLoading}"
                          Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
         </Grid>
     </Grid>

@@ -1,0 +1,34 @@
+﻿<local:BoardsPageViewModel
+    xmlns:local="clr-namespace:_4charm.ViewModels"
+    
+    HasFavorites="True">
+    <local:BoardsPageViewModel.Favorites>
+        <local:BoardViewModel
+            Description="/a/ - Anime"
+            Image="../Assets/Boards/Fanart/a.jpg"/>
+        <local:BoardViewModel
+            Description="/fa/ - Fashion"
+            Image="../Assets/Boards/Fanart/fa.jpg"/>
+        <local:BoardViewModel
+            Description="/fit/ - Health and Fitness"
+            Image="../Assets/Boards/Fanart/fit.jpg"/>
+    </local:BoardsPageViewModel.Favorites>
+    
+    <local:BoardsPageViewModel.All>
+        <local:BoardViewModel
+            Description="/3/ - 3DCG"
+            Image="../Assets/Boards/Fanart/3.jpg"/>
+        <local:BoardViewModel
+            Description="/a/ - Anime"
+            Image="../Assets/Boards/Fanart/a.jpg"/>
+        <local:BoardViewModel
+            Description="/adv/ - Advice"
+            Image="../Assets/Boards/Fanart/adv.jpg"/>
+        <local:BoardViewModel
+            Description="/an/ - Animals &amp; Nature"
+            Image="../Assets/Boards/Fanart/an.jpg"/>
+        <local:BoardViewModel
+            Description="/b/ - Random"
+            Image="../Assets/Boards/Fanart/b.jpg"/>
+    </local:BoardsPageViewModel.All>
+</local:BoardsPageViewModel>

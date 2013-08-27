@@ -10,31 +10,65 @@
     <Application.Resources>
         <local:LocalizedStrings xmlns:local="clr-namespace:_4charm" x:Key="LocalizedStrings"/>
         
+        <!-- Converts true to visible, and false to collapsed. If parameter is "flip"
+             this is inverted. -->
         <converters:BoolVisibleConverter x:Key="BoolVisibleConverter" />
+        
+        <!-- Converts null values to visible, and non-null to collapsed. If parameter is "flip"
+             this is inverted. -->
         <converters:NullVisibleConverter x:Key="NullVisibleConverter" />
+        
+        <!-- Converts a CapCode type the the text color used when displaying that CapCode in a post. -->
         <converters:CapCodeColorConverter x:Key="CapCodeColorConverter" />
+        
+        <!-- Converts empty collections to collapsed, and non-empty ones to visible.
+             Used to display empty list messages for favorites etc. -->
         <converters:EmptyCollectionVisibleConverter x:Key="EmptyCollectionVisibleConverter" />
 
+        <!-- Converts an index (0, 1, 2) into a SupportedOrientation, (PortraitOrLandscape, Portrait, Landscape),
+             respectively. Used to bind between the orientation setting list picker and the orientation mode. -->
+        <converters:IndexOrientationConverter x:Key="IndexOrientationConverter" />
+
+        <!-- Background color for posts on SFW boards. -->
         <Color x:Key="SFWColor">#D6DAF0</Color>
+        <!-- Background color for posts on NSFW boards. -->
         <Color x:Key="NSFWColor">#F0E0D6</Color>
+        <!-- Color for quoted text (greentext) in posts. -->
+        <Color x:Key="GreentextColor">#789922</Color>
+        <!-- Color for links (thread quotes and backlinks) in posts. -->
+        <Color x:Key="LinkColor">#000080</Color>
+        <!-- Color of the "(USER WAS BANNED FOR THIS POST)" text. -->
+        <Color x:Key="BannedColor">#FF0000</Color>
+        <!-- Highlight color for spoiler text. -->
+        <Color x:Key="SpoilerColor">#FFA500</Color>
+
+        <!-- Text color for names ("Anonymous", "moot") using no capcode. -->
+        <SolidColorBrush x:Key="NormalBrush" Color="#117743"/>
+        <!-- Text color for names ("Anonymous", "moot") using the admin capcode. -->
+        <SolidColorBrush x:Key="AdminBrush" Color="#FF0000"/>
+        <!-- Text color for names ("Anonymous", "moot") using the mod capcode. -->
+        <SolidColorBrush x:Key="ModBrush" Color="#800080"/>
+        <!-- Text color for names ("Anonymous", "moot") using the developer capcode. -->
+        <SolidColorBrush x:Key="DeveloperBrush" Color="#0000F0"/>
+
+
+        <!-- Background color for field descriptions in the inline reply area on NSFW boards. -->
+        <SolidColorBrush x:Key="NSFWReplyBackBrush" Color="#EEAA88"/>
+        <!-- Text color for field descriptions of the inline reply area on NSFW boards. "Subject", "Comment", etc. -->
+        <SolidColorBrush x:Key="NSFWReplyForeBrush" Color="#880000"/>
+        <!-- Background color for field descriptions in the inline reply area on SFW boards. -->
+        <SolidColorBrush x:Key="SFWReplyBackBrush" Color="#9988EE"/>
+        <!-- Text color for field descriptions of the inline reply area on SFW boards. "Subject", "Comment", etc. -->
+        <SolidColorBrush x:Key="SFWReplyForeBrush" Color="#000000"/>
+       
+
+        <!-- Some utility brushes based on the above to avoid repeated resource creation. -->
         <SolidColorBrush x:Key="SFWBrush" Color="{StaticResource SFWColor}"/>
         <SolidColorBrush x:Key="NSFWBrush" Color="{StaticResource NSFWColor}"/>
-        <Color x:Key="GreentextColor">#789922</Color>
         <SolidColorBrush x:Key="GreentextBrush" Color="{StaticResource GreentextColor}"/>
-        <Color x:Key="LinkColor">#000080</Color>
         <SolidColorBrush x:Key="LinkBrush" Color="{StaticResource LinkColor}"/>
-        <Color x:Key="BannedColor">#FF0000</Color>
         <SolidColorBrush x:Key="BannedBrush" Color="{StaticResource BannedColor}"/>
-        <Color x:Key="SpoilerColor">#FFA500</Color>
         <SolidColorBrush x:Key="SpoilerBrush" Color="{StaticResource SpoilerColor}"/>
-        <SolidColorBrush x:Key="NSFWReplyBackBrush" Color="#EEAA88"/>
-        <SolidColorBrush x:Key="NSFWReplyForeBrush" Color="#880000"/>
-        <SolidColorBrush x:Key="SFWReplyBackBrush" Color="#9988EE"/>
-        <SolidColorBrush x:Key="SFWReplyForeBrush" Color="#000000"/>
-        <SolidColorBrush x:Key="AdminBrush" Color="#FF0000"/>
-        <SolidColorBrush x:Key="ModBrush" Color="#800080"/>
-        <SolidColorBrush x:Key="DeveloperBrush" Color="#0000F0"/>
-        <SolidColorBrush x:Key="NormalBrush" Color="#117743"/>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>

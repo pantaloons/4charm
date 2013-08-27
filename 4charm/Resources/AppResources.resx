@@ -230,4 +230,64 @@
   <data name="PostTemplate_CopyText" xml:space="preserve">
     <value>copy text</value>
   </data>
+  <data name="ApplicationBar_ScrollToTop" xml:space="preserve">
+    <value>scroll to top</value>
+  </data>
+  <data name="AboutPage_4chan" xml:space="preserve">
+    <value>4chan</value>
+  </data>
+  <data name="AboutPage_4chanAPI" xml:space="preserve">
+    <value>4chan API</value>
+  </data>
+  <data name="AboutPage_ContentSourcedFrom" xml:space="preserve">
+    <value>Content is sourced from</value>
+  </data>
+  <data name="AboutPage_Credits" xml:space="preserve">
+    <value>Credits</value>
+  </data>
+  <data name="AboutPage_Disclaimer" xml:space="preserve">
+    <value>All title and intellectual property rights in and to the content which may be accessed through use of the 4charm is the property of the respective content owner and may be protected by applicable copyright or other intellectual property laws and treaties. Use of this application grants you no rights to use such content.</value>
+  </data>
+  <data name="AboutPage_HtmlAgilityPack" xml:space="preserve">
+    <value>HtmlAgilityPack</value>
+  </data>
+  <data name="AboutPage_Publisher" xml:space="preserve">
+    <value>Publisher</value>
+  </data>
+  <data name="AboutPage_SilverlightMediaViewer" xml:space="preserve">
+    <value>Silverlight MediaViewer</value>
+  </data>
+  <data name="AboutPage_SilverlightToolkit" xml:space="preserve">
+    <value>Silverlight Toolkit</value>
+  </data>
+  <data name="AboutPage_ToolstackPNG" xml:space="preserve">
+    <value>ToolStack C# PNG Writer</value>
+  </data>
+  <data name="AddBoardPage_Title" xml:space="preserve">
+    <value>add board</value>
+  </data>
+  <data name="ApplicationBar_NewThread" xml:space="preserve">
+    <value>new thread</value>
+  </data>
+  <data name="ApplicationBar_Submit" xml:space="preserve">
+    <value>submit</value>
+  </data>
+  <data name="PostTemplate_SeeQuotes" xml:space="preserve">
+    <value>show quotes</value>
+  </data>
+  <data name="SettingsPage_ManualRefresh" xml:space="preserve">
+    <value>Enable manual refresh</value>
+  </data>
+  <data name="SettingsPage_OrientationLandscape" xml:space="preserve">
+    <value>landscape</value>
+  </data>
+  <data name="SettingsPage_OrientationPortrait" xml:space="preserve">
+    <value>portrait</value>
+  </data>
+  <data name="SettingsPage_OrientationUnlocked" xml:space="preserve">
+    <value>unlocked</value>
+  </data>
+  <data name="SettingsPage_Title" xml:space="preserve">
+    <value>settings</value>
+  </data>
 </root>

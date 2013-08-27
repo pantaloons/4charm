@@ -20,16 +20,16 @@ namespace _4charm.Models
             return (string)obj.GetValue(FormattedTextProperty);
         }
 
-        public static void SetFormattedText(DependencyObject obj, string value)
+        public static void SetFormattedText(DependencyObject obj, HtmlDocument value)
         {
             obj.SetValue(FormattedTextProperty, value);
         }
 
         public static readonly DependencyProperty FormattedTextProperty =
             DependencyProperty.RegisterAttached("FormattedText",
-            typeof(string),
+            typeof(HtmlDocument),
             typeof(BindableTextBlock),
-            new PropertyMetadata("", FormattedTextChanged));
+            new PropertyMetadata(null, FormattedTextChanged));
 
         private static Regex r = new Regex("^(/([^/]+)/res/)?(\\d+)#p(\\d+)$");
         private static Regex r2 = new Regex("//dis\\.4chan\\.org/([^/]+)/");
@@ -40,11 +40,7 @@ namespace _4charm.Models
             RichTextBox textBlock = sender as RichTextBox;
             textBlock.Blocks.Clear();
 
-            string value = e.NewValue as string;
-            if (value == null) return;
-
-            HtmlDocument doc = new HtmlDocument();
-            doc.LoadHtml(value.Replace("<wbr>", ""));
+            HtmlDocument doc = e.NewValue as HtmlDocument;
             Paragraph para = new Paragraph();
             foreach (var node in doc.DocumentNode.ChildNodes)
             {

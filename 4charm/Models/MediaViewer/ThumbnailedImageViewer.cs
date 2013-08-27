@@ -11,6 +11,7 @@
 */
 using System;
 using System.ComponentModel;
+using System.IO;
 using System.Runtime.CompilerServices;
 using System.Windows;
 using System.Windows.Controls;
@@ -69,12 +70,32 @@ namespace Microsoft.Phone.Controls
             {
                 _thumbnailBitmapImage.DownloadProgress -= OnDownloadProgress;
                 _thumbnailBitmapImage.ImageOpened -= OnThumbnailOpened;
+                try
+                {
+                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
+                    {
+                        _thumbnailBitmapImage.SetSource(ms);
+                    }
+                }
+                catch
+                {
+                }
                 _thumbnailBitmapImage.UriSource = null;
             }
             if (_fullResolutionBitmapImage != null)
             {
                 _fullResolutionBitmapImage.DownloadProgress -= OnDownloadProgress;
                 _fullResolutionBitmapImage.ImageOpened -= OnFullSizeImageOpened;
+                try
+                {
+                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
+                    {
+                        _fullResolutionBitmapImage.SetSource(ms);
+                    }
+                }
+                catch
+                {
+                }
                 _fullResolutionBitmapImage.UriSource = null;
             }
         }
@@ -225,6 +246,16 @@ namespace Microsoft.Phone.Controls
 
             if (_thumbnailBitmapImage != null)
             {
+                try
+                {
+                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
+                    {
+                        _thumbnailBitmapImage.SetSource(ms);
+                    }
+                }
+                catch
+                {
+                }
                 _thumbnailBitmapImage.UriSource = null;
                 _thumbnailBitmapImage.ImageOpened -= OnThumbnailOpened;
             }
@@ -248,6 +279,16 @@ namespace Microsoft.Phone.Controls
 
             if (_fullResolutionBitmapImage != null)
             {
+                try
+                {
+                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
+                    {
+                        _fullResolutionBitmapImage.SetSource(ms);
+                    }
+                }
+                catch
+                {
+                }
                 _fullResolutionBitmapImage.UriSource = null;
                 _fullResolutionBitmapImage.ImageOpened -= OnFullSizeImageOpened;
             }

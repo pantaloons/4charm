@@ -4,6 +4,7 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Linq;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows.Navigation;
 
@@ -41,6 +42,12 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public ObservableCollection<ThreadViewModel> ImageThreads
+        {
+            get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
+            set { SetProperty(value); }
+        }
+
         public ObservableCollection<ThreadViewModel> Watchlist
         {
             get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
@@ -49,6 +56,12 @@ namespace _4charm.ViewModels
 
         private Board _board;
         private Task _reloadTask;
+
+        private Task<Task> _initialPostsTask;
+        private Task _extraPostsTask;
+        private bool _isExtraQueued;
+        private CancellationTokenSource _extraPostsCanceller;
+
         private bool _initialized;
 
         public void OnNavigatedTo(string boardName)
@@ -62,6 +75,7 @@ namespace _4charm.ViewModels
                 IsLoading = false;
                 Watchlist = new ObservableCollection<ThreadViewModel>();
                 Threads = new ObservableCollection<ThreadViewModel>();
+                ImageThreads = new ObservableCollection<ThreadViewModel>();
 
                 Reload();
 
@@ -80,6 +94,7 @@ namespace _4charm.ViewModels
             if (e.NavigationMode == NavigationMode.Back || e.NavigationMode == NavigationMode.Refresh || e.NavigationMode == NavigationMode.Reset)
             {
                 foreach (ThreadViewModel tvm in Threads) tvm.UnloadImage();
+                foreach (ThreadViewModel tvm in ImageThreads) tvm.UnloadImage();
                 foreach (ThreadViewModel tvm in Watchlist) tvm.UnloadImage();
             }
         }
@@ -97,10 +112,13 @@ namespace _4charm.ViewModels
 
         private async Task ReloadAsync()
         {
+            if(_extraPostsCanceller != null) _extraPostsCanceller.Cancel();
+
             Threads.Clear();
+            ImageThreads.Clear();
             IsLoading = true;
 
-            List<Thread> threads;
+            List<_4charm.Models.Thread> threads;
             try
             {
                 threads = await _board.GetThreadsAsync();
@@ -115,17 +133,55 @@ namespace _4charm.ViewModels
             IsLoading = false;
             IsError = false;
 
-            int j = 0;
-            foreach (Thread thread in threads)
+            _initialPostsTask = new Task<Task>(async () =>
             {
-                if (!thread.IsSticky || CriticalSettingsManager.Current.ShowStickies)
+                for (int j = 0; j < Math.Min(15, threads.Count); j++)
                 {
-                    Threads.Add(new ThreadViewModel(thread));
-                    if (j < 15) await Task.Delay(100);
-                    else if (j % 10 == 0) await Task.Delay(1);
-                    j++;
+                    _4charm.Models.Thread thread = threads[j];
+                    if (!thread.IsSticky || CriticalSettingsManager.Current.ShowStickies)
+                    {
+                        Threads.Add(new ThreadViewModel(thread));
+                        ImageThreads.Add(new ThreadViewModel(thread));
+                        await Task.Delay(100);
+                    }
                 }
-            }
+            });
+
+            CancellationTokenSource local = new CancellationTokenSource();
+            _extraPostsCanceller = local;
+            _isExtraQueued = false;
+            _extraPostsTask = new Task(async () =>
+            {
+                for(int j = 15; j < threads.Count; j++)
+                {
+                    _4charm.Models.Thread thread = threads[j];
+                    if (!thread.IsSticky || CriticalSettingsManager.Current.ShowStickies)
+                    {
+                        if (local.Token.IsCancellationRequested)
+                        {
+                            return;
+                        }
+                        Threads.Add(new ThreadViewModel(thread));
+                        ImageThreads.Add(new ThreadViewModel(thread));
+                        if (j % 10 == 0) await Task.Delay(100);
+                    }
+                }
+            }, local.Token);
+
+            _initialPostsTask.Start(TaskScheduler.FromCurrentSynchronizationContext());
+            await _initialPostsTask.Unwrap();
+        }
+
+        public void FinishInsertingPosts()
+        {
+            if (_isExtraQueued) return;
+            _isExtraQueued = true;
+
+            TaskScheduler sched = TaskScheduler.FromCurrentSynchronizationContext();
+            _initialPostsTask.Unwrap().ContinueWith(t =>
+            {
+                _extraPostsTask.Start(sched);
+            });
         }
 
         private void Watchlist_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
