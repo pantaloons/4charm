@@ -1,17 +1,20 @@
-﻿using _4charm.ViewModels;
-using Microsoft.Phone.Controls;
-using System;
-using System.Collections.Generic;
-using System.Collections.ObjectModel;
-using System.IO.IsolatedStorage;
+﻿using System.Collections.Generic;
 using System.Linq;
-using System.Text;
-using System.Threading.Tasks;
 
 namespace _4charm.Models.Migration
 {
+    /// <summary>
+    /// The version migrator handles transferring settings between application versions.
+    /// 
+    /// Currently the only incompatability is between 1.1 and 1.2, which switched from a
+    /// the settings API to using a faster local storage based approach.
+    /// </summary>
     public class VersionMigrator
     {
+        /// <summary>
+        /// Migrate setting from 1.1 to version 1.2.
+        /// </summary>
+        /// <param name="target"></param>
         public static void Migrate1_1to1_2(Dictionary<string, object> target)
         {
             try
@@ -58,6 +61,7 @@ namespace _4charm.Models.Migration
                 target["Boards"] = new List<string>(boards.Select(x => x.Name));
             }
 
+            // Clear the 1.1 settings afterwards so they never get remigrated.
             SettingsManager1_1.Current.Clear();
         }
     }

@@ -14,17 +14,16 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="False">
 
-    <Grid x:Name="LayoutRoot" Background="Transparent" Margin="0">
+    <Grid x:Name="LayoutRoot" Background="Transparent">
         <controls:MediaViewer
             x:Name="MediaViewer"
             Items="{Binding ImagePosts}"
             ItemZoomed="MediaViewer_ItemZoomed"
             ItemUnzoomed="MediaViewer_ItemUnzoomed"
             InitiallyDisplayedElement="First"/>
-        <Grid VerticalAlignment="Top">
-            <ProgressBar IsIndeterminate="{Binding IsLoading}"
-                         Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
-        </Grid>
+        <ProgressBar VerticalAlignment="Top"
+                     IsIndeterminate="{Binding IsLoading}"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}" />
     </Grid>
 
 </phone:PhoneApplicationPage>

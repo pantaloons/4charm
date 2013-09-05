@@ -5,16 +5,33 @@ using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using System.Text;
 using System.Threading.Tasks;
 
 namespace _4charm.Models
 {
+    /// <summary>
+    /// Important settings object. This is all settings that *must* be loaded on app startup,
+    /// and can't ever be accidentally lost, overwritten, timed out when writing, etc.
+    /// 
+    /// These are forcibly loaded and block app startup, so don't put garbage in here, or things
+    /// which can grow to be unbounded, since when they get large app startup will suffer. The
+    /// favorites and all board listings can go here, since those are max ~50 items.
+    /// </summary>
     class CriticalSettingsManager : SettingsManager
     {
+        /// <summary>
+        /// File name for this settings file in isolated storage.
+        /// </summary>
         private const string DefaultSettingsFileName = "CriticalSettings.xml";
+
+        /// <summary>
+        /// List of non basic types that need to be serialized into this settings file.
+        /// </summary>
         private static readonly List<Type> KnownTypes = new List<Type>() { typeof(List<string>), typeof(SupportedPageOrientation) };
 
+        /// <summary>
+        /// Singleton critical settings service.
+        /// </summary>
         private static CriticalSettingsManager _current = new CriticalSettingsManager();
         public static CriticalSettingsManager Current
         {
@@ -70,9 +87,19 @@ namespace _4charm.Models
         public CriticalSettingsManager()
             : base(DefaultSettingsFileName, KnownTypes)
         {
+            // We first "restore" the settings from a file, and then rebuild the history
+            // and watchlist collections, which involves fixing up some references that
+            // don't get persisted correctly. Those collections should wait on the rebuild
+            // task before returning.
             _rebuildTask = Restore().ContinueWith(t => Rebuild(), TaskScheduler.Current);
         }
 
+        /// <summary>
+        /// The serialization for these threads is the minimum required information needed to show them
+        /// in the history and watchlists. That is, the board they are from, and the first post, this information
+        /// is described by a ThreadID. We represent these as single post threads in the cache, opening the thread
+        /// will load the remaining posts again from the net.
+        /// </summary>
         private void Rebuild()
         {
             List<string> boards = GetSetting<List<string>>("Boards", BoardList.Boards.Values.Where(x => !x.IsNSFW).Select(x => x.Name).ToList());

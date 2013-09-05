@@ -17,24 +17,27 @@
 
     <Grid Background="Transparent" d:DataContext="{d:DesignData Source=../SampleData/SampleAddBoardPageViewModel.xaml}">
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <!-- Page title. -->
             <TextBlock Text="{Binding Path=LocalizedResources.AddBoardPage_Title, Source={StaticResource LocalizedStrings}}"
                        Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
         <StackPanel Grid.Row="1" Margin="12,0,12,0">
+            <!-- Board name input area. -->
             <TextBlock Text="{Binding Path=LocalizedResources.AddBoardPage_Name, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource PhoneTextNormalStyle}"
                        FontSize="{StaticResource PhoneFontSizeLarge}"/>
             <TextBox TextChanged="NameChanged" KeyDown="NameKeyDown"/>
+            
+            <!-- Board description. -->
             <TextBlock Text="{Binding Path=LocalizedResources.AddBoardPage_Description, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource PhoneTextNormalStyle}"
                        FontSize="{StaticResource PhoneFontSizeLarge}"/>
-            
             <RichTextBox Foreground="Gray" FontSize="{StaticResource PhoneFontSizeLarge}">
                 <Paragraph>
                     <Run Text="{Binding Board.Description}"/>
@@ -42,6 +45,7 @@
                 </Paragraph>
             </RichTextBox>
             
+            <!-- Board fanart preview. -->
             <Border BorderThickness="2" Margin="12">
                 <Border.BorderBrush>
                     <SolidColorBrush Opacity="0.5" Color="{StaticResource PhoneForegroundColor}"/>
@@ -68,6 +72,7 @@
                 </Grid>
             </Border>
 
+            <!-- Add button. -->
             <Button Content="{Binding Path=LocalizedResources.AddBoardPage_Add, Source={StaticResource LocalizedStrings}}"
                     Command="{Binding AddBoard}"
                     IsEnabled="{Binding HasBoard}"/>

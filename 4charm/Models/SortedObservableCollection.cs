@@ -6,31 +6,33 @@ namespace _4charm.Models
 {
     /// <summary>
     /// Observable collection that maintains a sort order.
-    /// 
-    /// Mostly used for the PostsPage to ensure that posts do not get out of order.
     /// </summary>
     /// <typeparam name="T"></typeparam>
     class SortedObservableCollection<T> : ObservableCollection<T> where T : IComparable<T>
     {
-        private bool useComparer;
-        private IComparer<T> comparer;
-
-        public SortedObservableCollection()
-        {
-            useComparer = false;
-        }
-
-        public SortedObservableCollection(IComparer<T> comparer)
-        {
-            useComparer = true;
-            this.comparer = comparer;
-        }
-
         public SortedObservableCollection(IEnumerable<T> enumerable)
         {
             foreach (T item in enumerable) InsertItem(0, item);
         }
 
+        /// <summary>
+        /// Override the insert method to insert the item in sorted position.
+        /// </summary>
+        /// <param name="index">The desired insertion index, this is ignored.</param>
+        /// <param name="item">The item to insert.</param>
+        protected override void InsertItem(int index, T item)
+        {
+            int pos = FindInsertPos(item);
+            if (pos == -1) return; // Duplicate element, do nothing
+            base.InsertItem(pos, item);
+        }
+
+        /// <summary>
+        /// Find the position the item should be inserted
+        /// in the collection, to maintain sort order.
+        /// </summary>
+        /// <param name="item">The item to find the insert position for</param>
+        /// <returns>The sorted insert index, or -1 if the item is a duplicate.</returns>
         private int FindInsertPos(T item)
         {
             int lo = 0, hi = Count;
@@ -38,7 +40,7 @@ namespace _4charm.Models
             {
                 int mid = (lo + hi) / 2;
 
-                int cmp = useComparer ? comparer.Compare(item, Items[mid]) : item.CompareTo(Items[mid]);
+                int cmp = item.CompareTo(Items[mid]);
                 if (cmp < 0)
                 {
                     hi = mid - 1;
@@ -53,30 +55,6 @@ namespace _4charm.Models
                 }
             }
             return lo;
-        }
-
-        protected override void InsertItem(int index, T item)
-        {
-            int pos = FindInsertPos(item);
-            if (pos == -1) return; // Duplicate element, do nothing
-            base.InsertItem(pos, item);
-        }
-
-        public void UpdateItem(T item)
-        {
-            int oldPos = IndexOf(item);
-            if (oldPos == -1)
-            {
-                InsertItem(0, item);
-            }
-            else
-            {
-                int pos = FindInsertPos(item);
-                if (pos >= 0) // Last post in the thread actually changed
-                {
-                    base.Move(oldPos, pos);
-                }
-            }
         }
     }
 }

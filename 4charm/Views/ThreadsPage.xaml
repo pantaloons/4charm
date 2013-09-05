@@ -16,6 +16,9 @@
     shell:SystemTray.IsVisible="False">
 
     <phone:PhoneApplicationPage.Resources>
+        <!-- Correct the LongListSelector template so that the scrollbar does not affect content width,
+             otherwise adding threads 3/4 will cause the scrollbar to appear and snap the width of
+             existing posts in a little bit. -->
         <Style x:Key="OverlaidScrollbarLLS" TargetType="phone:LongListSelector">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
@@ -50,8 +53,10 @@
             </Setter>
         </Style>
         
+        <!-- Template for threads in the thread and watchlist views. -->
         <DataTemplate x:Key="ThreadItemTemplate">
             <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24" DataContext="{Binding InitialPost}">
+                <!-- Tapping anywhere on the thread will take you to that thread page. -->
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Tap">
                         <i:InvokeCommandAction Command="{Binding ThreadNavigated}" />
@@ -59,6 +64,7 @@
                 </i:Interaction.Triggers>
 
                 <Grid.Resources>
+                    <!-- Storyboard to fade the thread in when it is initially loaded. -->
                     <Storyboard x:Key="FadeInStoryboard">
                         <DoubleAnimation Duration="0:0:0.5" From="0" To="1"
                                          Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Opacity"/>
@@ -77,6 +83,7 @@
                         <ColumnDefinition Width="*" />
                     </Grid.ColumnDefinitions>
 
+                    <!-- Thread subject. This is optional. -->
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                Margin="0"
                                Grid.ColumnSpan="2"
@@ -87,11 +94,14 @@
                                Text="{Binding Subject}"/>
 
                     <StackPanel HorizontalAlignment="Left" Orientation="Horizontal" Grid.Row="1" Grid.ColumnSpan="2">
+                        <!-- Poster name. Usually Anonymous. -->
                         <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                    Margin="0"
                                    Foreground="{Binding CapCode, Converter={StaticResource CapCodeColorConverter}}"
                                    FontSize="17"
                                    Text="{Binding AuthorName}"/>
+                        
+                        <!-- Associated thread icons to toggle on and off. -->
                         <Image Source="\Assets\Icons\sticky.gif"
                                Visibility="{Binding IsSticky, Converter={StaticResource BoolVisibleConverter}}"/>
                         <Image Source="\Assets\Icons\closed.gif"
@@ -106,6 +116,7 @@
                                Visibility="{Binding FileDeleted, Converter={StaticResource BoolVisibleConverter}}"/>
                     </StackPanel>
 
+                    <!-- Thread number. -->
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                Margin="0"
                                Grid.Row="1" Grid.ColumnSpan="2"
@@ -114,12 +125,17 @@
                                Foreground="Black"
                                Text="{Binding Number}"/>
 
+                    <!-- Thread image. Width and height are computed by the API so that threads don't
+                         have their content area resize after the image loads. The margin binding is
+                         because threads with no image should not add extra padding between the thread
+                         border and the text area, where if an image is there will require another 12px -->
                     <Image VerticalAlignment="Top"
                            Grid.Row="2"
                            Width="{Binding ThumbWidth}"
                            Height="{Binding ThumbHeight}"
                            Margin="{Binding ThumbMargin2}"
                            Source="{Binding Image}">
+                        <!-- Tapping the image goes directly to the image viewer. -->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Tap">
                                 <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
@@ -127,14 +143,17 @@
                         </i:Interaction.Triggers>
                     </Image>
 
+                    <!-- Post comment. RichTextBox has its "Blocks" property set through
+                         the attached FormattedText DependencyProperty. -->
                     <RichTextBox VerticalAlignment="Top" Grid.Column="1" Grid.Row="2"
                                  models:BindableTextBlock.FormattedText="{Binding HtmlComment}"
-                                 Margin="-12,0,-12,0"
+                                 Margin="-12,0"
                                  TextWrapping="Wrap"
                                  FontSize="17"
                                  FontFamily="{StaticResource PhoneFontFamilyNormal}"
                                  Foreground="Black"/>
 
+                    <!-- Post time. -->
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                Margin="0"
                                Grid.Row="3" Grid.ColumnSpan="2"
@@ -143,6 +162,7 @@
                                Foreground="#707070"
                                Text="{Binding PrettyTime}"/>
                     
+                    <!-- Number of replies. -->
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                Grid.Row="3" Grid.ColumnSpan="2"
                                Margin="0"
@@ -205,14 +225,14 @@
                                             ItemUnrealized="ThreadUnrealized">
                         <phone:LongListSelector.ListFooterTemplate>
                             <DataTemplate>
-                                <Grid Height="600"/>
+                                <Grid Height="600" />
                             </DataTemplate>
                         </phone:LongListSelector.ListFooterTemplate>
                     </phone:LongListSelector>
 
                     <TextBlock TextWrapping="Wrap"
                                Visibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
-                               Margin="24,0,24,0"
+                               Margin="24,0"
                                FontSize="{StaticResource PhoneFontSizeLarge}"
                                Foreground="{StaticResource PhoneSubtleBrush}"
                                FontFamily="Segoe WP Light"
@@ -241,10 +261,9 @@
             </phone:PivotItem>
         </phone:Pivot>
 
-        <Grid VerticalAlignment="Top">
-            <ProgressBar IsIndeterminate="{Binding IsLoading}"
-                         Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
-        </Grid>
+        <ProgressBar VerticalAlignment="Top"
+                     IsIndeterminate="{Binding IsLoading}"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
     </Grid>
 
 </phone:PhoneApplicationPage>

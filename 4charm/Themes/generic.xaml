@@ -19,11 +19,7 @@
             <Setter.Value>
                 <ControlTemplate TargetType="local:MediaViewer">
                     <Canvas x:Name="LayoutRoot" Background="Transparent">
-                        <Canvas 
-              x:Name="MediaStrip" 
-              Background="Transparent"
-              VerticalAlignment="Top" 
-              RenderTransformOrigin="0.5,0.5">
+                        <Canvas x:Name="MediaStrip" Background="Transparent" VerticalAlignment="Top" RenderTransformOrigin="0.5,0.5">
                             <Canvas.RenderTransform>
                                 <CompositeTransform x:Name="MediaStripCompositeTransform"/>
                             </Canvas.RenderTransform>
@@ -38,10 +34,7 @@
                     <Grid Margin="0">
                         <ViewportControl x:Name="Viewport">
                             <Canvas x:Name="Canvas">
-                                <local:ThumbnailedImageViewer 
-                  x:Name="ZoomableContent"
-                  CacheMode="BitmapCache"
-                  RenderTransformOrigin="0,0">
+                                <local:ThumbnailedImageViewer x:Name="ZoomableContent" CacheMode="BitmapCache" RenderTransformOrigin="0,0">
                                     <local:ThumbnailedImageViewer.RenderTransform>
                                         <ScaleTransform x:Name="ZoomableContentTransform"/>
                                     </local:ThumbnailedImageViewer.RenderTransform>
@@ -66,15 +59,9 @@
 
                         <local:GIFViewer x:Name="GIFImage"/>
 
-                        <Image 
-              x:Name="Image" 
-              Stretch="Uniform" 
-              HorizontalAlignment="Center"/>
+                        <Image x:Name="Image" Stretch="Uniform" HorizontalAlignment="Center"/>
 
-                        <Rectangle 
-              x:Name="Placeholder" 
-              Width="480" 
-              Height="360" />
+                        <Rectangle x:Name="Placeholder" Width="480" Height="360" />
                     </Grid>
                 </ControlTemplate>
             </Setter.Value>

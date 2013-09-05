@@ -1,8 +1,11 @@
-﻿<local:AboutPageViewModel
+﻿<local:AddBoardPageViewModel
     xmlns:local="clr-namespace:_4charm.ViewModels"
     
-    Title="4charm"
-    Version="9.9.9.9"
-    Publisher="Michael McGee">
-    
-</local:AboutPageViewModel>
+    HasBoard="True"
+    NSFWText=" (NSFW)">
+    <local:AddBoardPageViewModel.Board>
+        <local:BoardViewModel
+            Description="/fa/ - Fashion"
+            Image="../Assets/Boards/Fanart/fa.jpg"/>
+    </local:AddBoardPageViewModel.Board>
+</local:AddBoardPageViewModel>

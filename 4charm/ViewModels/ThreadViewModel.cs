@@ -4,17 +4,14 @@ using System.Windows.Media;
 
 namespace _4charm.ViewModels
 {
-    class ThreadViewModel : ViewModelBase
+    class ThreadViewModel : ImageViewModelBase
     {
         public string BoardName
         {
             get { return GetProperty<string>(); }
             set { SetProperty(value); }
         }
-        public bool IsWatchlisted
-        {
-            get { return TransitorySettingsManager.Current.Watchlist.Count(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number) > 0; }
-        }
+
         public ulong Number
         {
             get { return GetProperty<ulong>(); }
@@ -23,7 +20,8 @@ namespace _4charm.ViewModels
 
         public Brush Background
         {
-            get { return _thread.Board.Brush; }
+            get { return GetProperty<Brush>(); }
+            set { SetProperty(value); }
         }
 
         public PostViewModel InitialPost
@@ -32,30 +30,27 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        private Thread _thread;
+        public bool IsWatchlisted
+        {
+            get { return TransitorySettingsManager.Current.Watchlist.Count(x => x.BoardName == BoardName && x.Number == Number) > 0; }
+        }
 
         public ThreadViewModel(Thread t)
         {
-            _thread = t;
-
             BoardName = t.Board.Name;
             Number = t.Number;
+            Background = t.Board.Brush;
 
             Post initial = t.Posts.FirstOrDefault().Value;
             if (initial != null) InitialPost = new PostViewModel(initial, null);
         }
 
-        ~ThreadViewModel()
-        {
-            //System.Diagnostics.Debug.WriteLine("Disposing thread VM");
-        }
-
-        public void LoadImage(int displayWidth = 100)
+        public override void LoadImage(int displayWidth = 100)
         {
             if (InitialPost != null) InitialPost.LoadImage(displayWidth);
         }
 
-        public void UnloadImage()
+        public override void UnloadImage()
         {
             if (InitialPost != null) InitialPost.UnloadImage();
         }

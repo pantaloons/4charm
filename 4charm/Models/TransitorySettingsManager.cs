@@ -43,7 +43,16 @@ namespace _4charm.Models
             }
         }
 
+        /// <summary>
+        /// Storage for friendly watchlist and history objects.
+        /// </summary>
         private ObservableCollection<ThreadViewModel> _watchlist, _history;
+        
+        /// <summary>
+        /// Task tracking progress of collection rebuilding. This gets started off after
+        /// the restore completes, and should be waited on before attempting to use
+        /// the two rebuilt collections (watchlist and history.)
+        /// </summary>
         private Task _rebuildTask = null;
 
         public TransitorySettingsManager()
@@ -56,11 +65,19 @@ namespace _4charm.Models
             _rebuildTask = Restore().ContinueWith(t => Rebuild(), TaskScheduler.Current);
         }
 
+        /// <summary>
+        /// Friendly view of the history collection. The settings class registers to changes on this collection
+        /// and seamlessly updates the saved values in the background, so modify it as desired.
+        /// </summary>
         public ObservableCollection<ThreadViewModel> History
         {
             get { Restore(); _rebuildTask.Wait(); return _history; }
         }
 
+        /// <summary>
+        /// Friendly view of the watchlist collection. The settings class registers to changes on this collection
+        /// and seamlessly updates the saved values in the background, so modify it as desired.
+        /// </summary>
         public ObservableCollection<ThreadViewModel> Watchlist
         {
             get { Restore(); _rebuildTask.Wait(); return _watchlist; }
@@ -74,7 +91,7 @@ namespace _4charm.Models
         /// </summary>
         private void Rebuild()
         {
-
+            // Translate the serialized watchlist into valid usable objects.
             List<ThreadID> watchlist = GetSetting<List<ThreadID>>("Watchlist", new List<ThreadID>());
             _watchlist = new ObservableCollection<ThreadViewModel>(watchlist.Where(x => BoardList.Boards.ContainsKey(x.BoardName))
                 .Select(x =>
@@ -85,6 +102,7 @@ namespace _4charm.Models
                     return new ThreadViewModel(t);
                 }));
 
+            // Translate the history into valid usable objects.
             List<ThreadID> history = GetSetting<List<ThreadID>>("History", new List<ThreadID>());
             _history = new ObservableCollection<ThreadViewModel>(history.Where(x => BoardList.Boards.ContainsKey(x.BoardName))
                 .Select(x =>

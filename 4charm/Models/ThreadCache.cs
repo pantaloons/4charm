@@ -29,8 +29,15 @@ namespace _4charm.Models
             }
         }
 
+        /// <summary>
+        /// List of boards currently existing in the cache. A board cannot be navigated to
+        /// by the application without existing in here.
+        /// </summary>
         public Dictionary<string, Board> Boards { get; set; }
 
+        /// <summary>
+        /// Private singleton constructor.
+        /// </summary>
         private ThreadCache()
         {
             Boards = new Dictionary<string, Board>();

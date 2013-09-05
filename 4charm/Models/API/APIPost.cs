@@ -4,6 +4,9 @@ using System.Runtime.Serialization;
 
 namespace _4charm.Models.API
 {
+    /// <summary>
+    /// 4chan API post type.
+    /// </summary>
     [DataContract]
     public sealed class APIPost
     {
@@ -20,6 +23,11 @@ namespace _4charm.Models.API
         public bool IsClosed { get; set; }
 
         public DateTime Time { get; set; }
+
+        /// <summary>
+        /// "now" doesn't parse into a DateTime by default, so we use the TimeSet field to transfer
+        /// that API field into a DateTime at parse time.
+        /// </summary>
         [DataMember(Name = "now", IsRequired = true)]
         public string TimeSet
         {
@@ -63,6 +71,12 @@ namespace _4charm.Models.API
             developer
         };
         public CapCodes CapCode { get; set; }
+
+        /// <summary>
+        /// CapCodes are returned by the API as a string, which doesn't transfer into
+        /// the CapCodes enum, so we use this CapCodeSet field to do the parse time
+        /// translation.
+        /// </summary>
         [DataMember(Name = "capcode")]
         public string CapCodeSet
         {
@@ -110,6 +124,12 @@ namespace _4charm.Models.API
             swf
         };
         public FileTypes FileType { get; set; }
+
+        /// <summary>
+        /// Extensions are returned as strings with a prefix "." by the API, which don't
+        /// map to the FileTypes enum. Instead we use the FileTypeSet field to transfer
+        /// the property at parse time.
+        /// </summary>
         [DataMember(Name = "ext")]
         public string FileTypeSet
         {

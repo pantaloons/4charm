@@ -14,20 +14,22 @@
     shell:SystemTray.IsVisible="False">
     
     <phone:PhoneApplicationPage.Resources>
+        <!-- Textblock style for values below each header. -->
         <Style x:Key="CreditStyle" TargetType="TextBlock">
-            <Setter Property="Margin" Value="12,0,12,0" />
+            <Setter Property="Margin" Value="12,0" />
             <Setter Property="Foreground" Value="{StaticResource PhoneTextMidContrastBrush}"/>
             <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
         </Style>
     </phone:PhoneApplicationPage.Resources>
 
-    <Grid Background="Transparent" d:DataContext="{d:DesignData Source=../SampleData/SampleAddBoardPageViewModel.xaml}">
+    <Grid Background="Transparent" d:DataContext="{d:DesignData Source=../SampleData/SampleAboutPageViewModel.xaml}">
         <Grid.RowDefinitions>
             <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <!-- Page title. -->
             <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_Title, Source={StaticResource LocalizedStrings}}"
                        Margin="9,-7,0,0"
                        Style="{StaticResource PhoneTextTitle1Style}"/>
@@ -35,32 +37,37 @@
 
         <StackPanel Grid.Row="1" Margin="12,0">
             <StackPanel Orientation="Horizontal">
+                <!-- Application icon displayed when in dark theme. -->
                 <Image Source="\Assets\ApplicationIcon.png" Width="99" Height="99"
                        HorizontalAlignment="Left"
                        Margin="12,0,0,0"
                        Visibility="{StaticResource PhoneDarkThemeVisibility}"/>
+
+                <!-- Application icon displayed when in light theme. -->
                 <Image Source="\Assets\ApplicationIcon.dark.png" Width="99" Height="99"
                        HorizontalAlignment="Left"
                        Margin="12,0,0,0"
                        Visibility="{StaticResource PhoneLightThemeVisibility}"/>
                 <StackPanel>
+                    <!-- Application title. -->
                     <TextBlock Text="{Binding Title}"
-                               VerticalAlignment="Center"
                                Style="{StaticResource PhoneTextNormalStyle}"
                                FontSize="{StaticResource PhoneFontSizeExtraLarge}"/>
+                    
+                    <!-- Application version.-->
                     <TextBlock Text="{Binding Version}"
-                               Foreground="{StaticResource PhoneTextMidContrastBrush}"
-                               Style="{StaticResource PhoneTextNormalStyle}"
-                               FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
+                               Style="{StaticResource CreditStyle}"/>
                 </StackPanel>
             </StackPanel>
+            
+            <!-- Publisher. -->
             <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_Publisher, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource PhoneTextNormalStyle}"
                        FontSize="{StaticResource PhoneFontSizeLarge}"/>
             <TextBlock Text="{Binding Publisher}"
-                       Foreground="{StaticResource PhoneTextMidContrastBrush}"
-                       Style="{StaticResource PhoneTextNormalStyle}"
-                       FontSize="{StaticResource PhoneFontSizeMediumLarge}"/>
+                       Style="{StaticResource CreditStyle}"/>
+            
+            <!-- Credits -->
             <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_Credits, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource PhoneTextNormalStyle}"
                        FontSize="{StaticResource PhoneFontSizeLarge}"/>
@@ -74,6 +81,8 @@
                        Style="{StaticResource CreditStyle}"/>
             <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_ToolkstackPNG, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource CreditStyle}"/>
+            
+            <!-- Legal disclaimer. -->
             <RichTextBox TextWrapping="Wrap" Margin="0"
                          Foreground="{StaticResource PhoneTextMidContrastBrush}"
                          FontSize="{StaticResource PhoneFontSizeSmall}">

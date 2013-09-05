@@ -2,8 +2,17 @@
 
 namespace _4charm.Models
 {
+    /// <summary>
+    /// This is the global listing of all boards that can be linked to,
+    /// added, removed, etc. On first launch the all listing is populated
+    /// out of the SFW boards from this list.
+    /// </summary>
     class BoardList
     {
+        /// <summary>
+        /// Board listing. Additions and deletions should add/remove corresponding
+        /// fanart and icon from the assets.
+        /// </summary>
         public static Dictionary<string, BoardID> Boards = new Dictionary<string, BoardID>{
             {"a", new BoardID("a", "Anime", false)},
             {"b", new BoardID("b", "Random", true)},

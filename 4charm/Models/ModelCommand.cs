@@ -3,6 +3,11 @@ using System.Windows.Input;
 
 namespace _4charm.Models
 {
+    /// <summary>
+    /// Default implementation of the ICommand interface.
+    /// 
+    /// Just a bindable action for buttons and other tap handlers.
+    /// </summary>
     class ModelCommand : ICommand
     {
         private readonly Action _execute = null;

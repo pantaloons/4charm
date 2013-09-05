@@ -10,11 +10,12 @@
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
-    SupportedOrientations="PortraitOrLandscape" Orientation="Portrait"
+    SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="False">
     
 	<phone:PhoneApplicationPage.Resources>
+        <!-- TextBox style that removes gray background fill when focused. -->
 		<Style x:Key="WhiteTextBox" TargetType="TextBox">
 			<Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyNormal}"/>
 			<Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
@@ -99,12 +100,14 @@
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
         <Grid.Resources>
+            <!-- Highlight the captcha box red when it has an error. -->
             <Storyboard x:Name="HighlightCaptchaStoryboard">
                 <ColorAnimation To="#FF4040" Duration="0:0:0.4" BeginTime="0:0:0"
                                 Storyboard.TargetName="CaptchaTextBox"
                                 Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"/>
             </Storyboard>
 
+            <!-- Highlight the image button red when it has an error. -->
             <Storyboard x:Name="HighlightImageStoryboard">
                 <ColorAnimation To="#FF4040" Duration="0:0:0.4" BeginTime="0:0:0"
                                 Storyboard.TargetName="FileButton"
@@ -113,11 +116,12 @@
         </Grid.Resources>
         
         <Grid.RowDefinitions>
-            <RowDefinition Height="Auto"/>
+            <RowDefinition Height="auto"/>
             <RowDefinition Height="*"/>
         </Grid.RowDefinitions>
 
         <StackPanel Grid.Row="0" Margin="12,17,0,28">
+            <!-- Page title. -->
             <TextBlock Text="{Binding PageTitle}" Style="{StaticResource PhoneTextNormalStyle}"/>
         </StackPanel>
 
@@ -167,6 +171,7 @@
             </StackPanel>
         </ScrollViewer>
 
+        <!-- Upload indicator bar. -->
         <ProgressBar VerticalAlignment="Top"
                      IsIndeterminate="{Binding IsPosting}"
                      Visibility="{Binding IsPosting, Converter={StaticResource BoolVisibleConverter}}"/>

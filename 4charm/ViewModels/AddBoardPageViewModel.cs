@@ -57,7 +57,7 @@ namespace _4charm.ViewModels
 
             if (BoardList.Boards.ContainsKey(text))
             {
-                Board = new BoardViewModel(new Board(BoardList.Boards[text].Name, BoardList.Boards[text].Description, BoardList.Boards[text].IsNSFW));
+                Board = new BoardViewModel(ThreadCache.Current.EnforceBoard(BoardList.Boards[text].Name));
                 Board.LoadImage();
                 NSFWText = Board.IsNSFW ? AppResources.AddBoardPage_NSFW : string.Empty;
                 HasBoard = true;

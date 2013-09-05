@@ -12,14 +12,8 @@ using System.Windows.Media.Imaging;
 
 namespace _4charm.ViewModels
 {
-    public class PostViewModel : ViewModelBase, IThumbnailedImage, IDisplayableImage, IComparable<PostViewModel>
+    public class PostViewModel : ImageViewModelBase, IThumbnailedImage, IDisplayableImage
     {
-        public BitmapImage Image
-        {
-            get { return GetProperty<BitmapImage>(); }
-            set { SetProperty(value); }
-        }
-
         public bool IsWatchlisted
         {
             get { return GetProperty<bool>(); }
@@ -258,35 +252,43 @@ namespace _4charm.ViewModels
             ViewQuotes = new ModelCommand(DoViewQuotes);
         }
 
-        ~PostViewModel()
-        {
-            //if (Image != null)
-            //{
-            //    System.Diagnostics.Debugger.Break();
-            //    throw new System.Exception();
-            //}
-        }
-
+        /// <summary>
+        /// User tapped on the post as the initial one in a thread view. Navigat to the threads page.
+        /// </summary>
         private void DoThreadNavigated()
         {
+            // App.RootFrame.IsHitTestVisible is used to mark the tap routed event as handled, since tapping post quotes
+            // can only be handled by a click event, they can't cancel it normally.
             if (!App.RootFrame.IsHitTestVisible) return;
 
-            Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}", Uri.EscapeUriString(_post.Thread.Board.Name), Uri.EscapeDataString(Number + "")), UriKind.Relative));
+            Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}", Uri.EscapeUriString(_post.Thread.Board.Name), Uri.EscapeUriString(Number + "")), UriKind.Relative));
         }
 
+        /// <summary>
+        /// User tapped the post image. Navigate to the image viewer.
+        /// </summary>
         private void DoImageNavigated()
         {
+            // App.RootFrame.IsHitTestVisible is used to mark the tap routed event as handled, since tapping post quotes
+            // can only be handled by a click event, they can't cancel it normally.
             if (!App.RootFrame.IsHitTestVisible) return;
 
             Navigate(new Uri(String.Format("/Views/ImageViewer.xaml?board={0}&thread={1}&post={2}&skipped=true",
-                Uri.EscapeUriString(_post.Thread.Board.Name), Uri.EscapeDataString(_post.Thread.Number + ""), Uri.EscapeDataString(Number + "")), UriKind.Relative));
+                Uri.EscapeUriString(_post.Thread.Board.Name), Uri.EscapeUriString(_post.Thread.Number + ""), Uri.EscapeUriString(Number + "")), UriKind.Relative));
         }
 
+        /// <summary>
+        /// User tapped the post number. View determines how to handle this, usually does nothing but in the posts view
+        /// the replies area is shown for this post.
+        /// </summary>
         private void DoNumberTapped()
         {
             if (_quoteTapped != null) _quoteTapped(Number);
         }
 
+        /// <summary>
+        /// User copied post text from the context menu.
+        /// </summary>
         private void DoTextCopied()
         {
             HtmlDocument doc = new HtmlDocument();
@@ -294,92 +296,63 @@ namespace _4charm.ViewModels
             Clipboard.SetText(doc.DocumentNode.InnerText);
         }
 
+        /// <summary>
+        /// User tried to show quotes from the context menu.
+        /// </summary>
         private void DoViewQuotes()
         {
+            // Just inform them of a better way to do it, for discoverability.
             MessageBox.Show("Tap the post number in the top right corner to view quotes.");
         }
 
-        private BitmapImage _loading;
-        public void LoadImage(int displayWidth = 100)
+        public override void LoadImage(int displayWidth = 100)
         {
-            if (_post.RenamedFileName == 0 || _post.FileDeleted || _loading != null) return;
-
-            //if (_loading != null) throw new Exception();
-            _loading = new BitmapImage() { DecodePixelWidth = displayWidth };
-            _loading.ImageOpened += ImageLoaded;
-            _loading.CreateOptions = BitmapCreateOptions.BackgroundCreation;
-            _loading.UriSource = _post.ThumbnailSrc;
+            if (_post.RenamedFileName == 0 || _post.FileDeleted) return;
+            base.LoadImage(_post.ThumbnailSrc, displayWidth);
         }
 
-        private void ImageLoaded(object sender, RoutedEventArgs e)
-        {
-            Image = _loading;
-        }
-
-        public void UnloadImage()
-        {
-            if (_loading != null)
-            {
-                _loading.ImageOpened -= ImageLoaded;
-                _loading.UriSource = null;
-                try
-                {
-                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
-                    {
-                        _loading.SetSource(ms);
-                    }
-                }
-                catch
-                {
-                }
-                _loading = null;
-            }
-
-            if (Image != null)
-            {
-                try
-                {
-                    using (var ms = new MemoryStream(new byte[] { 0x0 }))
-                    {
-                        Image.SetSource(ms);
-                    }
-                }
-                catch
-                {
-                }
-                Image.UriSource = null;
-                Image = null;
-            }
-        }
-
+        /// <summary>
+        /// If this post quotes the given post.
+        /// </summary>
+        /// <param name="post">The post to check if it is quoted.</param>
+        /// <returns>True if this post quotes the parameter.</returns>
         public bool QuotesPost(ulong post)
         {
             return _post.Quotes.Contains(post);
         }
 
-        public int CompareTo(PostViewModel other)
-        {
-            if (_post.Thread.Board.Name == other._post.Thread.Board.Name) return Number.CompareTo(other.Number);
-            else return _post.Thread.Board.Name.CompareTo(other._post.Thread.Board.Name);
-        }
-
+        /// <summary>
+        /// User tapped a quote on the post. Show the reply box or navigate as appropriate.
+        /// </summary>
+        /// <param name="board">Board part of the quote hyperlink.</param>
+        /// <param name="newThread">Thread ID of the quote hyperlink.</param>
+        /// <param name="post">Post ID of the quote hyperlink.</param>
         public void QuoteLinkTapped(string board, ulong newThread, ulong post)
         {
             if ((board == "" || board == _post.Thread.Board.Name) && newThread == _post.Thread.Number)
             {
+                // The quote links into the current thread. The view model was constructed with an appropriate handler,
+                // since the existing thread view wants to handle this.
                 if (_quoteTapped != null) _quoteTapped(post);
             }
             else
             {
                 string newBoard = board;
+                // If the board part is empty, assume it is the current board.
                 if (newBoard == "") newBoard = _post.Thread.Board.Name;
+
                 if (BoardList.Boards.ContainsKey(newBoard))
                 {
-                    Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}&post={2}", newBoard, newThread, post), UriKind.Relative));
+                    Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}&post={2}",
+                        Uri.EscapeUriString(newBoard), Uri.EscapeUriString(newThread + ""), Uri.EscapeUriString(post + "")), UriKind.Relative));
                 }
             }
         }
 
+        /// <summary>
+        /// User tapped a link to another board.
+        /// </summary>
+        /// <param name="name">The name of the board.</param>
         public void BoardLinkTapped(string name)
         {
             if (BoardList.Boards.ContainsKey(name))

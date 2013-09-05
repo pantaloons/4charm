@@ -44,10 +44,10 @@ namespace _4charm.Views
                         if (result.ThreadID != 0)
                         {
                             Dispatcher.BeginInvoke(() =>
-                                {
-                                    NavigationService.Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}",
-                                        Uri.EscapeUriString(_viewModel.Board), Uri.EscapeDataString(result.ThreadID + "")), UriKind.Relative));
-                                });
+                            {
+                                NavigationService.Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}",
+                                    Uri.EscapeUriString(_viewModel.Board), Uri.EscapeUriString(result.ThreadID + "")), UriKind.Relative));
+                            });
                         }
                         break;
                     case SubmitResultType.EmptyCaptchaError:

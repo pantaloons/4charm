@@ -601,10 +601,9 @@
             </phone:PivotItem>
         </phone:Pivot>
 
-        <Grid VerticalAlignment="Top">
-            <ProgressBar IsIndeterminate="{Binding IsLoading}"
-                         Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
-        </Grid>
+        <ProgressBar VerticalAlignment="Top"
+                     IsIndeterminate="{Binding IsLoading}"
+                     Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
     </Grid>
 
 </phone:PhoneApplicationPage>

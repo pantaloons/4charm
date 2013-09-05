@@ -148,10 +148,10 @@ namespace _4charm.Models
             }
         }
 
-                /// <summary>
+        /// <summary>
         /// Restores previously saved settings.
         /// </summary>
-        /// <returns>An asynchronous task that reflects when settings have been read.  The
+        /// <returns>An asynchronous task that reflects when settings have been read. The
         /// content of _settings should not be relied upon until this task completes.</returns>
         protected Task Restore()
         {
@@ -180,9 +180,18 @@ namespace _4charm.Models
             }
             catch (FileNotFoundException)
             {
+                // If there is no modern settings file, this is probably their first application run
+                // and we may need to migrate their old settings.
                 if (_fileName == CriticalSettingsManager.Current._fileName)
                 {
+                    // Version migration must happen synchronously, to avoid concurrent
+                    // access to the settings object while migrating. This perf hit is
+                    // acceptable, since it is one time only.
                     VersionMigrator.Migrate1_1to1_2(_settings);
+
+                    // We just wrote directly into the settings object, so we need to manually
+                    // queue a save operation. That can happen later though, it does not need
+                    // to be synchronous.
                     System.Windows.Deployment.Current.Dispatcher.BeginInvoke(async () =>
                     {
                         await Save();
