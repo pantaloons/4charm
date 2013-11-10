@@ -14,9 +14,9 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public ObservableCollection<PostViewModel> ImagePosts
+        public ObservableCollection<object> ImagePosts
         {
-            get { return GetProperty<ObservableCollection<PostViewModel>>(); }
+            get { return GetProperty<ObservableCollection<object>>(); }
             set { SetProperty(value); }
         }
 
@@ -30,14 +30,14 @@ namespace _4charm.ViewModels
             _showLoading = skipped && (ulong)_thread.Posts.Where(x => x.Value.RenamedFileName != 0).Count() < _thread.ImageCount + 1;
             _seenPosts = new HashSet<ulong>();
 
-            ImagePosts = new ObservableCollection<PostViewModel>();
+            ImagePosts = new ObservableCollection<object>();
 
             IEnumerable<Post> _posts = _thread.Posts.Values.Where(x => x.RenamedFileName != 0);
             foreach (Post post in _posts)
             {
                 _seenPosts.Add(post.Number);
             }
-            ImagePosts = new ObservableCollection<PostViewModel>(_posts.Select(x => new PostViewModel(x, null)));
+            ImagePosts = new ObservableCollection<object>(_posts.Select(x => new PostViewModel(x, null)));
 
             Task t = Update();
         }

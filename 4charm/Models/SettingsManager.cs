@@ -157,6 +157,7 @@ namespace _4charm.Models
         {
             if (_restoreTask == null)
             {
+                bool qq = System.Windows.Deployment.Current.Dispatcher.CheckAccess();
                 _restoreTask = Task.Run(async () => await RestoreAsync());
             }
 

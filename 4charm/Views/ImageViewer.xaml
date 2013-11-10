@@ -6,7 +6,7 @@
     xmlns:shell="clr-namespace:Microsoft.Phone.Shell;assembly=Microsoft.Phone"
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
-    xmlns:controls="clr-namespace:Microsoft.Phone.Controls"
+    xmlns:controls="clr-namespace:_4charm.Controls"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -15,12 +15,28 @@
     shell:SystemTray.IsVisible="False">
 
     <Grid x:Name="LayoutRoot" Background="Transparent">
-        <controls:MediaViewer
-            x:Name="MediaViewer"
-            Items="{Binding ImagePosts}"
-            ItemZoomed="MediaViewer_ItemZoomed"
-            ItemUnzoomed="MediaViewer_ItemUnzoomed"
-            InitiallyDisplayedElement="First"/>
+        <controls:FlipView ItemsSource="{Binding ImagePosts}">
+            <controls:FlipView.ItemTemplate>
+                <DataTemplate>
+                    <Grid CacheMode="BitmapCache">
+                        <ViewportControl x:Name="FlipperViewport">
+                            <Canvas x:Name="FlipperCanvas">
+                                <Grid x:Name="FlipperZoomableContent" CacheMode="BitmapCache" RenderTransformOrigin="0,0">
+                                    <Grid.RenderTransform>
+                                        <ScaleTransform x:Name="FlipperZoomableContentTransform" />
+                                    </Grid.RenderTransform>
+
+                                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}" FullSize="{Binding ImageSrc}" />
+                                </Grid>
+                            </Canvas>
+                        </ViewportControl>
+
+                        <ProgressBar x:Name="Progress" Value="50" Margin="0" Padding="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+                    </Grid>
+                </DataTemplate>
+            </controls:FlipView.ItemTemplate>
+        </controls:FlipView>
+        
         <ProgressBar VerticalAlignment="Top"
                      IsIndeterminate="{Binding IsLoading}"
                      Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}" />

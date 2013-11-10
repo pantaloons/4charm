@@ -12,7 +12,7 @@ using System.Windows.Media.Imaging;
 
 namespace _4charm.ViewModels
 {
-    public class PostViewModel : ImageViewModelBase, IThumbnailedImage, IDisplayableImage
+    public class PostViewModel : ImageViewModelBase
     {
         public bool IsWatchlisted
         {

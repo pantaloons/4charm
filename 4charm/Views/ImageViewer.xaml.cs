@@ -40,60 +40,60 @@ namespace _4charm.Views
             _saveImage = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.download.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Save };
             _saveImage.Click += (sender, e) =>
             {
-                int index = MediaViewer.DisplayedItemIndex;
-                if (index >= 0 && _viewModel.ImagePosts.Count > index)
-                {
-                    BitmapImage bi = new BitmapImage() { CreateOptions = BitmapCreateOptions.BackgroundCreation };
-                    EventHandler<RoutedEventArgs> opened = null;
-                    EventHandler<ExceptionRoutedEventArgs> failed = null;
+                //int index = MediaViewer.DisplayedItemIndex;
+                //if (index >= 0 && _viewModel.ImagePosts.Count > index)
+                //{
+                //    BitmapImage bi = new BitmapImage() { CreateOptions = BitmapCreateOptions.BackgroundCreation };
+                //    EventHandler<RoutedEventArgs> opened = null;
+                //    EventHandler<ExceptionRoutedEventArgs> failed = null;
 
-                    ProgressIndicator progress = new ProgressIndicator
-                    {
-                        IsVisible = true,
-                        IsIndeterminate = true,
-                        Text = "Saving to Saved Pictures..."
-                    };
+                //    ProgressIndicator progress = new ProgressIndicator
+                //    {
+                //        IsVisible = true,
+                //        IsIndeterminate = true,
+                //        Text = "Saving to Saved Pictures..."
+                //    };
 
-                    SystemTray.SetOpacity(this, 0.99);
-                    SystemTray.SetIsVisible(this, true);
-                    SystemTray.SetProgressIndicator(this, progress);
+                //    SystemTray.SetOpacity(this, 0.99);
+                //    SystemTray.SetIsVisible(this, true);
+                //    SystemTray.SetProgressIndicator(this, progress);
 
-                    opened = async (ssender, se) =>
-                    {
-                        (ssender as BitmapImage).ImageOpened -= opened;
-                        (ssender as BitmapImage).ImageFailed -= failed;
+                //    opened = async (ssender, se) =>
+                //    {
+                //        (ssender as BitmapImage).ImageOpened -= opened;
+                //        (ssender as BitmapImage).ImageFailed -= failed;
 
-                        try
-                        {
-                            DownloadImageOpened(ssender as BitmapImage, _viewModel.ImagePosts[index]);
-                        }
-                        catch
-                        {
-                            failed(ssender, null);
-                            return;
-                        }
+                //        try
+                //        {
+                //            DownloadImageOpened(ssender as BitmapImage, _viewModel.ImagePosts[index]);
+                //        }
+                //        catch
+                //        {
+                //            failed(ssender, null);
+                //            return;
+                //        }
 
-                        progress.Text = "Done.";
-                        await Task.Delay(400);
-                        SystemTray.SetProgressIndicator(this, null);
-                        SystemTray.SetIsVisible(this, false);
-                    };
+                //        progress.Text = "Done.";
+                //        await Task.Delay(400);
+                //        SystemTray.SetProgressIndicator(this, null);
+                //        SystemTray.SetIsVisible(this, false);
+                //    };
 
-                    failed = async (ssender, se) =>
-                    {
-                        (ssender as BitmapImage).ImageOpened -= opened;
-                        (ssender as BitmapImage).ImageFailed -= failed;
+                //    failed = async (ssender, se) =>
+                //    {
+                //        (ssender as BitmapImage).ImageOpened -= opened;
+                //        (ssender as BitmapImage).ImageFailed -= failed;
 
-                        progress.Text = "Image download failed.";
-                        await Task.Delay(1000);
-                        SystemTray.SetProgressIndicator(this, null);
-                        SystemTray.SetIsVisible(this, false);
-                    };
+                //        progress.Text = "Image download failed.";
+                //        await Task.Delay(1000);
+                //        SystemTray.SetProgressIndicator(this, null);
+                //        SystemTray.SetIsVisible(this, false);
+                //    };
 
-                    bi.ImageOpened += opened;
-                    bi.ImageFailed += failed;
-                    bi.UriSource = _viewModel.ImagePosts[index].ImageSrc;
-                }
+                //    bi.ImageOpened += opened;
+                //    bi.ImageFailed += failed;
+                //    bi.UriSource = _viewModel.ImagePosts[index].ImageSrc;
+                //}
             };
 
             _orientLock = new ApplicationBarMenuItem(AppResources.ApplicationBar_LockOrientation);
@@ -157,24 +157,24 @@ namespace _4charm.Views
         {
             Loaded -= ImageViewerLoaded;
 
-            PostViewModel pvm = _viewModel.ImagePosts.FirstOrDefault(x => x.Number == _postID);
-            if (pvm != null)
-            {
-                try
-                {
-                    MediaViewer.JumpToItem(_viewModel.ImagePosts.IndexOf(pvm));
-                }
-                catch
-                {
-                }
-            }
+            //PostViewModel pvm = _viewModel.ImagePosts.FirstOrDefault(x => x.Number == _postID);
+            //if (pvm != null)
+            //{
+            //    try
+            //    {
+            //        //MediaViewer.JumpToItem(_viewModel.ImagePosts.IndexOf(pvm));
+            //    }
+            //    catch
+            //    {
+            //    }
+            //}
         }
 
         protected override void OnRemovedFromJournal(JournalEntryRemovedEventArgs e)
         {
             base.OnRemovedFromJournal(e);
 
-            MediaViewer.Unload();
+            //MediaViewer.Unload();
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)

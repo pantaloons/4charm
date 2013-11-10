@@ -93,6 +93,8 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\FlipView.cs" />
+    <Compile Include="Controls\MultiResolutionImage.cs" />
     <Compile Include="Converters\BoolVisibleConverter.cs" />
     <Compile Include="Converters\CapCodeColorConverter.cs" />
     <Compile Include="Converters\EmptyCollectionVisibilityConverter.cs" />
@@ -109,15 +111,6 @@
     <Compile Include="Models\BoardList.cs" />
     <Compile Include="Models\CriticalSettingsManager.cs" />
     <Compile Include="Models\DataContractJsonSerializerExtensions.cs" />
-    <Compile Include="Models\MediaViewer\DragState.cs" />
-    <Compile Include="Models\MediaViewer\GIFViewer.cs" />
-    <Compile Include="Models\MediaViewer\IDisplayableImage.cs" />
-    <Compile Include="Models\MediaViewer\ItemDisplayedEventArgs.cs" />
-    <Compile Include="Models\MediaViewer\IThumbnailedImage.cs" />
-    <Compile Include="Models\MediaViewer\MediaViewer.cs" />
-    <Compile Include="Models\MediaViewer\ThumbnailedImageViewer.cs" />
-    <Compile Include="Models\MediaViewer\UnloadedVisibleConverter.cs" />
-    <Compile Include="Models\MediaViewer\VirtualizedItem.cs" />
     <Compile Include="Models\Migration\SettingsManager1_1.cs" />
     <Compile Include="Models\Migration\VersionMigrator.cs" />
     <Compile Include="Models\ModelCommand.cs" />
