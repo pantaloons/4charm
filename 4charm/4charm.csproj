@@ -204,7 +204,7 @@
     <DesignData Include="SampleData\SampleImageViewerPageViewModel.xaml">
       <SubType>Designer</SubType>
     </DesignData>
-    <DesignData Include="SampleData\Copy of SampleAboutPageViewModel.xaml">
+    <DesignData Include="SampleData\SampleAboutPageViewModel.xaml">
       <SubType>Designer</SubType>
     </DesignData>
     <Page Include="Themes\generic.xaml">

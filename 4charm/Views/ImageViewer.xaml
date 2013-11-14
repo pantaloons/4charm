@@ -15,7 +15,10 @@
     shell:SystemTray.IsVisible="False">
 
     <Grid d:DataContext="{d:DesignData Source=../SampleData/SampleImageViewerPageViewModel.xaml}">
-        <controls:FlipView ItemsSource="{Binding ImagePosts}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+        <controls:FlipView ItemsSource="{Binding ImagePosts}"
+                           SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                           ItemZoomed="MediaViewer_ItemZoomed"
+                           ItemUnzoomed="MediaViewer_ItemUnzoomed">
             <controls:FlipView.ItemTemplate>
                 <DataTemplate>
                     <Grid CacheMode="BitmapCache">

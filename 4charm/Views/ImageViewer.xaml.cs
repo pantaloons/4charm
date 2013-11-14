@@ -5,7 +5,6 @@ using _4charm.ViewModels;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System;
-using System.Windows;
 using System.Windows.Navigation;
 
 namespace _4charm.Views

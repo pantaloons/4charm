@@ -397,6 +397,15 @@ namespace _4charm.Controls
 
         #endregion
 
+        /// <summary>
+        /// Raised when the currently displayed item is zoomed in.
+        /// </summary>
+        public event EventHandler ItemZoomed;
+        /// <summary>
+        /// Raised when the currently displayed item is zoomed back out to nuetral.
+        /// </summary>
+        public event EventHandler ItemUnzoomed;
+
         private enum FlipperState
         {
             Uninitialized,
@@ -722,6 +731,14 @@ namespace _4charm.Controls
             if (SelectedIndex >= 0)
             {
                 _containers[_displayedContainerIndex].OnDoubleTap();
+                if (_containers[_displayedContainerIndex].IsZoomedIn)
+                {
+                    ItemZoomed(this, EventArgs.Empty);
+                }
+                else
+                {
+                    ItemUnzoomed(this, EventArgs.Empty);
+                }
             }
         }
 
