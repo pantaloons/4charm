@@ -1,25 +1,15 @@
-﻿using _4charm.ViewModels;
-using Microsoft.Phone.Controls;
+﻿using _4charm.Controls;
+using _4charm.ViewModels;
 
 namespace _4charm.Views
 {
-    public partial class AboutPage : PhoneApplicationPage
+    public partial class AboutPage : BoundPage
     {
-        private AboutPageViewModel _viewModel;
-
         public AboutPage()
         {
             InitializeComponent();
 
-            _viewModel = new AboutPageViewModel();
-            DataContext = _viewModel;
-        }
-
-        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
-        {
-            base.OnNavigatedTo(e);
-
-            _viewModel.OnNavigatedTo();
+            DataContext = new AboutPageViewModel();
         }
     }
 }

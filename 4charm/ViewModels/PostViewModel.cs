@@ -3,6 +3,8 @@ using _4charm.Models.API;
 using HtmlAgilityPack;
 using Microsoft.Phone.Controls;
 using System;
+using System.ComponentModel;
+using System.Diagnostics;
 using System.IO;
 using System.Net;
 using System.Windows;
@@ -200,6 +202,10 @@ namespace _4charm.ViewModels
 
         internal Post _post;
         private Action<ulong> _quoteTapped;
+
+        public PostViewModel()
+        {
+        }
 
         public PostViewModel(Post p, Action<ulong> quoteTapped)
         {

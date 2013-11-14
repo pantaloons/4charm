@@ -1,4 +1,5 @@
 ﻿using System;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
 using System.Net.Http;
@@ -8,6 +9,7 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
 using System.Windows.Media.Imaging;
+using Windows.Storage;
 
 namespace _4charm.Controls
 {
@@ -84,11 +86,22 @@ namespace _4charm.Controls
         private BitmapImage _thumbnail, _fullsize;
         private CancellationTokenSource _thumbCancel, _fullCancel;
 
+        private static int x = 0;
+
+        private int y = 0;
         public MultiResolutionImage()
         {
             DefaultStyleKey = typeof(MultiResolutionImage);
+            y = x++;
 
+            Loaded += MultiResolutionImage_Loaded;
             Unloaded += MultiResolutionImage_Unloaded;
+        }
+
+        private void MultiResolutionImage_Loaded(object sender, RoutedEventArgs e)
+        {
+            LoadThumbnailIfNeeded();
+            LoadFullSizeIfNeeded();
         }
 
         private void MultiResolutionImage_Unloaded(object sender, RoutedEventArgs e)
@@ -104,6 +117,16 @@ namespace _4charm.Controls
             base.OnApplyTemplate();
 
             _image = (Image)GetTemplateChild("ImageContainer");
+
+            if (DesignerProperties.GetIsInDesignMode(this))
+            {
+                // We have to load resources special in design mode, we can't read
+                // from a stream. To prevent other functions overwriting the image,
+                // new up the private member afterwards.
+                _image.Source = new BitmapImage(Thumbnail);
+                _image = new Image();
+                return;
+            }
 
             LoadThumbnailIfNeeded();
             LoadFullSizeIfNeeded();
@@ -158,7 +181,7 @@ namespace _4charm.Controls
 
         private void LoadFullSizeIfNeeded()
         {
-            if (!_isShowingFullSize && !_isLoadingFullSize && _size != null && _isShowingThumbnail &&
+            if (!_isShowingFullSize && !_isLoadingFullSize && _size != null && _isShowingThumbnail && FullSize != null &&
                 (_thumbnail.PixelWidth < _size.Value.Width || _thumbnail.PixelHeight < _size.Value.Height))
             {
                 LoadFullSizeImage().ContinueWith(result =>
@@ -177,35 +200,46 @@ namespace _4charm.Controls
 
             _isLoadingThumbnail = true;
             _thumbCancel = new CancellationTokenSource();
+            CancellationToken ct = _thumbCancel.Token;
 
-            HttpResponseMessage response;
-            try
+            Uri uri = Thumbnail;
+
+            Stream stream;
+            if (Thumbnail.Scheme == "file")
             {
-                response = await new HttpClient().GetAsync(Thumbnail, _thumbCancel.Token);
+                try
+                {
+                    stream = await LoadLocalFile(Thumbnail, ct);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
             }
-            catch (TaskCanceledException)
+            else
             {
-                _isLoadingThumbnail = false;
-                _thumbCancel = null;
-                return;
+                try
+                {
+                    stream = await LoadRemoteFile(Thumbnail, ct);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
             }
 
-            byte[] data = await response.Content.ReadAsByteArrayAsync();
-
-            if (_thumbCancel.IsCancellationRequested)
+            if (ct.IsCancellationRequested)
             {
-                _isLoadingThumbnail = false;
-                _thumbCancel = null;
                 return;
             }
 
             _thumbnail = new BitmapImage()
             {
-                CreateOptions = BitmapCreateOptions.BackgroundCreation
+                CreateOptions = BitmapCreateOptions.DelayCreation
             };
             try
             {
-                _thumbnail.SetSource(new MemoryStream(data));
+                _thumbnail.SetSource(stream);
             }
             catch (Exception ex)
             {
@@ -233,6 +267,19 @@ namespace _4charm.Controls
             LoadFullSizeIfNeeded();
         }
 
+        private async Task<Stream> LoadRemoteFile(Uri uri, CancellationToken token)
+        {
+            HttpResponseMessage response;
+            response = await new HttpClient().GetAsync(uri, HttpCompletionOption.ResponseContentRead, token);
+            return await response.Content.ReadAsStreamAsync();
+        }
+
+        private async Task<Stream> LoadLocalFile(Uri uri, CancellationToken token)
+        {
+            StorageFile file = await StorageFile.GetFileFromPathAsync(uri.LocalPath);
+            return await file.OpenStreamForReadAsync();
+        }
+
         private async Task LoadFullSizeImage()
         {
             Debug.Assert(_fullsize == null);
@@ -242,38 +289,47 @@ namespace _4charm.Controls
 
             _isLoadingFullSize = true;
             _fullCancel = new CancellationTokenSource();
+            CancellationToken ct = _thumbCancel.Token;
 
-            HttpResponseMessage response;
-            try
+            Stream stream;
+            if (FullSize.Scheme == "file")
             {
-                response = await new HttpClient().GetAsync(FullSize, HttpCompletionOption.ResponseContentRead, _fullCancel.Token);
+                try
+                {
+                    stream = await LoadLocalFile(FullSize, ct);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
             }
-            catch (TaskCanceledException)
+            else
             {
-                _isLoadingFullSize = false;
-                _fullCancel = null;
+                try
+                {
+                    stream = await LoadRemoteFile(FullSize, ct);
+                }
+                catch (TaskCanceledException)
+                {
+                    return;
+                }
+            }
+
+            if (ct.IsCancellationRequested)
+            {
                 return;
             }
-
-            if (_fullCancel.IsCancellationRequested)
-            {
-                _isLoadingFullSize = false;
-                _fullCancel = null;
-                return;
-            }
-
-            byte[] data = await response.Content.ReadAsByteArrayAsync();
 
             Debug.Assert(_fullsize == null);
             _fullsize = new BitmapImage()
             {
-                CreateOptions = BitmapCreateOptions.BackgroundCreation,
+                CreateOptions = BitmapCreateOptions.DelayCreation,
                 DecodePixelType = DecodePixelType.Logical,
                 DecodePixelWidth = (int)_size.Value.Width
             };
             try
             {
-                _fullsize.SetSource(new MemoryStream(data));
+                _fullsize.SetSource(stream);
             }
             catch (Exception ex)
             {
@@ -312,6 +368,8 @@ namespace _4charm.Controls
             if (_isLoadingThumbnail)
             {
                 _thumbCancel.Cancel();
+                _thumbCancel = null;
+                _isLoadingThumbnail = false;
             }
         }
 
@@ -335,6 +393,8 @@ namespace _4charm.Controls
             if (_isLoadingFullSize)
             {
                 _fullCancel.Cancel();
+                _fullCancel = null;
+                _isLoadingFullSize = false;
             }
         }
 

@@ -1,18 +1,15 @@
-﻿using _4charm.ViewModels;
-using Microsoft.Phone.Controls;
+﻿using _4charm.Controls;
+using _4charm.ViewModels;
 
 namespace _4charm.Views
 {
-    public partial class SettingsPage : PhoneApplicationPage
+    public partial class SettingsPage : BoundPage
     {
-        private SettingsPageViewModel _viewModel;
-
         public SettingsPage()
         {
             InitializeComponent();
 
-            _viewModel = new SettingsPageViewModel();
-            DataContext = _viewModel;
+            DataContext = new SettingsPageViewModel();
         }
     }
 }

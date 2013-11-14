@@ -32,7 +32,11 @@ namespace _4charm.ViewModels
 
         public bool IsWatchlisted
         {
-            get { return TransitorySettingsManager.Current.Watchlist.Count(x => x.BoardName == BoardName && x.Number == Number) > 0; }
+            get { return TransitorySettingsManager.Current.Watchlist.Count(x => x.Board.Name == BoardName && x.Number == Number) > 0; }
+        }
+
+        private ThreadViewModel()
+        {
         }
 
         public ThreadViewModel(Thread t)

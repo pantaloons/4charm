@@ -6,6 +6,6 @@
     <local:AddBoardPageViewModel.Board>
         <local:BoardViewModel
             Description="/fa/ - Fashion"
-            Image="../Assets/Boards/Fanart/fa.jpg"/>
+            WideURI="../Assets/Boards/Fanart/fa.jpg" />
     </local:AddBoardPageViewModel.Board>
 </local:AddBoardPageViewModel>

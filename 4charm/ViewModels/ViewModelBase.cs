@@ -7,7 +7,7 @@ using System.Windows;
 
 namespace _4charm.ViewModels
 {
-    public class ViewModelBase : INotifyPropertyChanged
+    public abstract class ViewModelBase : INotifyPropertyChanged
     {
         public void Navigate(Uri uri)
         {

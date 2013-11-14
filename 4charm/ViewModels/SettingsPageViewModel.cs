@@ -3,7 +3,7 @@ using Microsoft.Phone.Controls;
 
 namespace _4charm.ViewModels
 {
-    class SettingsPageViewModel : ViewModelBase
+    class SettingsPageViewModel : PageViewModelBase
     {
         public bool EnableManualRefresh
         {
@@ -33,10 +33,6 @@ namespace _4charm.ViewModels
         {
             get { return CriticalSettingsManager.Current.LockOrientation; }
             set { CriticalSettingsManager.Current.LockOrientation = value; }
-        }
-
-        public SettingsPageViewModel()
-        {
         }
     }
 }

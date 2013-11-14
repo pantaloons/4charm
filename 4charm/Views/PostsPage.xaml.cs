@@ -58,9 +58,15 @@ namespace _4charm.Views
             _watch = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.eye.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Watch };
             _watch.Click += (sender, e) =>
             {
-                ThreadViewModel tvm = TransitorySettingsManager.Current.Watchlist.FirstOrDefault(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number);
-                if (tvm != null) TransitorySettingsManager.Current.Watchlist.Remove(tvm);
-                else TransitorySettingsManager.Current.Watchlist.Add(new ThreadViewModel(_thread));
+                Thread thread = TransitorySettingsManager.Current.Watchlist.FirstOrDefault(x => x.Board.Name == _thread.Board.Name && x.Number == _thread.Number);
+                if (thread != null)
+                {
+                    TransitorySettingsManager.Current.Watchlist.Remove(thread);
+                }
+                else
+                {
+                    TransitorySettingsManager.Current.Watchlist.Add(_thread);
+                }
 
                 UpdateWatchButton();
             };
@@ -197,7 +203,7 @@ namespace _4charm.Views
 
         private void UpdateWatchButton()
         {
-            bool watchlisted = TransitorySettingsManager.Current.Watchlist.Count(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number) > 0;
+            bool watchlisted = TransitorySettingsManager.Current.Watchlist.Count(x => x.Board.Name == _thread.Board.Name && x.Number == _thread.Number) > 0;
             if (watchlisted)
             {
                 _watch.IconUri = new Uri("Assets/Appbar/appbar.eye.check.png", UriKind.Relative);
@@ -243,9 +249,12 @@ namespace _4charm.Views
                         }
                     }
 
-                    ThreadViewModel tvm = TransitorySettingsManager.Current.History.FirstOrDefault(x => x.BoardName == _thread.Board.Name && x.Number == _thread.Number);
-                    if (tvm != null) TransitorySettingsManager.Current.History.Remove(tvm);
-                    TransitorySettingsManager.Current.History.Insert(0, new ThreadViewModel(_thread));
+                    Thread thread = TransitorySettingsManager.Current.History.FirstOrDefault(x => x.Board.Name == _thread.Board.Name && x.Number == _thread.Number);
+                    if (thread != null)
+                    {
+                        TransitorySettingsManager.Current.History.Remove(thread);
+                    }
+                    TransitorySettingsManager.Current.History.Insert(0, _thread);
                 }, FilterApplied);
 
                 UpdateWatchButton();

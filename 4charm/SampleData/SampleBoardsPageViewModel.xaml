@@ -1,34 +1,153 @@
 ﻿<local:BoardsPageViewModel
     xmlns:local="clr-namespace:_4charm.ViewModels"
+    xmlns:xaml="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
+    xmlns:html="clr-namespace:HtmlAgilityPack;assembly=HtmlAgilityPack">
     
-    HasFavorites="True">
     <local:BoardsPageViewModel.Favorites>
         <local:BoardViewModel
             Description="/a/ - Anime"
-            Image="../Assets/Boards/Fanart/a.jpg"/>
+            WideURI="../Assets/Boards/Fanart/a.jpg"/>
         <local:BoardViewModel
             Description="/fa/ - Fashion"
-            Image="../Assets/Boards/Fanart/fa.jpg"/>
+            WideURI="../Assets/Boards/Fanart/fa.jpg"/>
         <local:BoardViewModel
             Description="/fit/ - Health and Fitness"
-            Image="../Assets/Boards/Fanart/fit.jpg"/>
+            WideURI="../Assets/Boards/Fanart/fit.jpg"/>
     </local:BoardsPageViewModel.Favorites>
+    
+    <local:BoardsPageViewModel.Watchlist>
+        <local:ThreadViewModel Background="#F0E0D6">
+            <local:ThreadViewModel.InitialPost>
+                <local:PostViewModel
+                    AuthorName="Anonymous"
+                    IsMod="True"
+                    IsAdmin="True"
+                    IsDeveloper="True"
+                    IsClosed="True"
+                    IsSticky="True"
+                    FileDeleted="True"
+                    
+                    LongNumber="111111"
+                    Subject="Hello"
+                    PrettyTime="just now"
+                    Image="../Assets/Boards/Icons/fit.jpg"
+                    ThumbMargin2="0,6,12,6"
+                    ThumbHeight="100"
+                    ThumbWidth="100"
+                    CounterText="32 posts and 5 images.">
+                </local:PostViewModel>
+            </local:ThreadViewModel.InitialPost>
+        </local:ThreadViewModel>
+
+        <local:ThreadViewModel Background="#D6DAF0">
+            <local:ThreadViewModel.InitialPost>
+                <local:PostViewModel
+                    AuthorName="Anonymous"
+                    
+                    LongNumber="111111"
+                    Subject="Hello"
+                    PrettyTime="just now"
+                    Image="../Assets/Boards/Icons/a.jpg"
+                    ThumbMargin2="0,6,12,6"
+                    ThumbHeight="100"
+                    ThumbWidth="100"
+                    CounterText="32 posts and 5 images.">
+                </local:PostViewModel>
+            </local:ThreadViewModel.InitialPost>
+        </local:ThreadViewModel>
+
+        <local:ThreadViewModel Background="#F0E0D6">
+            <local:ThreadViewModel.InitialPost>
+                <local:PostViewModel
+                    AuthorName="Anonymous"
+                    
+                    LongNumber="111111"
+                    Subject="Hello"
+                    PrettyTime="just now"
+                    Image="../Assets/Boards/Icons/q.jpg"
+                    ThumbMargin2="0,6,12,6"
+                    ThumbHeight="100"
+                    ThumbWidth="100"
+                    CounterText="32 posts and 5 images.">
+                </local:PostViewModel>
+            </local:ThreadViewModel.InitialPost>
+        </local:ThreadViewModel>
+    </local:BoardsPageViewModel.Watchlist>
+    
+    <local:BoardsPageViewModel.History>
+        <local:ThreadViewModel Background="#D6DAF0">
+            <local:ThreadViewModel.InitialPost>
+                <local:PostViewModel
+                    AuthorName="Anonymous"
+                    IsMod="True"
+                    IsAdmin="True"
+                    IsDeveloper="True"
+                    IsClosed="True"
+                    IsSticky="True"
+                    FileDeleted="True"
+                    
+                    LongNumber="111111"
+                    Subject="Hello"
+                    PrettyTime="just now"
+                    Image="../Assets/Boards/Icons/o.jpg"
+                    ThumbMargin2="0,6,12,6"
+                    ThumbHeight="100"
+                    ThumbWidth="100"
+                    CounterText="32 posts and 5 images.">
+                </local:PostViewModel>
+            </local:ThreadViewModel.InitialPost>
+        </local:ThreadViewModel>
+
+        <local:ThreadViewModel Background="#F0E0D6">
+            <local:ThreadViewModel.InitialPost>
+                <local:PostViewModel
+                    AuthorName="Anonymous"
+                    
+                    LongNumber="111111"
+                    Subject="Hello"
+                    PrettyTime="just now"
+                    Image="../Assets/Boards/Icons/s.jpg"
+                    ThumbMargin2="0,6,12,6"
+                    ThumbHeight="100"
+                    ThumbWidth="100"
+                    CounterText="32 posts and 5 images.">
+                </local:PostViewModel>
+            </local:ThreadViewModel.InitialPost>
+        </local:ThreadViewModel>
+
+        <local:ThreadViewModel Background="#D6DAF0">
+            <local:ThreadViewModel.InitialPost>
+                <local:PostViewModel
+                    AuthorName="Anonymous"
+                    
+                    LongNumber="111111"
+                    Subject="Hello"
+                    PrettyTime="just now"
+                    Image="../Assets/Boards/Icons/ck.jpg"
+                    ThumbMargin2="0,6,12,6"
+                    ThumbHeight="100"
+                    ThumbWidth="100"
+                    CounterText="32 posts and 5 images.">
+                </local:PostViewModel>
+            </local:ThreadViewModel.InitialPost>
+        </local:ThreadViewModel>
+    </local:BoardsPageViewModel.History>
     
     <local:BoardsPageViewModel.All>
         <local:BoardViewModel
             Description="/3/ - 3DCG"
-            Image="../Assets/Boards/Fanart/3.jpg"/>
+            WideURI="../Assets/Boards/Fanart/3.jpg"/>
         <local:BoardViewModel
             Description="/a/ - Anime"
-            Image="../Assets/Boards/Fanart/a.jpg"/>
+            WideURI="../Assets/Boards/Fanart/a.jpg"/>
         <local:BoardViewModel
             Description="/adv/ - Advice"
-            Image="../Assets/Boards/Fanart/adv.jpg"/>
+            WideURI="../Assets/Boards/Fanart/adv.jpg"/>
         <local:BoardViewModel
             Description="/an/ - Animals &amp; Nature"
-            Image="../Assets/Boards/Fanart/an.jpg"/>
+            WideURI="../Assets/Boards/Fanart/an.jpg"/>
         <local:BoardViewModel
             Description="/b/ - Random"
-            Image="../Assets/Boards/Fanart/b.jpg"/>
+            WideURI="../Assets/Boards/Fanart/b.jpg"/>
     </local:BoardsPageViewModel.All>
 </local:BoardsPageViewModel>

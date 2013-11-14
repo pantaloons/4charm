@@ -1,0 +1,12 @@
+﻿<local:ImageViewerPageViewModel
+    xmlns:local="clr-namespace:_4charm.ViewModels"
+    
+    IsLoading="False">
+
+    <local:ImageViewerPageViewModel.ImagePosts>
+        <local:PostViewModel ThumbnailSrc="../Assets/Boards/Icons/b.jpg" />
+        <local:PostViewModel ThumbnailSrc="../Assets/Boards/Icons/c.jpg" />
+        <local:PostViewModel ThumbnailSrc="../Assets/Boards/Icons/ck.jpg" />
+    </local:ImageViewerPageViewModel.ImagePosts>
+    
+</local:ImageViewerPageViewModel>

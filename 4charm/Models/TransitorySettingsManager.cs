@@ -46,8 +46,8 @@ namespace _4charm.Models
         /// <summary>
         /// Storage for friendly watchlist and history objects.
         /// </summary>
-        private ObservableCollection<ThreadViewModel> _watchlist, _history;
-        
+        private ObservableCollection<Thread> _watchlist, _history;
+
         /// <summary>
         /// Task tracking progress of collection rebuilding. This gets started off after
         /// the restore completes, and should be waited on before attempting to use
@@ -62,25 +62,25 @@ namespace _4charm.Models
             // and watchlist collections, which involves fixing up some references that
             // don't get persisted correctly. Those collections should wait on the rebuild
             // task before returning.
-            _rebuildTask = Restore().ContinueWith(t => Rebuild(), TaskScheduler.Current);
+            _rebuildTask = Restore().ContinueWith(t => Rebuild(), TaskContinuationOptions.ExecuteSynchronously);
         }
 
         /// <summary>
         /// Friendly view of the history collection. The settings class registers to changes on this collection
         /// and seamlessly updates the saved values in the background, so modify it as desired.
         /// </summary>
-        public ObservableCollection<ThreadViewModel> History
+        public ObservableCollection<Thread> History
         {
-            get { Restore(); _rebuildTask.Wait(); return _history; }
+            get { _rebuildTask.Wait(); return _history; }
         }
 
         /// <summary>
         /// Friendly view of the watchlist collection. The settings class registers to changes on this collection
         /// and seamlessly updates the saved values in the background, so modify it as desired.
         /// </summary>
-        public ObservableCollection<ThreadViewModel> Watchlist
+        public ObservableCollection<Thread> Watchlist
         {
-            get { Restore(); _rebuildTask.Wait(); return _watchlist; }
+            get { _rebuildTask.Wait(); return _watchlist; }
         }
 
         /// <summary>
@@ -93,36 +93,36 @@ namespace _4charm.Models
         {
             // Translate the serialized watchlist into valid usable objects.
             List<ThreadID> watchlist = GetSetting<List<ThreadID>>("Watchlist", new List<ThreadID>());
-            _watchlist = new ObservableCollection<ThreadViewModel>(watchlist.Where(x => BoardList.Boards.ContainsKey(x.BoardName))
+            _watchlist = new ObservableCollection<Thread>(watchlist.Where(x => BoardList.Boards.ContainsKey(x.BoardName))
                 .Select(x =>
                 {
                     Thread t = ThreadCache.Current.EnforceBoard(x.BoardName).EnforceThread(x.Number);
                     x.Initial.Thread = t;
                     t.Merge(x.Initial);
-                    return new ThreadViewModel(t);
+                    return t;
                 }));
 
             // Translate the history into valid usable objects.
             List<ThreadID> history = GetSetting<List<ThreadID>>("History", new List<ThreadID>());
-            _history = new ObservableCollection<ThreadViewModel>(history.Where(x => BoardList.Boards.ContainsKey(x.BoardName))
+            _history = new ObservableCollection<Thread>(history.Where(x => BoardList.Boards.ContainsKey(x.BoardName))
                 .Select(x =>
                 {
                     Thread t = ThreadCache.Current.EnforceBoard(x.BoardName).EnforceThread(x.Number);
                     x.Initial.Thread = t;
                     t.Merge(x.Initial);
-                    return new ThreadViewModel(t);
+                    return t;
                 }));
 
             // Wire to collection changed events to trigger reserialization. We can just do this as often as we like, since the settings manager
             // queueing ensures it won't do redudnant save work.
             _watchlist.CollectionChanged += (sender, e) =>
             {
-                SetSetting<List<ThreadID>>("Watchlist", _watchlist.Select(x => new ThreadID(x.BoardName, x.Number, x.InitialPost._post)).ToList());
+                SetSetting<List<ThreadID>>("Watchlist", _watchlist.Select(x => new ThreadID(x.Board.Name, x.Number, x.Posts.First().Value)).ToList());
             };
 
             _history.CollectionChanged += (sender, e) =>
             {
-                SetSetting<List<ThreadID>>("History", _history.Select(x => new ThreadID(x.BoardName, x.Number, x.InitialPost._post)).Take(MaxHistoryEntries).ToList());
+                SetSetting<List<ThreadID>>("History", _history.Select(x => new ThreadID(x.Board.Name, x.Number, x.Posts.First().Value)).Take(MaxHistoryEntries).ToList());
             };
         }
     }

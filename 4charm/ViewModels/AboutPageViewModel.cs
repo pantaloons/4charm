@@ -1,8 +1,10 @@
-﻿using System.Xml;
+﻿using System.Collections.Generic;
+using System.Windows.Navigation;
+using System.Xml;
 
 namespace _4charm.ViewModels
 {
-    class AboutPageViewModel : ViewModelBase
+    class AboutPageViewModel : PageViewModelBase
     {
         public string Version
         {
@@ -22,11 +24,7 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public AboutPageViewModel()
-        {
-        }
-
-        public void OnNavigatedTo()
+        public override void Initialize(IDictionary<string, string> arguments, NavigationEventArgs e)
         {
             Version = GetAppAttribute("Version");
             Title = GetAppAttribute("Title");

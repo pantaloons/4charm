@@ -358,11 +358,29 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Press the + button to get add some boards..
+        /// </summary>
+        public static string BoardsPage_AllEmpty {
+            get {
+                return ResourceManager.GetString("BoardsPage_AllEmpty", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to favorites.
         /// </summary>
         public static string BoardsPage_Favorites {
             get {
                 return ResourceManager.GetString("BoardsPage_Favorites", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Tap and hold boards on the all boards list to add favorites!.
+        /// </summary>
+        public static string BoardsPage_FavoritesEmpty {
+            get {
+                return ResourceManager.GetString("BoardsPage_FavoritesEmpty", resourceCulture);
             }
         }
         
@@ -381,6 +399,15 @@ namespace _4charm.Resources {
         public static string BoardsPage_History {
             get {
                 return ResourceManager.GetString("BoardsPage_History", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to No history at the moment..
+        /// </summary>
+        public static string BoardsPage_HistoryEmpty {
+            get {
+                return ResourceManager.GetString("BoardsPage_HistoryEmpty", resourceCulture);
             }
         }
         
@@ -417,6 +444,15 @@ namespace _4charm.Resources {
         public static string BoardsPage_Watchlist {
             get {
                 return ResourceManager.GetString("BoardsPage_Watchlist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Watchlist is empty. Add some threads!.
+        /// </summary>
+        public static string BoardsPage_WatchlistEmpty {
+            get {
+                return ResourceManager.GetString("BoardsPage_WatchlistEmpty", resourceCulture);
             }
         }
         

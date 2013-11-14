@@ -2,6 +2,11 @@ Bugs:
 
 Features:
 Rating reminder
-Image download cancellation
-Refactoring GIFs/mediaviewer
+GIFs
+Text tile pinning
+progress bar
+try/catch new system.net
+zoom in/out appbar
 Memory leaks...
+enforce https
+DST timezone 1 hour thing

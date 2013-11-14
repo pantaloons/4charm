@@ -93,8 +93,14 @@
     <Compile Include="App.xaml.cs">
       <DependentUpon>App.xaml</DependentUpon>
     </Compile>
+    <Compile Include="Controls\BoundPage.cs" />
+    <Compile Include="Controls\ErrorStateButton.cs" />
+    <Compile Include="Controls\ErrorStateTextBox.cs" />
     <Compile Include="Controls\FlipView.cs" />
     <Compile Include="Controls\MultiResolutionImage.cs" />
+    <Compile Include="Controls\PlaceHolderLongListSelector.cs" />
+    <Compile Include="Controls\SelectionBindableTextBox.cs" />
+    <Compile Include="Controls\TilePicker.cs" />
     <Compile Include="Converters\BoolVisibleConverter.cs" />
     <Compile Include="Converters\CapCodeColorConverter.cs" />
     <Compile Include="Converters\EmptyCollectionVisibilityConverter.cs" />
@@ -139,13 +145,13 @@
     <Compile Include="ViewModels\ImageViewerPageViewModel.cs" />
     <Compile Include="ViewModels\ImageViewModelBase.cs" />
     <Compile Include="ViewModels\NewThreadPageViewModel.cs" />
+    <Compile Include="ViewModels\PageViewModelBase.cs" />
     <Compile Include="ViewModels\PostsPageViewModel.cs" />
     <Compile Include="ViewModels\PostViewModel.cs" />
     <Compile Include="ViewModels\ReplyViewModel.cs" />
     <Compile Include="ViewModels\SettingsPageViewModel.cs" />
     <Compile Include="ViewModels\ThreadsPageViewModel.cs" />
     <Compile Include="ViewModels\ThreadViewModel.cs" />
-    <Compile Include="ViewModels\TilePickerViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">
       <DependentUpon>AboutPage.xaml</DependentUpon>
@@ -189,10 +195,16 @@
     <DesignData Include="SampleData\SampleAddBoardPageViewModel.xaml">
       <SubType>Designer</SubType>
     </DesignData>
-    <DesignData Include="SampleData\SampleAboutPageViewModel.xaml">
+    <DesignData Include="SampleData\SampleNewThreadPageViewModel.xaml">
       <SubType>Designer</SubType>
     </DesignData>
     <DesignData Include="SampleData\SampleBoardsPageViewModel.xaml">
+      <SubType>Designer</SubType>
+    </DesignData>
+    <DesignData Include="SampleData\SampleImageViewerPageViewModel.xaml">
+      <SubType>Designer</SubType>
+    </DesignData>
+    <DesignData Include="SampleData\Copy of SampleAboutPageViewModel.xaml">
       <SubType>Designer</SubType>
     </DesignData>
     <Page Include="Themes\generic.xaml">

@@ -1,10 +1,11 @@
 ﻿using _4charm.Models;
 using _4charm.Models.API;
+using _4charm.Views;
 using Microsoft.Phone.Tasks;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
-using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -12,12 +13,23 @@ using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Media.Imaging;
+using System.Windows.Navigation;
 
 namespace _4charm.ViewModels
 {
-    class NewThreadPageViewModel : ViewModelBase
+    class NewThreadPageViewModel : PageViewModelBase
     {
+        public enum NewThreadFocusResult
+        {
+            None,
+            Captcha,
+            Page
+        };
+
+        private static readonly Regex ErrorRegex = new Regex("<span id=\"errmsg\" style=\"color: red;\">(Error: [^<]+)<");
+
+        private static readonly Regex SuccessRegex = new Regex("<title>Post successful!</title>");
+
         public bool HasMoreDetails
         {
             get { return GetProperty<bool>(); }
@@ -39,6 +51,12 @@ namespace _4charm.ViewModels
         public string CaptchaText
         {
             get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
+
+        public Uri CaptchaUri
+        {
+            get { return GetProperty<Uri>(); }
             set { SetProperty(value); }
         }
 
@@ -84,9 +102,15 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public BitmapImage CaptchaImage
+        public bool IsCaptchaError
         {
-            get { return GetProperty<BitmapImage>(); }
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
+        public bool IsImageError
+        {
+            get { return GetProperty<bool>(); }
             set { SetProperty(value); }
         }
 
@@ -108,38 +132,48 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        private Action _imageChanged;
-
         private string _token;
         private byte[] _imageData;
+        private Regex _threadIDRegex;
 
-        public NewThreadPageViewModel(Action imageChanged)
+        public NewThreadPageViewModel()
         {
-            _imageChanged = imageChanged;
-
-            ReloadCaptcha = new ModelCommand(() => Load());
+            ReloadCaptcha = new ModelCommand(async () => await LoadCaptcha());
             AddImage = new ModelCommand(() => DoAddImage());
             MoreDetails = new ModelCommand(() => HasMoreDetails = true);
+        }
 
+        public override void Initialize(IDictionary<string, string> arguments, NavigationEventArgs e)
+        {
             Comment = "";
             CaptchaText = "";
             Subject = "";
             Name = "";
             Email = "";
-        }
 
-        public void OnNavigatedTo(string boardName)
-        {
-            Board = boardName;
-            ThreadIDRegex = new Regex("<meta http-equiv=\"refresh\" content=\"1;URL=http://boards\\.4chan\\.org/" + Board + "/res/(\\d+)\">");
+            Board = arguments["board"];
+            _threadIDRegex = new Regex("<meta http-equiv=\"refresh\" content=\"1;URL=http://boards\\.4chan\\.org/" + Board + "/res/(\\d+)\">");
 
-            PageTitle = "NEW THREAD - /" + boardName + "/";
+            PageTitle = "NEW THREAD - /" + Board + "/";
             FileName = "choose file";
 
-            Load();
+            LoadCaptcha().ContinueWith(result =>
+            {
+                throw result.Exception;
+            }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public async void Load()
+        public override void OnBackKeyPress(CancelEventArgs e)
+        {
+            base.OnBackKeyPress(e);
+
+            if (IsPosting)
+            {
+                e.Cancel = true;
+            }
+        }
+
+        public async Task LoadCaptcha()
         {
             try
             {
@@ -152,14 +186,13 @@ namespace _4charm.ViewModels
             }
 
             CaptchaText = "";
-
-            UnloadImage();
-            LoadImage();
+            CaptchaUri = RequestManager.Current.EnforceHTTPS(new Uri("http://www.google.com/recaptcha/api/image?c=" + _token));
         }
 
         public async Task<string> GetCaptcha()
         {
-            string page = await RequestManager.Current.GetStringAsync(new Uri("http://www.google.com/recaptcha/api/challenge?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc"));
+            Uri uri = RequestManager.Current.EnforceHTTPS(new Uri("http://www.google.com/recaptcha/api/challenge?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc"));
+            string page = await RequestManager.Current.GetStringAsync(uri);
 
             int start = page.IndexOf("{");
             int end = page.LastIndexOf("}");
@@ -168,113 +201,119 @@ namespace _4charm.ViewModels
             {
                 DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(APICaptcha));
 
-                APICaptcha captcha = dcjs.ReadObject(ms) as APICaptcha;
+                APICaptcha captcha = await dcjs.ReadObjectAsync<APICaptcha>(ms);
 
                 return captcha.Challenge;
             }
         }
 
-        public async Task<SubmitResult> Submit()
+        public async Task<NewThreadFocusResult> Submit()
         {
             IsPosting = true;
-            SubmitResult result = await SubmitInternal();
+            NewThreadFocusResult result = await SubmitInternal();
             IsPosting = false;
             return result;
         }
 
-        private static Regex ErrorRegex = new Regex("<span id=\"errmsg\" style=\"color: red;\">(Error: [^<]+)<");
-        private static Regex SuccessRegex = new Regex("<title>Post successful!</title>");
-        private Regex ThreadIDRegex;
-        private async Task<SubmitResult> SubmitInternal()
+        private async Task<NewThreadFocusResult> SubmitInternal()
         {
-            if (string.IsNullOrEmpty(CaptchaText)) return new SubmitResult() { ResultType = SubmitResultType.EmptyCaptchaError };
-            else if (!HasImage) return new SubmitResult() { ResultType = SubmitResultType.NoImageError };
+            IsCaptchaError = false;
+            IsImageError = false;
+
+            if (string.IsNullOrEmpty(CaptchaText))
+            {
+                IsCaptchaError = true;
+                if (!HasImage)
+                {
+                    IsImageError = true;
+                }
+
+                Task ignored = LoadCaptcha().ContinueWith(t =>
+                {
+                    throw t.Exception;
+                }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+
+                return NewThreadFocusResult.Captcha;
+            }
+            else if (!HasImage)
+            {
+                IsImageError = true;
+
+                return NewThreadFocusResult.Page;
+            }
 
             Uri uri = new Uri("https://sys.4chan.org/" + Board + "/post");
             Uri referrer = new Uri("http://boards.4chan.org/" + Board);
+            Dictionary<string, string> formFields = new Dictionary<string, string>()
+            {
+                {"MAX_FILE_SIZE", "3145728"},
+                {"mode", "regist"},
+                {"name", Name},
+                {"email", Email},
+                {"sub", Subject},
+                {"com", Comment},
+                {"recaptcha_challenge_field", _token},
+                {"recaptcha_response_field", CaptchaText}
+            };
 
+            string result;
             try
             {
-                Dictionary<string, string> formFields = new Dictionary<string, string>()
-                {
-                    {"MAX_FILE_SIZE", "3145728"},
-                    {"mode", "regist"},
-                    {"name", Name},
-                    {"email", Email},
-                    {"sub", Subject},
-                    {"com", Comment},
-                    {"recaptcha_challenge_field", _token},
-                    {"recaptcha_response_field", CaptchaText}
-                };
-
                 HttpResponseMessage message = await RequestManager.Current.PostAsync(uri, referrer, formFields, FileName, _imageData);
-
-                string result = await message.Content.ReadAsStringAsync();
-                Match m;
-                if (SuccessRegex.IsMatch(result))
-                {
-                    ulong thread = 0;
-                    if((m = ThreadIDRegex.Match(result)).Success)
-                    {
-                        ulong.TryParse(m.Groups[1].Value, out thread);
-                    }
-                    return new SubmitResult() { ResultType = SubmitResultType.Success, ThreadID = thread };
-                }
-                else if ((m = ErrorRegex.Match(result)).Success)
-                {
-                    if (m.Groups[1].Value.Contains("You forgot to solve the CAPTCHA"))
-                    {
-                        return new SubmitResult() { ResultType = SubmitResultType.EmptyCaptchaError };
-                    }
-                    else if (m.Groups[1].Value.Contains("You seem to have mistyped the CAPTCHA"))
-                    {
-                        return new SubmitResult() { ResultType = SubmitResultType.WrongCatpchaError };
-                    }
-                    else
-                    {
-                        return new SubmitResult() { ResultType = SubmitResultType.KnownError, ErrorMessage = m.Groups[1].Value };
-                    }
-                }
-                else
-                {
-                    return new SubmitResult() { ResultType = SubmitResultType.UnknownError };
-                }
+                result = await message.Content.ReadAsStringAsync();
             }
             catch
             {
-                return new SubmitResult() { ResultType = SubmitResultType.UnknownError };
-            }
-        }
-
-        private BitmapImage _loading;
-        public void LoadImage()
-        {
-            //if (_loading != null) throw new Exception();
-            _loading = new BitmapImage();
-            _loading.ImageOpened += ImageLoaded;
-            _loading.CreateOptions = BitmapCreateOptions.BackgroundCreation;
-            _loading.UriSource = RequestManager.Current.EnforceHTTPS(new Uri("http://www.google.com/recaptcha/api/image?c=" + _token));
-        }
-
-        private void ImageLoaded(object sender, RoutedEventArgs e)
-        {
-            _loading.ImageOpened -= ImageLoaded;
-            CaptchaImage = _loading;
-        }
-
-        public void UnloadImage()
-        {
-            if (_loading != null)
-            {
-                _loading.ImageOpened -= ImageLoaded;
-                _loading.UriSource = null;
-                _loading = null;
+                MessageBox.Show("Unknown error encountered submitting thread.");
+                return NewThreadFocusResult.None;
             }
 
-            if (CaptchaImage != null)
+            Match m;
+            if (SuccessRegex.IsMatch(result))
             {
-                CaptchaImage.UriSource = null;
-                CaptchaImage = null;
+                ulong thread = 0;
+                if((m = _threadIDRegex.Match(result)).Success)
+                {
+                    ulong.TryParse(m.Groups[1].Value, out thread);
+                }
+
+                ThreadsPage.ForceReload = true;
+
+                GoBack();
+                if (thread != 0)
+                {
+                    Deployment.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}",
+                            Uri.EscapeUriString(Board), Uri.EscapeUriString(thread + "")), UriKind.Relative));
+                    });
+                }
+
+                return NewThreadFocusResult.None;
+            }
+            else if ((m = ErrorRegex.Match(result)).Success)
+            {
+                if (m.Groups[1].Value.Contains("You forgot to solve the CAPTCHA"))
+                {
+                    IsCaptchaError = true;
+                    return NewThreadFocusResult.Captcha;
+                }
+                else if (m.Groups[1].Value.Contains("You seem to have mistyped the CAPTCHA"))
+                {
+                    CaptchaText = "";
+                    IsCaptchaError = true;
+                    return NewThreadFocusResult.Captcha;
+                }
+                else
+                {
+                    MessageBox.Show(m.Groups[1].Value);
+                    return NewThreadFocusResult.None;
+                }
+            }
+            else
+            {
+                MessageBox.Show("Unknown error encountered submitting thread.");
+                return NewThreadFocusResult.None;
             }
         }
 
@@ -304,8 +343,6 @@ namespace _4charm.ViewModels
                 HasImage = false;
                 FileName = "choose file";
             }
-
-            _imageChanged();
         }
     }
 }

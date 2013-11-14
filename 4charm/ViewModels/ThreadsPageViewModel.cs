@@ -85,7 +85,7 @@ namespace _4charm.ViewModels
 
         public void OnWatchlistNavigated()
         {
-            Watchlist = new ObservableCollection<ThreadViewModel>(TransitorySettingsManager.Current.Watchlist.Where(x => x.BoardName == _board.Name));
+            Watchlist = new ObservableCollection<ThreadViewModel>(TransitorySettingsManager.Current.Watchlist.Where(x => x.Board.Name == _board.Name).Select(x => new ThreadViewModel(x)));
             TransitorySettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
         }
 

@@ -1,53 +1,34 @@
-﻿using _4charm.Models;
+﻿using _4charm.Controls;
 using _4charm.ViewModels;
 using Microsoft.Phone.Controls;
-using System.Text.RegularExpressions;
-using System.Windows.Controls;
-using System.Linq;
 using System.Windows;
 using System.Windows.Input;
-using System.Windows.Navigation;
 
 namespace _4charm.Views
 {
-    public partial class AddBoardPage : PhoneApplicationPage
+    public partial class AddBoardPage : BoundPage
     {
-        private AddBoardPageViewModel _viewModel;
-
         public AddBoardPage()
         {
             InitializeComponent();
 
-            _viewModel = new AddBoardPageViewModel();
-            DataContext = _viewModel;
+            DataContext = new AddBoardPageViewModel();
         }
 
-        protected override void OnNavigatedFrom(NavigationEventArgs e)
+        private void NameKeyDown(object sender, KeyEventArgs e)
         {
-            base.OnNavigatedFrom(e);
-
-            if (e.NavigationMode == NavigationMode.Back)
-            {
-                if (_viewModel.Board != null) _viewModel.Board.UnloadImage();
-            }
-        }
-
-        private void NameChanged(object sender, TextChangedEventArgs e)
-        {
-            TextBox tb = (TextBox)sender;
-            int pos = tb.SelectionStart;
-            tb.Text = Regex.Replace(((TextBox)sender).Text.ToLower(), "[^a-z0-9]", "");
-            tb.SelectionStart = pos;
-
-            _viewModel.TextChanged(tb.Text);
-        }
-
-        private void NameKeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
+            // Clear focus to hide the SIP when enter pressed
             if (e.Key == Key.Enter)
             {
                 Focus();
             }
+        }
+
+        private void ContextMenuOpened(object sender, System.Windows.RoutedEventArgs e)
+        {
+            var menu = (ContextMenu)sender;
+            var owner = (FrameworkElement)menu.Owner;
+            if (owner.DataContext != menu.DataContext) menu.DataContext = owner.DataContext;
         }
     }
 }

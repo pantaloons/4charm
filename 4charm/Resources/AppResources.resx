@@ -290,4 +290,16 @@
   <data name="SettingsPage_Title" xml:space="preserve">
     <value>settings</value>
   </data>
+  <data name="BoardsPage_AllEmpty" xml:space="preserve">
+    <value>Press the + button to get add some boards.</value>
+  </data>
+  <data name="BoardsPage_FavoritesEmpty" xml:space="preserve">
+    <value>Tap and hold boards on the all boards list to add favorites!</value>
+  </data>
+  <data name="BoardsPage_HistoryEmpty" xml:space="preserve">
+    <value>No history at the moment.</value>
+  </data>
+  <data name="BoardsPage_WatchlistEmpty" xml:space="preserve">
+    <value>Watchlist is empty. Add some threads!</value>
+  </data>
 </root>

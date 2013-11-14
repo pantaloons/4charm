@@ -3,10 +3,11 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Threading.Tasks;
 using System.Windows.Navigation;
+using System.Linq;
 
 namespace _4charm.ViewModels
 {
-    class BoardsPageViewModel : ViewModelBase
+    class BoardsPageViewModel : PageViewModelBase
     {
         public ObservableCollection<BoardViewModel> Favorites
         {
@@ -14,7 +15,6 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        // This one uses a settable property since we delay-load to improve startup perf
         public ObservableCollection<ThreadViewModel> Watchlist
         {
             get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
@@ -33,75 +33,14 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public bool HasFavorites
-        {
-            get { return GetProperty<bool>(); }
-            set { SetProperty(value); }
-        }
-
-        public bool HasWatchlist
-        {
-            get { return GetProperty<bool>(); }
-            set { SetProperty(value); }
-        }
-
-        public bool HasHistory
-        {
-            get { return GetProperty<bool>(); }
-            set { SetProperty(value); }
-        }
-
-        public TilePickerViewModel TilePicker
-        {
-            get { return GetProperty<TilePickerViewModel>(); }
-            set { SetProperty(value); }
-        }
-
         public BoardsPageViewModel()
         {
-            TilePicker = new TilePickerViewModel();
-            Favorites = CriticalSettingsManager.Current.Favorites;
+            Favorites = new ObservableCollection<BoardViewModel>(CriticalSettingsManager.Current.Favorites.Select(x => new BoardViewModel(x)));
+            All = new ObservableCollection<BoardViewModel>(CriticalSettingsManager.Current.Boards.Select(x => new BoardViewModel(x)));
+
+            // TODO: Initialize these as empty by default, and then load afterwards.
             Watchlist = new ObservableCollection<ThreadViewModel>();
             History = new ObservableCollection<ThreadViewModel>();
-            All = CriticalSettingsManager.Current.Boards;
-        }
-
-        public async void OnNavigatedTo()
-        {
-            ViewedCollectionChanged(null, null);
-
-            await Task.Delay(200);
-
-            Watchlist = TransitorySettingsManager.Current.Watchlist;
-            History = TransitorySettingsManager.Current.History;
-
-            Favorites.CollectionChanged += ViewedCollectionChanged;
-            Watchlist.CollectionChanged += ViewedCollectionChanged;
-            History.CollectionChanged += ViewedCollectionChanged;
-
-            ViewedCollectionChanged(null, null);
-        }
-
-        void ViewedCollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
-        {
-            HasFavorites = Favorites.Count > 0;
-            HasHistory = History.Count > 0;
-            HasWatchlist = Watchlist.Count > 0;
-        }
-
-        public void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            Favorites.CollectionChanged -= ViewedCollectionChanged;
-            Watchlist.CollectionChanged -= ViewedCollectionChanged;
-            History.CollectionChanged -= ViewedCollectionChanged;
-
-            if (e.IsNavigationInitiator)
-            {
-                foreach (BoardViewModel bvm in Favorites) bvm.UnloadImage();
-                foreach (BoardViewModel bvm in All) bvm.UnloadImage();
-                foreach (ThreadViewModel tvm in Watchlist) tvm.UnloadImage();
-                foreach (ThreadViewModel tvm in History) tvm.UnloadImage();
-            }
         }
     }
 }

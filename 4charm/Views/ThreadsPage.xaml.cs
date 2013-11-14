@@ -49,7 +49,7 @@ namespace _4charm.Views
             {
                 for (int i = 0; i < TransitorySettingsManager.Current.Watchlist.Count; i++)
                 {
-                    if (TransitorySettingsManager.Current.Watchlist[i].BoardName == _viewModel.Name)
+                    if (TransitorySettingsManager.Current.Watchlist[i].Board.Name == _viewModel.Name)
                     {
                         TransitorySettingsManager.Current.Watchlist.RemoveAt(i);
                         i--;

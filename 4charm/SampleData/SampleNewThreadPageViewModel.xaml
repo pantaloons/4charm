@@ -1,0 +1,15 @@
+﻿<local:NewThreadPageViewModel
+    xmlns:local="clr-namespace:_4charm.ViewModels"
+    
+    PageTitle="NEW THREAD - /fa/"
+    HasMoreDetails="True"
+    
+    Subject="Why is OP a fag?"
+    Email="moot@moot.com"
+    CaptchaText="marblecake zpf89"
+    FileName="wowsuchfiles.png"
+    Comment="commentcomment commentcommentcommentcomment commentcomment commentcommentcommentcomment">
+    
+    <local:NewThreadPageViewModel.Name>moot</local:NewThreadPageViewModel.Name>
+
+</local:NewThreadPageViewModel>

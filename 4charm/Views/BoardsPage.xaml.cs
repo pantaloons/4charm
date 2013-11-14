@@ -1,4 +1,5 @@
-﻿using _4charm.Models;
+﻿using _4charm.Controls;
+using _4charm.Models;
 using _4charm.Resources;
 using _4charm.ViewModels;
 using Microsoft.Phone.Controls;
@@ -13,7 +14,7 @@ using System.Windows.Navigation;
 
 namespace _4charm.Views
 {
-    public partial class BoardsPage : PhoneApplicationPage
+    public partial class BoardsPage : BoundPage
     {
         internal static BoardViewModel SetBoard = null;
 
@@ -29,8 +30,6 @@ namespace _4charm.Views
             DataContext = _viewModel;
 
             BoardViewModel.NewBoardAdded += NewBoardAdded;
-            BoardViewModel.BoardPinned += BoardPinned;
-            TilePickerViewModel.TilePinCompleted += TilePinCompleted;
         }
 
         private void InitializeApplicationBar()
@@ -39,32 +38,15 @@ namespace _4charm.Views
             {
                 Text = AppResources.ApplicationBar_Clear
             };
-            _clear.Click += (sender, e) =>
-            {
-                TransitorySettingsManager.Current.History.Clear();
-            };
+            _clear.Click += (sender, e) => TransitorySettingsManager.Current.History.Clear();
 
             _create = new ApplicationBarIconButton(new Uri("/Assets/Appbar/appbar.add.png", UriKind.Relative))
             {
                 Text = AppResources.BoardsPage_AddBoard
             };
-            _create.Click += (sender, e) =>
-            {
-                _viewModel.Navigate(new Uri("/Views/AddBoardPage.xaml", UriKind.Relative));
-            };
+            _create.Click += (sender, e) => _viewModel.Navigate(new Uri("/Views/AddBoardPage.xaml", UriKind.Relative));
 
             ApplicationBar = new ApplicationBar() { IsVisible = false };
-        }
-
-        protected override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
-        {
-            base.OnBackKeyPress(e);
-
-            if (_viewModel.TilePicker.IsVisible)
-            {
-                TilePinCompleted(null, null);
-                e.Cancel = true;
-            }
         }
 
         private void NewBoardAdded(object sender, Board e)
@@ -78,23 +60,7 @@ namespace _4charm.Views
             }
         }
 
-        private void BoardPinned(object sender, Board board)
-        {
-            _viewModel.TilePicker.SetBoard(board);
-            TilePickerFadeIn.Begin();
-
-            ApplicationBar.IsVisible = false;
-            RootPivot.IsHitTestVisible = false;
-        }
-
-        private void TilePinCompleted(object sender, EventArgs e)
-        {
-            TilePickerFadeOut.Begin();
-
-            RootPivot.IsHitTestVisible = true;
-        }
-
-        protected override void OnNavigatedTo(System.Windows.Navigation.NavigationEventArgs e)
+        protected override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
 
@@ -107,24 +73,9 @@ namespace _4charm.Views
                     All.UpdateLayout();
                     All.ScrollTo(bvm);
                 }
+
+                SetBoard = null;
             }
-            SetBoard = null;
-
-            _viewModel.OnNavigatedTo();
-        }
-
-        protected override void OnNavigatedFrom(System.Windows.Navigation.NavigationEventArgs e)
-        {
-            base.OnNavigatedFrom(e);
-
-            _viewModel.OnNavigatedFrom(e);
-        }
-
-        protected override void OnRemovedFromJournal(JournalEntryRemovedEventArgs e)
-        {
-            base.OnRemovedFromJournal(e);
-
-            BoardViewModel.NewBoardAdded -= NewBoardAdded;
         }
 
         private void RootPivotChanged(object sender, SelectionChangedEventArgs e)
@@ -142,22 +93,6 @@ namespace _4charm.Views
             }
         }
 
-        private void BoardRealized(object sender, ItemRealizationEventArgs e)
-        {
-            if (e.ItemKind == LongListSelectorItemKind.Item)
-            {
-                (e.Container.Content as BoardViewModel).LoadImage();
-            }
-        }
-
-        private void BoardUnrealized(object sender, ItemRealizationEventArgs e)
-        {
-            if (e.ItemKind == LongListSelectorItemKind.Item)
-            {
-                (e.Container.Content as BoardViewModel).UnloadImage();
-            }
-        }
-
         private void ThreadRealized(object sender, ItemRealizationEventArgs e)
         {
             if (e.ItemKind == LongListSelectorItemKind.Item)
@@ -172,12 +107,6 @@ namespace _4charm.Views
             {
                 (e.Container.Content as ThreadViewModel).UnloadImage();
             }
-        }
-
-        private void TilePickerFadeOutCompleted(object sender, EventArgs e)
-        {
-            _viewModel.TilePicker.SetBoard(null);
-            ApplicationBar.IsVisible = RootPivot.SelectedIndex == 2 || RootPivot.SelectedIndex == 3;
         }
 
         private void AddboardTap(object sender, System.Windows.Input.GestureEventArgs e)

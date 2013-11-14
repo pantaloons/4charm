@@ -376,6 +376,27 @@ namespace _4charm.Controls
 
         #endregion
 
+        #region SelectedIndex DependencyProperty
+
+        public static readonly DependencyProperty SelectedIndexProperty = DependencyProperty.Register(
+            "SelectedIndex",
+            typeof(int),
+            typeof(FlipView),
+            new PropertyMetadata(-1, OnSelectedIndexChanged));
+
+        public int SelectedIndex
+        {
+            get { return (int)GetValue(SelectedIndexProperty); }
+            set { SetValue(SelectedIndexProperty, value); }
+        }
+
+        private static void OnSelectedIndexChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as FlipView).SelectedIndexChanged();
+        }
+
+        #endregion
+
         private enum FlipperState
         {
             Uninitialized,
@@ -387,7 +408,6 @@ namespace _4charm.Controls
             UnsquishAnimating
         };
 
-        private int _displayedItemIndex = -1;
         private int _displayedContainerIndex;
         private int[] _representingIndex = new int[VirtualPoolSize];
         private Size? _size;
@@ -478,7 +498,17 @@ namespace _4charm.Controls
                 newItems.CollectionChanged += UpdateItems;
             }
 
+            SelectedIndex = ItemsSource.Count >= 0 ? Math.Min(SelectedIndex, ItemsSource.Count) : -1;
+
             InitializeIfReady();
+        }
+
+        private void SelectedIndexChanged()
+        {
+            InitializeIfReady();
+
+            UpdateVirtualizedItemPositions();
+            UpdateViewport();
         }
 
         private void InitializeIfReady()
@@ -498,13 +528,18 @@ namespace _4charm.Controls
 
             _state = FlipperState.Initialized;
 
-            _displayedItemIndex = ItemsSource.Count >= 0 ? 0 : -1;
             ResetGeometry();
             UpdateVirtualizedItemPositions();
+            UpdateViewport();
         }
 
         private void ResetGeometry()
         {
+            if (_state == FlipperState.Uninitialized)
+            {
+                return;
+            }
+
             _rootCanvas.Height = _size.Value.Height;
             _rootCanvas.Width = ItemsSource.Count * (_size.Value.Width + ItemGutter) - ItemGutter;
 
@@ -514,10 +549,15 @@ namespace _4charm.Controls
 
         private void UpdateVirtualizedItemPositions()
         {
+            if (_state == FlipperState.Uninitialized)
+            {
+                return;
+            }
+
             // Calculate the range of indexes we want the virtualized items to represent
             int itemsToEitherSide = VirtualPoolSize / 2;
-            int firstIndex = Math.Max(0, _displayedItemIndex - itemsToEitherSide);
-            int lastIndex = Math.Min(ItemsSource.Count - 1, _displayedItemIndex + itemsToEitherSide);
+            int firstIndex = Math.Max(0, SelectedIndex - itemsToEitherSide);
+            int lastIndex = Math.Min(ItemsSource.Count - 1, SelectedIndex + itemsToEitherSide);
 
             for (int i = firstIndex; i <= lastIndex; i++)
             {
@@ -527,7 +567,7 @@ namespace _4charm.Controls
                 // Check to see if this item index is already virtualized in
                 for (int j = 0; j < VirtualPoolSize; j++)
                 {
-                    if (_displayedItemIndex >= 0 && _representingIndex[j] == _displayedItemIndex)
+                    if (SelectedIndex >= 0 && _representingIndex[j] == SelectedIndex)
                     {
                         _displayedContainerIndex = j;
                     }
@@ -553,8 +593,8 @@ namespace _4charm.Controls
                         {
                             // Look for the VirtualizedItem that is furthest from our itemIndexToCenterOn
 
-                            int existingDistance = Math.Abs(_representingIndex[repurposeCandidate] - _displayedItemIndex);
-                            int thisDistance = Math.Abs(_representingIndex[j] - _displayedItemIndex);
+                            int existingDistance = Math.Abs(_representingIndex[repurposeCandidate] - SelectedIndex);
+                            int thisDistance = Math.Abs(_representingIndex[j] - SelectedIndex);
 
                             if (thisDistance > existingDistance)
                             {
@@ -572,7 +612,7 @@ namespace _4charm.Controls
                     _containers[repurposeCandidate].HorizontalOffset = i * (_size.Value.Width + ItemGutter);
                     _containers[repurposeCandidate].MakeVisible();
 
-                    if (_displayedItemIndex >= 0 && _displayedItemIndex == i)
+                    if (SelectedIndex >= 0 && SelectedIndex == i)
                     {
                         _displayedContainerIndex = repurposeCandidate;
                     }
@@ -599,13 +639,14 @@ namespace _4charm.Controls
                     }
 
                     // Calculate new element index to display
-                    if (_displayedItemIndex >= e.NewStartingIndex)
+                    if (SelectedIndex >= e.NewStartingIndex)
                     {
-                        _displayedItemIndex += e.NewItems.Count;
+                        SelectedIndex += e.NewItems.Count;
                     }
-
-                    UpdateVirtualizedItemPositions();
-                    UpdateViewport();
+                    else if (SelectedIndex >= e.NewStartingIndex - VirtualPoolSize / 2)
+                    {
+                        UpdateVirtualizedItemPositions();
+                    }
 
                     break;
                 case NotifyCollectionChangedAction.Remove:
@@ -628,13 +669,14 @@ namespace _4charm.Controls
                     }
 
                     // Calculate new element index to display
-                    if (_displayedItemIndex > e.OldStartingIndex)
+                    if (SelectedIndex > e.OldStartingIndex)
                     {
-                        _displayedItemIndex -= e.OldItems.Count;
+                        SelectedIndex -= e.OldItems.Count;
+                    }
+                    else if (SelectedIndex > e.OldStartingIndex - VirtualPoolSize / 2)
+                    {
                         UpdateVirtualizedItemPositions();
                     }
-
-                    UpdateViewport();
 
                     break;
                 case NotifyCollectionChangedAction.Move:
@@ -648,17 +690,16 @@ namespace _4charm.Controls
                         }
                         else
                         {
+                            ResetGeometry();
+
                             for (int i = 0; i < VirtualPoolSize; i++)
                             {
                                 _containers[i].SetItem(null);
                                 _representingIndex[i] = -1;
                             }
-                            _displayedItemIndex = -1;
+                            
+                            SelectedIndex = -1;
                             _displayedContainerIndex = -1;
-
-                            ResetGeometry();
-                            UpdateVirtualizedItemPositions();
-                            UpdateViewport();
                         }
                     } break;
             }
@@ -666,14 +707,19 @@ namespace _4charm.Controls
 
         private void UpdateViewport()
         {
-            _rootTransform.TranslateX = -1 * Math.Max(0, _displayedItemIndex) * (_size.Value.Width + ItemGutter);
+            if (_state == FlipperState.Uninitialized)
+            {
+                return;
+            }
+
+            _rootTransform.TranslateX = -1 * Math.Max(0, SelectedIndex) * (_size.Value.Width + ItemGutter);
         }
 
         protected override void OnDoubleTap(GestureEventArgs e)
         {
             base.OnDoubleTap(e);
 
-            if (_displayedItemIndex >= 0)
+            if (SelectedIndex >= 0)
             {
                 _containers[_displayedContainerIndex].OnDoubleTap();
             }
@@ -696,7 +742,7 @@ namespace _4charm.Controls
 
             if (e.PinchManipulation == null)
             {
-                bool isZoomed = _displayedItemIndex >= 0 && _containers[_displayedContainerIndex].IsZoomedIn;
+                bool isZoomed = SelectedIndex >= 0 && _containers[_displayedContainerIndex].IsZoomedIn;
                 if (!isZoomed && _state == FlipperState.Initialized && ItemsSource.Count > 0)
                 {
                     _state = FlipperState.Dragging;
@@ -736,8 +782,8 @@ namespace _4charm.Controls
             _dragState.LastDragUpdateTime = DateTime.Now;
             _dragState.DragStartingMediaStripOffset = _rootTransform.TranslateX;
             _dragState.NetDragDistanceSincleLastDragStagnation = 0.0;
-            _dragState.IsDraggingFirstElement = _displayedItemIndex == 0;
-            _dragState.IsDraggingLastElement = _displayedItemIndex == ItemsSource.Count - 1;
+            _dragState.IsDraggingFirstElement = SelectedIndex == 0;
+            _dragState.IsDraggingLastElement = SelectedIndex == ItemsSource.Count - 1;
             _dragState.GotDragDelta = false;
         }
 
@@ -822,11 +868,11 @@ namespace _4charm.Controls
         {
             if (Math.Abs(_dragState.NetDragDistanceSincleLastDragStagnation) > DragStagnationDistanceThreshold)
             {
-                if (_dragState.LastDragDistanceDelta > 0 && _displayedItemIndex == 0)
+                if (_dragState.LastDragDistanceDelta > 0 && SelectedIndex == 0)
                 {
                     return 0;
                 }
-                else if (_dragState.LastDragDistanceDelta < 0 && _displayedItemIndex == ItemsSource.Count - 1)
+                else if (_dragState.LastDragDistanceDelta < 0 && SelectedIndex == ItemsSource.Count - 1)
                 {
                     return 0;
                 }
@@ -863,7 +909,7 @@ namespace _4charm.Controls
             int elementIndexDelta = CalculateDragInertiaAnimationEndingValue();
             TimeSpan animationDuration = CalculateDragInertiaAnimationDuration(lastDragTimeDelta);
 
-            AnimateToElement(_displayedItemIndex + elementIndexDelta, animationDuration);
+            AnimateToElement(SelectedIndex + elementIndexDelta, animationDuration);
 
             _state = FlipperState.InertiaAnimating;
         }
@@ -899,9 +945,7 @@ namespace _4charm.Controls
                 _dragInertiaAnimation = null;
                 _dragInertiaAnimationTranslation = null;
 
-                _displayedItemIndex = _dragState.NewDisplayedElementIndex;
-                UpdateVirtualizedItemPositions();
-                UpdateViewport();
+                SelectedIndex = _dragState.NewDisplayedElementIndex;
             }
         }
 
