@@ -149,7 +149,13 @@
                 <controls:MultiResolutionImage Thumbnail="{Binding WideURI}">
                     <controls:MultiResolutionImage.Template>
                         <ControlTemplate TargetType="controls:MultiResolutionImage">
-                            <Image x:Name="ImageContainer" Width="440" Stretch="UniformToFill" />
+                            <controls:StaticImage x:Name="PreloadedImageContainer">
+                                <controls:StaticImage.Template>
+                                    <ControlTemplate TargetType="controls:StaticImage">
+                                        <Image x:Name="ImageContainer" Width="440" Stretch="UniformToFill" />
+                                    </ControlTemplate>
+                                </controls:StaticImage.Template>
+                            </controls:StaticImage>
                         </ControlTemplate>
                     </controls:MultiResolutionImage.Template>
                 </controls:MultiResolutionImage>

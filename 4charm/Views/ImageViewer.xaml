@@ -29,7 +29,13 @@
                                         <ScaleTransform x:Name="FlipperZoomableContentTransform" />
                                     </Grid.RenderTransform>
 
-                                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}" FullSize="{Binding ImageSrc}" />
+                                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}" FullSize="{Binding ImageSrc}" >
+                                        <controls:MultiResolutionImage.Template>
+                                            <ControlTemplate TargetType="controls:MultiResolutionImage">
+                                                <controls:GIFImage x:Name="PreloadedImageContainer" />
+                                            </ControlTemplate>
+                                        </controls:MultiResolutionImage.Template>
+                                    </controls:MultiResolutionImage>
                                 </Grid>
                             </Canvas>
                         </ViewportControl>

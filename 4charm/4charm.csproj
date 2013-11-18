@@ -97,9 +97,12 @@
     <Compile Include="Controls\ErrorStateButton.cs" />
     <Compile Include="Controls\ErrorStateTextBox.cs" />
     <Compile Include="Controls\FlipView.cs" />
+    <Compile Include="Controls\GIFImage.cs" />
+    <Compile Include="Controls\IPreloadedImage.cs" />
     <Compile Include="Controls\MultiResolutionImage.cs" />
     <Compile Include="Controls\PlaceHolderLongListSelector.cs" />
     <Compile Include="Controls\SelectionBindableTextBox.cs" />
+    <Compile Include="Controls\StaticImage.cs" />
     <Compile Include="Controls\TilePicker.cs" />
     <Compile Include="Converters\BoolVisibleConverter.cs" />
     <Compile Include="Converters\CapCodeColorConverter.cs" />
@@ -420,7 +423,12 @@
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=3.9.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
   </ItemGroup>
-  <ItemGroup />
+  <ItemGroup>
+    <ProjectReference Include="..\GIFSurface\GIFSurface.vcxproj">
+      <Project>{A9050C25-EED4-41D6-8686-3E1D39892A99}</Project>
+      <Name>GIFSurface</Name>
+    </ProjectReference>
+  </ItemGroup>
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).$(TargetFrameworkVersion).Overrides.targets" />
   <Import Project="$(MSBuildExtensionsPath)\Microsoft\$(TargetFrameworkIdentifier)\$(TargetFrameworkVersion)\Microsoft.$(TargetFrameworkIdentifier).CSharp.targets" />
   <!-- To modify your build process, add your task inside one of the targets below and uncomment it.

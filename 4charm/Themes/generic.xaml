@@ -33,7 +33,27 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:MultiResolutionImage">
+                    <controls:StaticImage x:Name="PreloadedImageContainer" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style TargetType="controls:StaticImage">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:StaticImage">
                     <Image x:Name="ImageContainer" />
+                </ControlTemplate>
+            </Setter.Value>
+        </Setter>
+    </Style>
+    
+    <Style TargetType="controls:GIFImage">
+        <Setter Property="Template">
+            <Setter.Value>
+                <ControlTemplate TargetType="controls:GIFImage">
+                    <DrawingSurface x:Name="SurfaceContainer" />
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

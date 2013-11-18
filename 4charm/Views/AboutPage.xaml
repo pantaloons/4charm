@@ -80,11 +80,11 @@
                        Style="{StaticResource CreditStyle}"/>
             <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_SilverlightMediaViewer, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource CreditStyle}"/>
-            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_ToolkstackPNG, Source={StaticResource LocalizedStrings}}"
+            <TextBlock Text="{Binding Path=LocalizedResources.AboutPage_ToolstackPNG, Source={StaticResource LocalizedStrings}}"
                        Style="{StaticResource CreditStyle}"/>
             
             <!-- Legal disclaimer. -->
-            <RichTextBox TextWrapping="Wrap" Margin="0"
+            <RichTextBox TextWrapping="Wrap" Margin="0,24,0,0"
                          Foreground="{StaticResource PhoneTextMidContrastBrush}"
                          FontSize="{StaticResource PhoneFontSizeSmall}">
                 <Paragraph>
