@@ -122,6 +122,7 @@
     <Compile Include="Models\BoardList.cs" />
     <Compile Include="Models\CriticalSettingsManager.cs" />
     <Compile Include="Models\DataContractJsonSerializerExtensions.cs" />
+    <Compile Include="Models\HttpClientExtensions.cs" />
     <Compile Include="Models\Migration\SettingsManager1_1.cs" />
     <Compile Include="Models\Migration\VersionMigrator.cs" />
     <Compile Include="Models\ModelCommand.cs" />
@@ -148,6 +149,7 @@
     <Compile Include="ViewModels\BoardsPageViewModel.cs" />
     <Compile Include="ViewModels\BoardViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerPageViewModel.cs" />
+    <Compile Include="ViewModels\ImageViewerPostViewModel.cs" />
     <Compile Include="ViewModels\ImageViewModelBase.cs" />
     <Compile Include="ViewModels\NewThreadPageViewModel.cs" />
     <Compile Include="ViewModels\PageViewModelBase.cs" />

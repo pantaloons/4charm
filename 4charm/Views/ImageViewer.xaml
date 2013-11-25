@@ -29,10 +29,11 @@
                                         <ScaleTransform x:Name="FlipperZoomableContentTransform" />
                                     </Grid.RenderTransform>
 
-                                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}" FullSize="{Binding ImageSrc}" >
+                                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}" FullSize="{Binding ImageSrc}"
+                                                                   DownloadProgressCommand="{Binding UpdateProgress}">
                                         <controls:MultiResolutionImage.Template>
                                             <ControlTemplate TargetType="controls:MultiResolutionImage">
-                                                <controls:GIFImage x:Name="PreloadedImageContainer" />
+                                                <controls:GIFImage x:Name="PreloadedImageContainer" ShouldAnimate="{Binding IsSelected}" />
                                             </ControlTemplate>
                                         </controls:MultiResolutionImage.Template>
                                     </controls:MultiResolutionImage>
@@ -40,7 +41,12 @@
                             </Canvas>
                         </ViewportControl>
 
-                        <ProgressBar x:Name="Progress" Value="50" Margin="0" Padding="0" VerticalAlignment="Top" HorizontalAlignment="Stretch" />
+                        <ProgressBar Value="{Binding DownloadProgress}"
+                                     Visibility="{Binding IsDownloading, Converter={StaticResource BoolVisibleConverter}}"
+                                     Margin="0"
+                                     Padding="0"
+                                     VerticalAlignment="Top"
+                                     HorizontalAlignment="Stretch" />
                     </Grid>
                 </DataTemplate>
             </controls:FlipView.ItemTemplate>

@@ -112,7 +112,6 @@
                                Foreground="#707070"
                                Text="{Binding PrettyTime}" />
 
-                    <!-- Number of replies. -->
                     <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                Grid.Row="3" Grid.ColumnSpan="2"
                                Margin="0"

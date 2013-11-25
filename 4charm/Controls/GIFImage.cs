@@ -8,6 +8,27 @@ namespace _4charm.Controls
 {
     public class GIFImage : Control, IPreloadedImage
     {
+        #region ShouldAnimate DependencyProperty
+
+        public static readonly DependencyProperty ShouldAnimateProperty = DependencyProperty.Register(
+            "ShouldAnimate",
+            typeof(bool),
+            typeof(GIFImage),
+            new PropertyMetadata(false, OnShouldAnimateChanged));
+
+        public bool ShouldAnimate
+        {
+            get { return (bool)GetValue(ShouldAnimateProperty); }
+            set { SetValue(ShouldAnimateProperty, value); }
+        }
+
+        private static void OnShouldAnimateChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as GIFImage).ShouldAnimateChanged();
+        }
+
+        #endregion
+
         public int PixelWidth
         {
             get { return 0; }
@@ -89,6 +110,11 @@ namespace _4charm.Controls
             return base.ArrangeOverride(finalSize);
         }
 
+        private void ShouldAnimateChanged()
+        {
+            _gifWrapper.SetShouldAnimate(ShouldAnimate);
+        }
+
         private void CreateIfReady()
         {
             if (_surface == null || _size == null || _hasCreatedProvider)
@@ -130,6 +156,7 @@ namespace _4charm.Controls
             {
                 _image.UnloadStreamSource();
                 _image.Opacity = 0;
+                _surface.Opacity = 1;
 
                 byte[] data = new byte[_streamSource.Length];
                 _streamSource.Seek(0, SeekOrigin.Begin);
@@ -137,7 +164,7 @@ namespace _4charm.Controls
 
                 try
                 {
-                    _gifWrapper.SetGIF(data);
+                    _gifWrapper.SetGIF(data, ShouldAnimate);
                 }
                 catch
                 {
@@ -151,6 +178,7 @@ namespace _4charm.Controls
             {
                 _gifWrapper.UnloadGIF();
                 _image.Opacity = 1;
+                _surface.Opacity = 0;
 
                 _image.SetStreamSource(_streamSource, _fileType);
                 _hasLoadedGif = true;

@@ -1,5 +1,4 @@
-﻿using System;
-using System.IO;
+﻿using System.IO;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
@@ -68,7 +67,6 @@ namespace _4charm.Controls
         protected override Size ArrangeOverride(Size finalSize)
         {
             _size = finalSize;
-            LoadIfNeeded();
             UpdateDecodeSize();
 
             return base.ArrangeOverride(finalSize);

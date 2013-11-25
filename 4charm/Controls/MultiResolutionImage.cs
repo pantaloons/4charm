@@ -8,6 +8,7 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
+using _4charm.Models;
 using System.Windows.Media.Imaging;
 using Windows.Storage;
 
@@ -73,7 +74,6 @@ namespace _4charm.Controls
 
         private static void OnDownloadProgressCommandChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
         {
-            (d as MultiResolutionImage).DownloadProgressCommandChanged();
         }
 
         #endregion
@@ -160,11 +160,6 @@ namespace _4charm.Controls
             LoadFullSizeIfNeeded();
         }
 
-        private void DownloadProgressCommandChanged()
-        {
-            throw new NotImplementedException();
-        }
-
         private void LoadThumbnailIfNeeded()
         {
             if (!_isShowingThumbnail && !_isShowingFullSize && !_isLoadingThumbnail && Thumbnail != null && _size != null)
@@ -200,7 +195,7 @@ namespace _4charm.Controls
 
             try
             {
-                _thumbnail = await LoadImage(Thumbnail, _thumbCancel.Token);
+                _thumbnail = await LoadImage(Thumbnail, progress => {}, _thumbCancel.Token);
             }
             catch (Exception ex)
             {
@@ -218,9 +213,12 @@ namespace _4charm.Controls
                 }
             }
 
-            _isLoadingThumbnail = false;
-            _isShowingFullSize = false;
-            _isShowingThumbnail = true;
+            if (_thumbnail != null)
+            {
+                _isLoadingThumbnail = false;
+                _isShowingFullSize = false;
+                _isShowingThumbnail = true;
+            }
 
             LoadFullSizeIfNeeded();
         }
@@ -237,7 +235,13 @@ namespace _4charm.Controls
 
             try
             {
-                _fullsize = await LoadImage(FullSize, _thumbCancel.Token);
+                _fullsize = await LoadImage(FullSize, progress =>
+                {
+                    if (DownloadProgressCommand != null)
+                    {
+                        DownloadProgressCommand.Execute(progress);
+                    }
+                }, _fullCancel.Token);
             }
             catch (Exception ex)
             {
@@ -254,12 +258,15 @@ namespace _4charm.Controls
                 }
             }
 
-            _isLoadingFullSize = false;
-            _isShowingThumbnail = false;
-            _isShowingFullSize = true;
+            if (_fullsize != null)
+            {
+                _isLoadingFullSize = false;
+                _isShowingThumbnail = false;
+                _isShowingFullSize = true;
+            }
         }
 
-        private async Task<Stream> LoadImage(Uri uri, CancellationToken token)
+        private async Task<Stream> LoadImage(Uri uri, Action<int> progress, CancellationToken token)
         {
             Stream stream;
             if (uri.Scheme == "file")
@@ -277,7 +284,7 @@ namespace _4charm.Controls
             {
                 try
                 {
-                    stream = await LoadRemoteFile(uri, token);
+                    stream = await LoadRemoteFile(uri, progress, token);
                 }
                 catch (TaskCanceledException)
                 {
@@ -294,11 +301,10 @@ namespace _4charm.Controls
             return stream;
         }
 
-        private async Task<Stream> LoadRemoteFile(Uri uri, CancellationToken token)
+        private async Task<Stream> LoadRemoteFile(Uri uri, Action<int> progress, CancellationToken token)
         {
-            HttpResponseMessage response;
-            response = await new HttpClient().GetAsync(uri, HttpCompletionOption.ResponseContentRead, token);
-            return await response.Content.ReadAsStreamAsync();
+            byte[] response = await new HttpClient().GetAsyncWithProgress(uri, progress, token);
+            return new MemoryStream(response);
         }
 
         private async Task<Stream> LoadLocalFile(Uri uri, CancellationToken token)

@@ -31,7 +31,12 @@ namespace _4charm.ViewModels
         public int SelectedIndex
         {
             get { return GetProperty<int>(); }
-            set { SetProperty(value); }
+            set
+            {
+                int oldValue = GetProperty<int>();
+                SetProperty(value);
+                SelectedIndexChanged(oldValue);
+            }
         }
 
         private Thread _thread;
@@ -55,11 +60,11 @@ namespace _4charm.ViewModels
             {
                 _seenPosts.Add(post.Number);
             }
-            ImagePosts = new ObservableCollection<object>(_posts.Select(x => new PostViewModel(x, null)));
+            ImagePosts = new ObservableCollection<object>(_posts.Select(x => new ImageViewerPostViewModel(x)));
 
             for (int i = 0; i < ImagePosts.Count; i++)
             {
-                if ((ImagePosts[i] as PostViewModel).Number == _postID)
+                if ((ImagePosts[i] as ImageViewerPostViewModel).Number == _postID)
                 {
                     SelectedIndex = i;
                     break;
@@ -81,7 +86,10 @@ namespace _4charm.ViewModels
 
         public async Task Update()
         {
-            if (_showLoading) IsLoading = true;
+            if (_showLoading)
+            {
+                IsLoading = true;
+            }
 
             List<Post> posts;
             try
@@ -90,18 +98,32 @@ namespace _4charm.ViewModels
             }
             catch
             {
-                IsLoading = false;
                 return;
             }
+            finally
+            {
+                IsLoading = false;
+            }
 
-            IsLoading = false;
             foreach (Post post in posts)
             {
                 if (!_seenPosts.Contains(post.Number) && post.RenamedFileName != 0)
                 {
                     _seenPosts.Add(post.Number);
-                    ImagePosts.Add(new PostViewModel(post, null));
+                    ImagePosts.Add(new ImageViewerPostViewModel(post));
                 }
+            }
+        }
+
+        private void SelectedIndexChanged(int oldValue)
+        {
+            if (oldValue >= 0 && oldValue < ImagePosts.Count)
+            {
+                (ImagePosts[oldValue] as ImageViewerPostViewModel).IsSelected = false;
+            }
+            if (SelectedIndex >= 0 && SelectedIndex < ImagePosts.Count)
+            {
+                (ImagePosts[SelectedIndex] as ImageViewerPostViewModel).IsSelected = true;
             }
         }
 
@@ -122,13 +144,12 @@ namespace _4charm.ViewModels
                 SystemTray.SetIsVisible(page, true);
                 SystemTray.SetProgressIndicator(page, progress);
 
-                bool result = await SaveInternal(ImagePosts[SelectedIndex] as PostViewModel);
+                bool result = await SaveInternal(ImagePosts[SelectedIndex] as ImageViewerPostViewModel);
 
                 if (result)
                 {
                     progress.Text = "Done.";
                     await Task.Delay(400);
-
                 }
                 else
                 {
@@ -141,7 +162,7 @@ namespace _4charm.ViewModels
             }
         }
 
-        private async Task<bool> SaveInternal(PostViewModel item)
+        private async Task<bool> SaveInternal(ImageViewerPostViewModel item)
         {
             Stream responseStream;
             try

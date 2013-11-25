@@ -1,5 +1,4 @@
 ﻿using Microsoft.Phone.Controls;
-using System;
 using System.Collections;
 using System.Collections.Specialized;
 using System.Windows;
@@ -56,6 +55,25 @@ namespace _4charm.Controls
         public PlaceHolderLongListSelector()
         {
             DefaultStyleKey = typeof(PlaceHolderLongListSelector);
+
+            Loaded += PlaceHolderLongListSelector_Loaded;
+            Unloaded += PlaceHolderLongListSelector_Unloaded;
+        }
+
+        private void PlaceHolderLongListSelector_Loaded(object sender, RoutedEventArgs e)
+        {
+            if (ItemsSource is INotifyCollectionChanged)
+            {
+                (ItemsSource as INotifyCollectionChanged).CollectionChanged += UpdatePlaceholder;
+            }
+        }
+
+        private void PlaceHolderLongListSelector_Unloaded(object sender, RoutedEventArgs e)
+        {
+            if (ItemsSource is INotifyCollectionChanged)
+            {
+                (ItemsSource as INotifyCollectionChanged).CollectionChanged -= UpdatePlaceholder;
+            }
         }
 
         public override void OnApplyTemplate()
