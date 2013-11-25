@@ -64,6 +64,8 @@ void Direct3DBase::CreateDeviceResources()
 	ThrowIfFailed(
 		context.As(&m_d3dContext)
 		);
+
+	m_sprite = std::unique_ptr<DirectX::SpriteBatch>(new DirectX::SpriteBatch(m_d3dContext.Get()));
 }
 
 // Allocate all memory resources that depend on the window size.

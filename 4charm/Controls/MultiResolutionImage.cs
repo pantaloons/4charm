@@ -290,7 +290,7 @@ namespace _4charm.Controls
                 return null;
             }
 
-            _image.StreamSource = stream;
+            _image.SetStreamSource(stream, Path.GetExtension(uri.AbsolutePath));
             return stream;
         }
 
@@ -325,7 +325,7 @@ namespace _4charm.Controls
                 _thumbCancel = null;
                 if (_isShowingThumbnail)
                 {
-                    _image.StreamSource = null;
+                    _image.UnloadStreamSource();
                     _isShowingThumbnail = false;
                 }
             }
@@ -349,7 +349,7 @@ namespace _4charm.Controls
                 _fullCancel = null;
                 if (_isShowingFullSize)
                 {
-                    _image.StreamSource = null;
+                    _image.UnloadStreamSource();
                     _isShowingFullSize = false;
                 }
             }
@@ -360,7 +360,7 @@ namespace _4charm.Controls
             Debug.Assert(!_isLoadingThumbnail);
             Debug.Assert(_thumbnail != null);
 
-            _image.StreamSource = _thumbnail;
+            _image.SetStreamSource(_thumbnail, Path.GetExtension(Thumbnail.AbsolutePath));
 
             _isShowingFullSize = false;
             _isShowingThumbnail = true;
@@ -371,7 +371,7 @@ namespace _4charm.Controls
             Debug.Assert(!_isLoadingFullSize);
             Debug.Assert(_fullsize != null);
 
-            _image.StreamSource = _fullsize;
+            _image.SetStreamSource(_fullsize, Path.GetExtension(FullSize.AbsolutePath));
 
             _isShowingFullSize = true;
             _isShowingThumbnail = false;

@@ -1,11 +1,19 @@
 ﻿
 Microsoft Visual Studio Solution File, Format Version 12.00
-# Visual Studio Express 2012 for Windows Phone
+# Visual Studio 2013
+VisualStudioVersion = 12.0.21005.1
+MinimumVisualStudioVersion = 10.0.40219.1
 Project("{FAE04EC0-301F-11D3-BF4B-00C04F79EFBC}") = "4charm", "4charm\4charm.csproj", "{C39B22F8-5238-4FD1-A864-76169663F0D9}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GIFLIB", "GIFLIB\GIFLIB.vcxproj", "{D604E239-EA62-4AFB-B81B-5227487B79F7}"
 EndProject
 Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "GIFSurface", "GIFSurface\GIFSurface.vcxproj", "{A9050C25-EED4-41D6-8686-3E1D39892A99}"
+	ProjectSection(ProjectDependencies) = postProject
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723} = {AEC8BC04-E4FB-4FB5-86C4-91101C575723}
+		{D604E239-EA62-4AFB-B81B-5227487B79F7} = {D604E239-EA62-4AFB-B81B-5227487B79F7}
+	EndProjectSection
+EndProject
+Project("{8BC9CEB8-8B4A-11D0-8D11-00A0C91BC942}") = "SpriteBatch", "SpriteBatch\SpriteBatch.vcxproj", "{AEC8BC04-E4FB-4FB5-86C4-91101C575723}"
 EndProject
 Global
 	GlobalSection(SolutionConfigurationPlatforms) = preSolution
@@ -87,6 +95,24 @@ Global
 		{A9050C25-EED4-41D6-8686-3E1D39892A99}.Release|Win32.Build.0 = Release|Win32
 		{A9050C25-EED4-41D6-8686-3E1D39892A99}.Release|x86.ActiveCfg = Release|Win32
 		{A9050C25-EED4-41D6-8686-3E1D39892A99}.Release|x86.Build.0 = Release|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|Any CPU.ActiveCfg = Debug|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|ARM.ActiveCfg = Debug|ARM
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|ARM.Build.0 = Debug|ARM
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|Mixed Platforms.ActiveCfg = Debug|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|Mixed Platforms.Build.0 = Debug|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|Win32.ActiveCfg = Debug|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|Win32.Build.0 = Debug|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|x86.ActiveCfg = Debug|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Debug|x86.Build.0 = Debug|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|Any CPU.ActiveCfg = Release|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|ARM.ActiveCfg = Release|ARM
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|ARM.Build.0 = Release|ARM
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|Mixed Platforms.ActiveCfg = Release|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|Mixed Platforms.Build.0 = Release|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|Win32.ActiveCfg = Release|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|Win32.Build.0 = Release|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|x86.ActiveCfg = Release|Win32
+		{AEC8BC04-E4FB-4FB5-86C4-91101C575723}.Release|x86.Build.0 = Release|Win32
 	EndGlobalSection
 	GlobalSection(SolutionProperties) = preSolution
 		HideSolutionNode = FALSE

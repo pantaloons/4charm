@@ -2,6 +2,8 @@
 
 #include <wrl/module.h>
 #include <d3d11_1.h>
+#include <memory>
+#include <SpriteBatch\SpriteBatch.h>
 
 // Helper class that initializes DirectX APIs for 3D rendering.
 ref class Direct3DBase abstract
@@ -15,7 +17,7 @@ public:
 	virtual void CreateWindowSizeDependentResources();
 	virtual void UpdateForRenderResolutionChange(float width, float height);
 	virtual void UpdateForWindowSizeChange(float width, float height);
-	virtual void Render() = 0;
+	virtual void Render(float timeDelta) = 0;
 
 internal:
 	virtual ID3D11Texture2D* GetTexture()
@@ -35,4 +37,5 @@ protected private:
 	D3D_FEATURE_LEVEL m_featureLevel;
 	Windows::Foundation::Size m_renderTargetSize;
 	Windows::Foundation::Rect m_windowBounds;
+	std::unique_ptr<DirectX::SpriteBatch> m_sprite;
 };

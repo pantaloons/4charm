@@ -53,7 +53,10 @@
         <Setter Property="Template">
             <Setter.Value>
                 <ControlTemplate TargetType="controls:GIFImage">
-                    <DrawingSurface x:Name="SurfaceContainer" />
+                    <Grid>
+                        <DrawingSurface x:Name="SurfaceContainer" />
+                        <controls:StaticImage x:Name="ImageContainer" />
+                    </Grid>
                 </ControlTemplate>
             </Setter.Value>
         </Setter>

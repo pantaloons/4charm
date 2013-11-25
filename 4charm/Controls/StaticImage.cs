@@ -8,18 +8,6 @@ namespace _4charm.Controls
 {
     public class StaticImage : Control, IPreloadedImage
     {
-        private Stream _streamSource;
-        public Stream StreamSource
-        {
-            get { return _streamSource; }
-            set
-            {
-                Unload();
-                _streamSource = value;
-                LoadIfNeeded();
-            }
-        }
-
         public int PixelWidth
         {
             get { return _image.PixelWidth; }
@@ -34,12 +22,28 @@ namespace _4charm.Controls
         private BitmapImage _image;
         private Size? _size;
 
+        private Stream _streamSource;
+        private string _fileType;
+
         public StaticImage()
         {
             DefaultStyleKey = typeof(StaticImage);
 
             Loaded += StaticImage_Loaded;
             Unloaded += StaticImage_Unloaded;
+        }
+
+        public void SetStreamSource(Stream source, string fileType)
+        {
+            Unload();
+            _streamSource = source;
+            _fileType = fileType;
+            LoadIfNeeded();
+        }
+
+        public void UnloadStreamSource()
+        {
+            Unload();
         }
 
         private void StaticImage_Loaded(object sender, RoutedEventArgs e)
@@ -72,7 +76,7 @@ namespace _4charm.Controls
 
         private void LoadIfNeeded()
         {
-            if (_container == null || _size == null || StreamSource == null || _image != null)
+            if (_container == null || _size == null || _streamSource == null || _image != null)
             {
                 return;
             }
@@ -85,7 +89,7 @@ namespace _4charm.Controls
             };
             try
             {
-                _image.SetSource(StreamSource);
+                _image.SetSource(_streamSource);
             }
             catch
             {

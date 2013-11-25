@@ -21,6 +21,23 @@ namespace GIFSurface
 		return reinterpret_cast<IDrawingSurfaceContentProvider^>(provider.Get());
 	}
 
+	void GIFWrapper::SetGIF(const Platform::Array<unsigned char>^ resource)
+	{
+		m_resource = resource;
+		if (m_renderer)
+		{
+			m_renderer->CreateGIFResources(m_resource);
+		}
+	}
+
+	void GIFWrapper::UnloadGIF()
+	{
+		if (m_renderer)
+		{
+			m_renderer->ReleaseGIFResources();
+		}
+	}
+
 	void GIFWrapper::RenderResolution::set(Windows::Foundation::Size renderResolution)
 	{
 		if (renderResolution.Width  != m_renderResolution.Width ||
@@ -52,6 +69,7 @@ namespace GIFSurface
 
 	void GIFWrapper::Disconnect()
 	{
+		m_renderer->ReleaseGIFResources();
 		m_renderer = nullptr;
 	}
 
@@ -65,8 +83,7 @@ namespace GIFSurface
 	HRESULT GIFWrapper::GetTexture(_In_ const DrawingSurfaceSizeF* size, _Inout_ IDrawingSurfaceSynchronizedTextureNative** synchronizedTexture, _Inout_ DrawingSurfaceRectF* textureSubRectangle)
 	{
 		m_timer->Update();
-		m_renderer->Update(m_timer->Total, m_timer->Delta);
-		m_renderer->Render();
+		m_renderer->Render(m_timer->Delta);
 
 		RequestAdditionalFrame();
 

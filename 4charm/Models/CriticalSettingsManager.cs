@@ -111,7 +111,7 @@ namespace _4charm.Models
             _boards = new SortedObservableCollection<Board>(boards.Where(x => BoardList.Boards.ContainsKey(x))
                 .Select(x => ThreadCache.Current.EnforceBoard(x)));
 
-            List<string> favorites = GetSetting<List<string>>("Favorites", new List<string>() { "a", "fa", "fit" });
+            List<string> favorites = GetSetting<List<string>>("Favorites", new List<string>() { "wsg", "a", "fa", "fit" });
             _favorites = new ObservableCollection<Board>(favorites.Where(x => BoardList.Boards.ContainsKey(x))
                 .Select(x => ThreadCache.Current.EnforceBoard(x)));
 

@@ -17,6 +17,8 @@ namespace GIFSurface
 		GIFWrapper();
 
 		Windows::Phone::Graphics::Interop::IDrawingSurfaceContentProvider^ CreateContentProvider();
+		void SetGIF(const Platform::Array<unsigned char>^ resource);
+		void UnloadGIF();
 
 		event RequestAdditionalFrameHandler^ RequestAdditionalFrame;
 		event RecreateSynchronizedTextureHandler^ RecreateSynchronizedTexture;
@@ -40,5 +42,6 @@ namespace GIFSurface
 		GIFRenderer^ m_renderer;
 		BasicTimer^ m_timer;
 		Windows::Foundation::Size m_renderResolution;
+		const Platform::Array<unsigned char>^ m_resource;
     };
 }

@@ -4,7 +4,8 @@ namespace _4charm.Controls
 {
     interface IPreloadedImage
     {
-        Stream StreamSource { get; set; }
+        void SetStreamSource(Stream source, string fileType);
+        void UnloadStreamSource();
 
         int PixelWidth { get; }
         int PixelHeight { get; }
