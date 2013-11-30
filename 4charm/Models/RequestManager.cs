@@ -3,7 +3,9 @@ using System.Collections.Generic;
 using System.IO;
 using System.Net.Http;
 using System.Net.Http.Headers;
+using System.Threading;
 using System.Threading.Tasks;
+using System.Xml;
 
 namespace _4charm.Models
 {
@@ -23,7 +25,7 @@ namespace _4charm.Models
         private RequestManager()
         {
             _client = new HttpClient();
-            _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("4charm", App.Version));
+            _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("4charm", Version));
         }
 
         public async Task<Stream> GetStreamAsync(Uri uri)
@@ -34,6 +36,11 @@ namespace _4charm.Models
         public async Task<string> GetStringAsync(Uri uri)
         {
             return await _client.GetStringAsync(EnforceHTTPS(uri));
+        }
+
+        public async Task<byte[]> GetByteArrayWithProgressAsync(Uri uri, Action<int> progress, CancellationToken token)
+        {
+            return await _client.GetAsyncWithProgress(EnforceHTTPS(uri), progress, token);
         }
 
         public async Task<HttpResponseMessage> PostAsync(Uri uri, Uri referrer, Dictionary<string, string> fields)
@@ -90,6 +97,35 @@ namespace _4charm.Models
                 modURI = new Uri("https" + modURI.AbsoluteUri.Substring(4));
             }
             return modURI;
+        }
+
+        private static string _version;
+        private static string Version
+        {
+            get
+            {
+                if (_version == null)
+                {
+                    string appManifestName = "WMAppManifest.xml";
+                    string appNodeName = "App";
+
+                    var settings = new XmlReaderSettings();
+                    settings.XmlResolver = new XmlXapResolver();
+
+                    using (XmlReader rdr = XmlReader.Create(appManifestName, settings))
+                    {
+                        rdr.ReadToDescendant(appNodeName);
+                        if (!rdr.IsStartElement())
+                        {
+                            throw new System.FormatException(appManifestName + " is missing " + appNodeName);
+                        }
+
+                        _version = rdr.GetAttribute("Version");
+                    }
+                }
+
+                return _version;
+            }
         }
     }
 }

@@ -277,7 +277,7 @@ namespace _4charm.ViewModels
                     ulong.TryParse(m.Groups[1].Value, out thread);
                 }
 
-                ThreadsPage.ForceReload = true;
+                ThreadsPageViewModel.ForceReload = true;
 
                 GoBack();
                 if (thread != 0)

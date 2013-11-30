@@ -1,4 +1,4 @@
-﻿<controls:BoundPage
+﻿<controls:OrientLockablePage
     x:Class="_4charm.Views.ImageViewer"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -13,7 +13,7 @@
     SupportedOrientations="Portrait" Orientation="Portrait"
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="False">
-
+    
     <Grid d:DataContext="{d:DesignData Source=../SampleData/SampleImageViewerPageViewModel.xaml}">
         <controls:FlipView ItemsSource="{Binding ImagePosts}"
                            SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
@@ -29,7 +29,9 @@
                                         <ScaleTransform x:Name="FlipperZoomableContentTransform" />
                                     </Grid.RenderTransform>
 
-                                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}" FullSize="{Binding ImageSrc}"
+                                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
+                                                                   FullSize="{Binding ImageSrc}"
+                                                                   AspectRatio="{Binding AspectRatio}"
                                                                    DownloadProgressCommand="{Binding UpdateProgress}">
                                         <controls:MultiResolutionImage.Template>
                                             <ControlTemplate TargetType="controls:MultiResolutionImage">
@@ -57,4 +59,4 @@
                      Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}" />
     </Grid>
 
-</controls:BoundPage>
+</controls:OrientLockablePage>

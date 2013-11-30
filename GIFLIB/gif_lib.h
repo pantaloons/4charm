@@ -156,7 +156,7 @@ int EGifPutImageDesc(GifFileType *GifFile,
 void EGifSetGifVersion(GifFileType *GifFile, const bool gif89);
 int EGifPutLine(GifFileType *GifFile, GifPixelType *GifLine,
                 int GifLineLen);
-int EGifPutPixel(GifFileType *GifFile, const GifPixelType GifPixel);
+int EGifPutPixel(GifFileType *GifFile, GifPixelType GifPixel);
 int EGifPutComment(GifFileType *GifFile, const char *GifComment);
 int EGifPutExtensionLeader(GifFileType *GifFile, const int GifExtCode);
 int EGifPutExtensionBlock(GifFileType *GifFile,

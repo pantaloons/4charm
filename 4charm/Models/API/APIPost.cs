@@ -22,32 +22,12 @@ namespace _4charm.Models.API
         [DataMember(Name = "closed")]
         public bool IsClosed { get; set; }
 
-        public DateTime Time { get; set; }
-
         /// <summary>
         /// "now" doesn't parse into a DateTime by default, so we use the TimeSet field to transfer
         /// that API field into a DateTime at parse time.
         /// </summary>
         [DataMember(Name = "now", IsRequired = true)]
-        public string TimeSet
-        {
-            set
-            {
-                DateTime t;
-                if (DateTime.TryParseExact(value, "MM/dd/yy(ddd)HH:mm", new CultureInfo("en-US"), DateTimeStyles.None, out t))
-                {
-                    Time = t;
-                }
-                else if (DateTime.TryParseExact(value, "MM/dd/yy(ddd)HH:mm:ss", new CultureInfo("en-US"), DateTimeStyles.None, out t))
-                {
-                    Time = t;
-                }
-            }
-            get
-            {
-                return null;
-            }
-        }
+        public string Time { get; set; }
 
         [DataMember(Name = "time", IsRequired = true)]
         public ulong TimeStamp { get; set; }

@@ -1,13 +1,12 @@
 ﻿using System.IO;
+using System.Threading;
+using System.Threading.Tasks;
 
 namespace _4charm.Controls
 {
     interface IPreloadedImage
     {
-        void SetStreamSource(Stream source, string fileType);
+        Task<bool> SetStreamSource(Stream source, string fileType, CancellationToken token);
         void UnloadStreamSource();
-
-        int PixelWidth { get; }
-        int PixelHeight { get; }
     }
 }

@@ -20,7 +20,6 @@ namespace _4charm.Models.Migration
         private static SettingsManager1_1 _current;
         public static SettingsManager1_1 Current
         {
-            [MethodImpl(MethodImplOptions.Synchronized)]
             get
             {
                 if (_current == null) _current = new SettingsManager1_1();

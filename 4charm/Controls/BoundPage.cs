@@ -6,7 +6,7 @@ using System.Windows.Navigation;
 
 namespace _4charm.Controls
 {
-    public class BoundPage : PhoneApplicationPage
+    public abstract class BoundPage : PhoneApplicationPage
     {
         private bool _initialized; 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -21,6 +21,8 @@ namespace _4charm.Controls
                 _initialized = true;
                 vm.Initialize(NavigationContext.QueryString, e);
             }
+
+            vm.OnNavigatedTo(e);
         }
 
         protected override void OnNavigatedFrom(NavigationEventArgs e)
@@ -31,6 +33,16 @@ namespace _4charm.Controls
             PageViewModelBase vm = DataContext as PageViewModelBase;
 
             vm.OnNavigatedFrom(e);
+        }
+
+        protected override void OnRemovedFromJournal(JournalEntryRemovedEventArgs e)
+        {
+            base.OnRemovedFromJournal(e);
+
+            Debug.Assert(DataContext is PageViewModelBase);
+            PageViewModelBase vm = DataContext as PageViewModelBase;
+
+            vm.OnRemovedFromJournal(e);
         }
 
         protected override void OnBackKeyPress(CancelEventArgs e)

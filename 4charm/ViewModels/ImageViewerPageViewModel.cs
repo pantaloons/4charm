@@ -1,4 +1,5 @@
 ﻿using _4charm.Models;
+using _4charm.Resources;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Microsoft.Xna.Framework.Media;
@@ -105,18 +106,25 @@ namespace _4charm.ViewModels
                 IsLoading = false;
             }
 
-            foreach (Post post in posts)
+            for (int i = 0; i < posts.Count; i++)
             {
+                Post post = posts[i];
+
                 if (!_seenPosts.Contains(post.Number) && post.RenamedFileName != 0)
                 {
                     _seenPosts.Add(post.Number);
                     ImagePosts.Add(new ImageViewerPostViewModel(post));
+                    if (post.Number == _postID)
+                    {
+                        SelectedIndex = i;
+                    }
                 }
             }
         }
 
         private void SelectedIndexChanged(int oldValue)
         {
+            // Toggles if animated GIF is playing
             if (oldValue >= 0 && oldValue < ImagePosts.Count)
             {
                 (ImagePosts[oldValue] as ImageViewerPostViewModel).IsSelected = false;
@@ -135,7 +143,7 @@ namespace _4charm.ViewModels
                 {
                     IsVisible = true,
                     IsIndeterminate = true,
-                    Text = "Saving to Saved Pictures..."
+                    Text = AppResources.ImageViewerPage_SavingImage
                 };
 
                 PhoneApplicationPage page = (App.Current.RootVisual as PhoneApplicationFrame).Content as PhoneApplicationPage;
@@ -148,12 +156,12 @@ namespace _4charm.ViewModels
 
                 if (result)
                 {
-                    progress.Text = "Done.";
+                    progress.Text = AppResources.ImageViewerPage_ImageSaved;
                     await Task.Delay(400);
                 }
                 else
                 {
-                    progress.Text = "Image download failed.";
+                    progress.Text = AppResources.ImageViewerPage_ImageFailed;
                     await Task.Delay(1000);
                 }
 
@@ -167,8 +175,7 @@ namespace _4charm.ViewModels
             Stream responseStream;
             try
             {
-                HttpResponseMessage response = await new HttpClient().GetAsync(item.ImageSrc);
-                responseStream = await response.Content.ReadAsStreamAsync();
+                responseStream = await RequestManager.Current.GetStreamAsync(item.ImageSrc);
             }
             catch
             {
@@ -205,9 +212,13 @@ namespace _4charm.ViewModels
                 }
                 catch
                 {
+                    return false;
+                }
+                finally
+                {
                     bi.UriSource = null;
                     bi = null;
-                    return false;
+                    wbmp = null;
                 }
             }
 

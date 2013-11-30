@@ -18,7 +18,7 @@
     shell:SystemTray.IsVisible="False">
     
     <!-- Resources. -->
-    <phone:PhoneApplicationPage.Resources>
+    <phone:PhoneApplicationPage.Resources>        
         <!-- Thread template for watchlist and history. -->
         <DataTemplate x:Key="ThreadItemTemplate">
             <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24">
@@ -83,18 +83,20 @@
                                    Text="{Binding LongNumber}" />
                     </Grid>
 
-                    <Image VerticalAlignment="Top"
-                           Grid.Row="2"
-                           Width="{Binding ThumbWidth}"
-                           Height="{Binding ThumbHeight}"
-                           Margin="{Binding ThumbMargin2}"
-                           Source="{Binding Image}">
+                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
+                                                   Width="{Binding ThumbWidth}"
+                                                   Height="{Binding ThumbHeight}"
+                                                   Margin="0,6,12,6"
+                                                   VerticalAlignment="Top"
+                                                   Grid.Row="2"
+                                                   Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
+                        <!-- Tapping the image goes directly to the image viewer.-->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Tap">
                                 <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </Image>
+                    </controls:MultiResolutionImage>
 
                     <RichTextBox VerticalAlignment="Top" Grid.Column="1" Grid.Row="2"
                                  models:BindableTextBlock.FormattedText="{Binding HtmlComment}"
@@ -171,6 +173,52 @@
             </Grid>
         </DataTemplate>
 
+        <!-- Correct the LongListSelector template so that the scrollbar does not affect content width,
+             otherwise adding threads 3/4 will cause the scrollbar to appear and snap the width of
+             existing posts in a little bit. -->
+        <Style x:Key="OverlaidScrollbarPHLLS" TargetType="controls:PlaceHolderLongListSelector">
+            <Setter Property="Background" Value="Transparent"/>
+            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
+            <Setter Property="Template">
+                <Setter.Value>
+                    <ControlTemplate TargetType="controls:PlaceHolderLongListSelector">
+                        <Grid Background="{TemplateBinding Background}">
+                            <VisualStateManager.VisualStateGroups>
+                                <VisualStateGroup x:Name="ScrollStates">
+                                    <VisualStateGroup.Transitions>
+                                        <VisualTransition GeneratedDuration="00:00:00.5"/>
+                                    </VisualStateGroup.Transitions>
+                                    <VisualState x:Name="Scrolling">
+                                        <Storyboard>
+                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="VerticalScrollBar"/>
+                                        </Storyboard>
+                                    </VisualState>
+                                    <VisualState x:Name="NotScrolling"/>
+                                </VisualStateGroup>
+                            </VisualStateManager.VisualStateGroups>
+                            <Grid Margin="{TemplateBinding Padding}">
+                                <Grid.ColumnDefinitions>
+                                    <ColumnDefinition Width="*"/>
+                                    <ColumnDefinition Width="12"/>
+                                </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="Placeholder"
+                                       TextWrapping="Wrap"
+                                       Visibility="Collapsed"
+                                       Grid.ColumnSpan="2"
+                                       FontSize="{StaticResource PhoneFontSizeLarge}"
+                                       Foreground="{StaticResource PhoneSubtleBrush}"
+                                       FontFamily="Segoe WP Light" />
+
+                                <ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                                <ScrollBar x:Name="VerticalScrollBar" Grid.Column="1" Margin="4,0,4,0" Opacity="0" Orientation="Vertical"/>
+                            </Grid>
+                        </Grid>
+                    </ControlTemplate>
+                </Setter.Value>
+            </Setter>
+        </Style>
+
         <!-- PlaceHolderLongListSelector without a scrollbar. -->
         <Style x:Key="NoScrollbarPHLLS" TargetType="controls:PlaceHolderLongListSelector">
             <Setter Property="Background" Value="Transparent"/>
@@ -187,11 +235,12 @@
                             </VisualStateManager.VisualStateGroups>
                             <Grid Margin="{TemplateBinding Padding}">
                                 <TextBlock x:Name="Placeholder"
-                                       TextWrapping="Wrap"
-                                       Visibility="Collapsed"
-                                       FontSize="{StaticResource PhoneFontSizeLarge}"
-                                       Foreground="{StaticResource PhoneSubtleBrush}"
-                                       FontFamily="Segoe WP Light" />
+                                           Margin="12,0"
+                                           TextWrapping="Wrap"
+                                           Visibility="Collapsed"
+                                           FontSize="{StaticResource PhoneFontSizeLarge}"
+                                           Foreground="{StaticResource PhoneSubtleBrush}"
+                                           FontFamily="Segoe WP Light" />
 
                                 <ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             </Grid>
@@ -205,7 +254,8 @@
     <Grid d:DataContext="{d:DesignData Source=../SampleData/SampleBoardsPageViewModel.xaml}">
         <phone:Pivot x:Name="RootPivot"
                      Title="{Binding Path=LocalizedResources.ApplicationTitle, Source={StaticResource LocalizedStrings}}"
-                     SelectionChanged="RootPivotChanged">
+                     SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}"
+                     SelectionChanged="PivotSelectionChanged">
             
             <!-- Favorites. -->
             <phone:PivotItem Header="{Binding Path=LocalizedResources.BoardsPage_Favorites, Source={StaticResource LocalizedStrings}}">
@@ -224,28 +274,27 @@
             <!-- Watchlist. -->
             <phone:PivotItem Header="{Binding Path=LocalizedResources.BoardsPage_Watchlist, Source={StaticResource LocalizedStrings}}">
                 <controls:PlaceHolderLongListSelector x:Name="Watchlist"
+                                                      Style="{StaticResource OverlaidScrollbarPHLLS}"
                                                       Margin="12,0,0,0"
                                                       ItemsSource="{Binding Watchlist}"
                                                       ItemTemplate="{StaticResource ThreadItemTemplate}"
-                                                      ItemRealized="ThreadRealized"
-                                                      ItemUnrealized="ThreadUnrealized"
                                                       PlaceholderText="{Binding Path=LocalizedResources.BoardsPage_WatchlistEmpty, Source={StaticResource LocalizedStrings}}" />
             </phone:PivotItem>
             
             <!-- History. -->
             <phone:PivotItem Header="{Binding Path=LocalizedResources.BoardsPage_History, Source={StaticResource LocalizedStrings}}">
                 <controls:PlaceHolderLongListSelector x:Name="History"
+                                                      Style="{StaticResource OverlaidScrollbarPHLLS}"
                                                       Margin="12,0,0,0"
                                                       ItemsSource="{Binding History}"
                                                       ItemTemplate="{StaticResource ThreadItemTemplate}"
-                                                      ItemRealized="ThreadRealized"
-                                                      ItemUnrealized="ThreadUnrealized"
                                                       PlaceholderText="{Binding Path=LocalizedResources.BoardsPage_HistoryEmpty, Source={StaticResource LocalizedStrings}}" />
             </phone:PivotItem>
             
             <!-- All. -->
             <phone:PivotItem Header="{Binding Path=LocalizedResources.BoardsPage_All, Source={StaticResource LocalizedStrings}}">
                 <controls:PlaceHolderLongListSelector x:Name="All"
+                                                      Style="{StaticResource OverlaidScrollbarPHLLS}"
                                                       Margin="12,0,0,0"
                                                       ItemsSource="{Binding All}"
                                                       PlaceholderText="{Binding Path=LocalizedResources.BoardsPage_AllEmpty, Source={StaticResource LocalizedStrings}}">

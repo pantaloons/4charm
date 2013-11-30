@@ -223,7 +223,16 @@ namespace _4charm.ViewModels
             AuthorName = p.DisplayName;
             HtmlComment = new HtmlDocument();
             if (p.Comment != null) HtmlComment.LoadHtml(p.Comment.Replace("<wbr>", ""));
-            SimpleComment = WebUtility.HtmlDecode(HtmlComment.DocumentNode.InnerText).Replace("&#039;", "'").Replace("&#44;", ",");
+
+            if (Subject != null)
+            {
+                SimpleComment = Subject;
+            }
+            else
+            {
+                SimpleComment = WebUtility.HtmlDecode(HtmlComment.DocumentNode.InnerText).Replace("&#039;", "'").Replace("&#44;", ",");
+            }
+            
             PrettyTime = p.PrettyTime;
 
             CapCode = p.CapCode;

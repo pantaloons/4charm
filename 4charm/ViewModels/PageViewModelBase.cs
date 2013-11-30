@@ -10,7 +10,15 @@ namespace _4charm.ViewModels
         {
         }
 
+        public virtual void OnNavigatedTo(NavigationEventArgs e)
+        {
+        }
+
         public virtual void OnNavigatedFrom(NavigationEventArgs e)
+        {
+        }
+
+        public virtual void OnRemovedFromJournal(JournalEntryRemovedEventArgs e)
         {
         }
 

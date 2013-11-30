@@ -25,6 +25,8 @@ namespace _4charm.Models
     [DataContract]
     public class Post
     {
+        private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
+
         /// <summary>
         /// Parent thread in the ThreadCache.
         /// </summary>
@@ -262,7 +264,7 @@ namespace _4charm.Models
             IsSticky = post.IsSticky;
             IsClosed = post.IsClosed;
             FileDeleted = post.FileDeleted;
-            Time = post.Time;
+            Time = UnixEpoch.AddSeconds(post.TimeStamp);
             Subject = post.Subject;
             Tripcode = post.Tripcode;
             CapCode = post.CapCode;
@@ -377,10 +379,7 @@ namespace _4charm.Models
 
                 var now = DateTime.UtcNow;
 
-                // Adjust for 4chan server time-offset, UTC-4.
-                var post = Time.AddHours(4);
-
-                var ts = new TimeSpan(now.Ticks - post.Ticks);
+                var ts = new TimeSpan(now.Ticks - Time.Ticks);
                 double delta = ts.TotalSeconds;
 
                 var realNow = DateTime.Now;
@@ -391,7 +390,7 @@ namespace _4charm.Models
                 else if (delta < 2 * MINUTE) return "a minute ago";
                 else if (delta < 60 * MINUTE) return ts.Minutes + " minutes ago";
                 else if (delta < 100 * MINUTE) return "about an hour ago";
-                else if (realNow.Date == real.Date || delta < 220 * MINUTE) return new TimeSpan(now.AddMinutes(20).Ticks - post.Ticks).Hours + " hours ago";
+                else if (realNow.Date == real.Date || delta < 220 * MINUTE) return new TimeSpan(now.AddMinutes(20).Ticks - Time.Ticks).Hours + " hours ago";
                 else if (realNow.Date == real.Date.AddDays(1)) return "yesterday at " + real.ToString("t");
                 else if (realNow.Date <= real.Date.AddDays(3)) return real.Date.DayOfWeek + " at " + real.ToString("t");
                 else if (realNow.Year == real.Year) return real.ToString("M") + " at " + real.ToString("t");

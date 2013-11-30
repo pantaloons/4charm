@@ -13,8 +13,9 @@ namespace _4charm.Models
         /// Board listing. Additions and deletions should add/remove corresponding
         /// fanart and icon from the assets.
         /// </summary>
-        public static Dictionary<string, BoardID> Boards = new Dictionary<string, BoardID>{
-            {"a", new BoardID("a", "Anime", false)},
+        public static Dictionary<string, BoardID> Boards = new Dictionary<string, BoardID>
+        {
+            {"a", new BoardID("a", "Anime & Manga", false)},
             {"b", new BoardID("b", "Random", true)},
             {"c", new BoardID("c", "Anime/Cute", false)},
             {"d", new BoardID("d", "Hentai/Alternative", true)},
@@ -58,7 +59,7 @@ namespace _4charm.Models
             {"co", new BoardID("co", "Comics & Cartoons", false)},
             {"diy", new BoardID("diy", "Do-It-Yourself", false)},
             {"fa", new BoardID("fa", "Fashion", false)},
-            {"fit", new BoardID("fit", "Health and Fitness", false)},
+            {"fit", new BoardID("fit", "Fitness", false)},
             {"gd", new BoardID("gd", "Graphic Design", false)},
             {"hc", new BoardID("hc", "Hardcore", true)},
             {"int", new BoardID("int", "International", false)},
@@ -71,7 +72,7 @@ namespace _4charm.Models
             {"po", new BoardID("po", "Papercraft & Origami", false)},
             {"pol", new BoardID("pol", "Politically Incorrect", true)},
             {"sci", new BoardID("sci", "Science & Math", false)},
-            {"soc", new BoardID("soc", "Social", true)},
+            {"soc", new BoardID("soc", "Cams & Meetups", true)},
             {"sp", new BoardID("sp", "Sports", false)},
             {"tg", new BoardID("tg", "Traditional Games", false)},
             {"toy", new BoardID("toy", "Toys", false)},
@@ -79,9 +80,7 @@ namespace _4charm.Models
             {"tv", new BoardID("tv", "Television & Film", false)},
             {"vp", new BoardID("vp", "Pokémon", false)},
             {"wsg", new BoardID("wsg", "Worksafe GIF", false)},
-            {"x", new BoardID("x", "Paranormal", false)},
-
-            {"q", new BoardID("q", "4chan Discussion", false)}
+            {"x", new BoardID("x", "Paranormal", false)}
         };
     }
 }

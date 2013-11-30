@@ -291,7 +291,7 @@
     <value>settings</value>
   </data>
   <data name="BoardsPage_AllEmpty" xml:space="preserve">
-    <value>Press the + button to get add some boards.</value>
+    <value>Press the + button to add some boards.</value>
   </data>
   <data name="BoardsPage_FavoritesEmpty" xml:space="preserve">
     <value>Tap and hold boards on the all boards list to add favorites!</value>
@@ -301,5 +301,26 @@
   </data>
   <data name="BoardsPage_WatchlistEmpty" xml:space="preserve">
     <value>Watchlist is empty. Add some threads!</value>
+  </data>
+  <data name="ThreadsPage_Error" xml:space="preserve">
+    <value>There was an error retrieving the threads :(</value>
+  </data>
+  <data name="ImageViewerPage_ImageFailed" xml:space="preserve">
+    <value>Image download failed.</value>
+  </data>
+  <data name="ImageViewerPage_ImageSaved" xml:space="preserve">
+    <value>Done.</value>
+  </data>
+  <data name="ImageViewerPage_SavingImage" xml:space="preserve">
+    <value>Saving to Saved Pictures...</value>
+  </data>
+  <data name="ThreadsPage_Catalog" xml:space="preserve">
+    <value>catalog</value>
+  </data>
+  <data name="ThreadsPage_Threads" xml:space="preserve">
+    <value>threads</value>
+  </data>
+  <data name="ThreadsPage_Watchlist" xml:space="preserve">
+    <value>watchlist</value>
   </data>
 </root>

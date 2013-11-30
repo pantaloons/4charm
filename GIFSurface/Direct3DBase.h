@@ -17,7 +17,7 @@ public:
 	virtual void CreateWindowSizeDependentResources();
 	virtual void UpdateForRenderResolutionChange(float width, float height);
 	virtual void UpdateForWindowSizeChange(float width, float height);
-	virtual void Render(float timeDelta) = 0;
+	virtual void Render(float timeDelta, bool forceUpdate) = 0;
 
 internal:
 	virtual ID3D11Texture2D* GetTexture()

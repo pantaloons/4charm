@@ -22,8 +22,8 @@ namespace _4charm.ViewModels
 #if DEBUG
         ~ImageViewModelBase()
         {
-            Debug.Assert(_loading == null);
-            Debug.Assert(Image == null);
+            //Debug.Assert(_loading == null);
+            //Debug.Assert(Image == null);
         }
 #endif
 

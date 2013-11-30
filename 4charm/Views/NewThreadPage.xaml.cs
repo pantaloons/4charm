@@ -50,7 +50,7 @@ namespace _4charm.Views
         {
             if (e.Key == Key.Enter)
             {
-                NameTextBox.Focus();
+                CaptchaTextBox.Focus();
             }
         }
 

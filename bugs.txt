@@ -1,11 +1,7 @@
-Bugs:
-
-Features:
-Rating reminder
-GIFs
 Text tile pinning
-progress bar
 try/catch new system.net
-Memory leaks...
-enforce https
-DST timezone 1 hour thing
+task switch back to gif image
+decode gif async
+tombstoning
+add replies indicator after post number
+fade in

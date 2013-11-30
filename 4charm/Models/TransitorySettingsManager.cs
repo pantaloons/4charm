@@ -1,9 +1,7 @@
-﻿using _4charm.ViewModels;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
-using System.Threading.Tasks;
 
 namespace _4charm.Models
 {
@@ -49,11 +47,9 @@ namespace _4charm.Models
         private ObservableCollection<Thread> _watchlist, _history;
 
         /// <summary>
-        /// Task tracking progress of collection rebuilding. This gets started off after
-        /// the restore completes, and should be waited on before attempting to use
-        /// the two rebuilt collections (watchlist and history.)
+        /// If the settings have been rebuilt yet.
         /// </summary>
-        private Task _rebuildTask = null;
+        private bool _isRebuilt;
 
         public TransitorySettingsManager()
             : base(DefaultSettingsFileName, KnownTypes)
@@ -62,7 +58,7 @@ namespace _4charm.Models
             // and watchlist collections, which involves fixing up some references that
             // don't get persisted correctly. Those collections should wait on the rebuild
             // task before returning.
-            _rebuildTask = Restore().ContinueWith(t => Rebuild(), TaskContinuationOptions.ExecuteSynchronously);
+            Restore();
         }
 
         /// <summary>
@@ -71,7 +67,7 @@ namespace _4charm.Models
         /// </summary>
         public ObservableCollection<Thread> History
         {
-            get { _rebuildTask.Wait(); return _history; }
+            get { Rebuild(); return _history; }
         }
 
         /// <summary>
@@ -80,7 +76,7 @@ namespace _4charm.Models
         /// </summary>
         public ObservableCollection<Thread> Watchlist
         {
-            get { _rebuildTask.Wait(); return _watchlist; }
+            get { Rebuild(); return _watchlist; }
         }
 
         /// <summary>
@@ -91,6 +87,14 @@ namespace _4charm.Models
         /// </summary>
         private void Rebuild()
         {
+            if (_isRebuilt)
+            {
+                return;
+            }
+
+            _isRebuilt = true;
+            Restore().Wait();
+
             // Translate the serialized watchlist into valid usable objects.
             List<ThreadID> watchlist = GetSetting<List<ThreadID>>("Watchlist", new List<ThreadID>());
             _watchlist = new ObservableCollection<Thread>(watchlist.Where(x => BoardList.Boards.ContainsKey(x.BoardName))

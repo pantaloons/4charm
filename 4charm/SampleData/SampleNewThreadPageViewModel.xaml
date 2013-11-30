@@ -8,7 +8,7 @@
     Email="moot@moot.com"
     CaptchaText="marblecake zpf89"
     FileName="wowsuchfiles.png"
-    Comment="commentcomment commentcommentcommentcomment commentcomment commentcommentcommentcomment">
+    Comment="commentcomment commentcommentcommentcomment commentcomment comm">
     
     <local:NewThreadPageViewModel.Name>moot</local:NewThreadPageViewModel.Name>
 

@@ -102,13 +102,13 @@
     <Compile Include="Controls\GIFImage.cs" />
     <Compile Include="Controls\IPreloadedImage.cs" />
     <Compile Include="Controls\MultiResolutionImage.cs" />
+    <Compile Include="Controls\OrientLockablePage.cs" />
     <Compile Include="Controls\PlaceHolderLongListSelector.cs" />
     <Compile Include="Controls\SelectionBindableTextBox.cs" />
     <Compile Include="Controls\StaticImage.cs" />
     <Compile Include="Controls\TilePicker.cs" />
     <Compile Include="Converters\BoolVisibleConverter.cs" />
     <Compile Include="Converters\CapCodeColorConverter.cs" />
-    <Compile Include="Converters\EmptyCollectionVisibilityConverter.cs" />
     <Compile Include="Converters\IndexOrientationConverter.cs" />
     <Compile Include="Converters\NullVisibleConverter.cs" />
     <Compile Include="LocalizedStrings.cs" />
@@ -117,11 +117,13 @@
     <Compile Include="Models\API\APIPost.cs" />
     <Compile Include="Models\API\APIThread.cs" />
     <Compile Include="Models\BindableTextBlock.cs" />
+    <Compile Include="Models\BitmapImageExtensions.cs" />
     <Compile Include="Models\Board.cs" />
     <Compile Include="Models\BoardID.cs" />
     <Compile Include="Models\BoardList.cs" />
     <Compile Include="Models\CriticalSettingsManager.cs" />
     <Compile Include="Models\DataContractJsonSerializerExtensions.cs" />
+    <Compile Include="Models\DelayLoadingObservableCollection.cs" />
     <Compile Include="Models\HttpClientExtensions.cs" />
     <Compile Include="Models\Migration\SettingsManager1_1.cs" />
     <Compile Include="Models\Migration\VersionMigrator.cs" />
@@ -269,7 +271,6 @@
     <Content Include="Assets\Boards\Fanart\p.jpg" />
     <Content Include="Assets\Boards\Fanart\po.jpg" />
     <Content Include="Assets\Boards\Fanart\pol.jpg" />
-    <Content Include="Assets\Boards\Fanart\q.jpg" />
     <Content Include="Assets\Boards\Fanart\r.jpg" />
     <Content Include="Assets\Boards\Fanart\r9k.jpg" />
     <Content Include="Assets\Boards\Fanart\s.jpg" />
@@ -331,7 +332,6 @@
     <Content Include="Assets\Boards\Icons\p.jpg" />
     <Content Include="Assets\Boards\Icons\po.jpg" />
     <Content Include="Assets\Boards\Icons\pol.jpg" />
-    <Content Include="Assets\Boards\Icons\q.jpg" />
     <Content Include="Assets\Boards\Icons\r.jpg" />
     <Content Include="Assets\Boards\Icons\r9k.jpg" />
     <Content Include="Assets\Boards\Icons\s.jpg" />

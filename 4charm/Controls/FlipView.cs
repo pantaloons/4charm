@@ -24,7 +24,6 @@ namespace _4charm.Controls
             public double DragStartingMediaStripOffset { get; set; }
             public double NetDragDistanceSincleLastDragStagnation { get; set; }
             public double LastDragDistanceDelta { get; set; }
-            public int NewDisplayedElementIndex { get; set; }
             public double UnsquishTranslationAnimationTarget { get; set; }
 
             public DragState(double maxDraggingBoundary)
@@ -507,7 +506,7 @@ namespace _4charm.Controls
                 newItems.CollectionChanged += UpdateItems;
             }
 
-            SelectedIndex = ItemsSource.Count >= 0 ? Math.Min(SelectedIndex, ItemsSource.Count) : -1;
+            SelectedIndex = ItemsSource.Count > 0 ? Math.Min(SelectedIndex, ItemsSource.Count) : -1;
 
             InitializeIfReady();
         }
@@ -550,7 +549,7 @@ namespace _4charm.Controls
             }
 
             _rootCanvas.Height = _size.Value.Height;
-            _rootCanvas.Width = ItemsSource.Count * (_size.Value.Width + ItemGutter) - ItemGutter;
+            _rootCanvas.Width = Math.Max(0, ItemsSource.Count * (_size.Value.Width + ItemGutter) - ItemGutter);
 
             _dragState.MinDraggingBoundary = MaxDraggingSquishDistance;
             _dragState.MaxDraggingBoundary = -1 * (_rootCanvas.Width - _size.Value.Width + MaxDraggingSquishDistance);
@@ -939,7 +938,7 @@ namespace _4charm.Controls
             _state = FlipperState.InertiaAnimating;
             _dragInertiaAnimation.Begin();
 
-            _dragState.NewDisplayedElementIndex = elementIndex;
+            SelectedIndex = elementIndex;
         }
 
         private void DragInertiaAnimationComplete(object sender, EventArgs e)
@@ -961,8 +960,6 @@ namespace _4charm.Controls
                 _dragInertiaAnimation.Stop();
                 _dragInertiaAnimation = null;
                 _dragInertiaAnimationTranslation = null;
-
-                SelectedIndex = _dragState.NewDisplayedElementIndex;
             }
         }
 

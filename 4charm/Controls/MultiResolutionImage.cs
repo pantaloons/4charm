@@ -58,6 +58,27 @@ namespace _4charm.Controls
 
         #endregion
 
+        #region AspectRatio DependencyProperty
+
+        public static readonly DependencyProperty AspectRatioProperty = DependencyProperty.Register(
+            "AspectRatio",
+            typeof(double),
+            typeof(MultiResolutionImage),
+            new PropertyMetadata(-1.0, OnAspectRationChanged));
+
+        public double AspectRatio
+        {
+            get { return (double)GetValue(AspectRatioProperty); }
+            set { SetValue(AspectRatioProperty, value); }
+        }
+
+        private static void OnAspectRationChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as MultiResolutionImage).AspectRatioChanged();
+        }
+
+        #endregion
+
         #region DownloadProgressCommand DependencyProperty
 
         public static readonly DependencyProperty DownloadProgressCommandProperty = DependencyProperty.Register(
@@ -92,18 +113,38 @@ namespace _4charm.Controls
 
             Loaded += MultiResolutionImage_Loaded;
             Unloaded += MultiResolutionImage_Unloaded;
+            SizeChanged += MultiResolutionImage_SizeChanged;
         }
 
         private void MultiResolutionImage_Loaded(object sender, RoutedEventArgs e)
         {
-            LoadThumbnailIfNeeded();
-            LoadFullSizeIfNeeded();
+            LoadAppropriateImageIfNeeded();
         }
 
         private void MultiResolutionImage_Unloaded(object sender, RoutedEventArgs e)
         {
             CancelLoadingThumbnail();
             CancelLoadingFullSize();
+            UnloadThumbnail();
+            UnloadFullSize();
+        }
+
+        protected override Size MeasureOverride(Size availableSize)
+        {
+            if (AspectRatio == -1.0)
+            {
+                return availableSize;
+            }
+
+            double availableAspect = availableSize.Width / (double)availableSize.Height;
+            if (AspectRatio >= availableAspect)
+            {
+                return new Size(availableSize.Width, availableSize.Width / AspectRatio);
+            }
+            else
+            {
+                return new Size(availableSize.Height * AspectRatio, availableSize.Height);
+            }
         }
 
         public override void OnApplyTemplate()
@@ -114,196 +155,193 @@ namespace _4charm.Controls
 
             if (DesignerProperties.GetIsInDesignMode(this))
             {
-                // We have to load resources special in design mode, we can't read
-                // from a stream. To prevent other functions overwriting the image,
-                // new up the private member afterwards.
-
-                //(_image as StaticImage)._container.Source = new BitmapImage(Thumbnail);
-                //(_image as StaticImage)._container = new Image();
-                //if (rootImage == null) throw new Exception("qqq");
-                //rootImage.Source = 
-                //_image = new StaticImage();
+                _isShowingFullSize = true;
+                ((StaticImage)_image).SetUriSource(Thumbnail);
+                _image = new StaticImage();
                 return;
             }
 
-            LoadThumbnailIfNeeded();
-            LoadFullSizeIfNeeded();
-        }
-
-        protected override Size MeasureOverride(Size availableSize)
-        {
-            return availableSize;
+            LoadAppropriateImageIfNeeded();
         }
 
         protected override Size ArrangeOverride(Size finalSize)
         {
             _size = finalSize;
-            LoadThumbnailIfNeeded();
-            LoadFullSizeIfNeeded();
-            
+
             return base.ArrangeOverride(finalSize);
+        }
+
+        private void MultiResolutionImage_SizeChanged(object sender, SizeChangedEventArgs e)
+        {
+            if (e.NewSize != e.PreviousSize)
+            {
+                LoadAppropriateImageIfNeeded();
+            }   
+        }
+
+        private void AspectRatioChanged()
+        {
+            InvalidateMeasure();
         }
 
         private void ThumbnailChanged()
         {
             CancelLoadingThumbnail();
+            CancelLoadingFullSize();
             UnloadThumbnail();
-            LoadThumbnailIfNeeded();
-            LoadFullSizeIfNeeded();
+            UnloadFullSize();
+            LoadAppropriateImageIfNeeded();
         }
 
         private void FullSizeChanged()
         {
             CancelLoadingFullSize();
             UnloadFullSize();
-            LoadThumbnailIfNeeded();
-            LoadFullSizeIfNeeded();
+            LoadAppropriateImageIfNeeded();
         }
 
-        private void LoadThumbnailIfNeeded()
+        private void LoadAppropriateImageIfNeeded()
         {
-            if (!_isShowingThumbnail && !_isShowingFullSize && !_isLoadingThumbnail && Thumbnail != null && _size != null)
+            if (_isShowingFullSize || _isLoadingThumbnail || _isLoadingFullSize || _size == null)
             {
-                LoadThumbnailImage().ContinueWith(result =>
-                {
-                    throw result.Exception;
-                }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+                return;
+            }
+
+            if (!_isShowingThumbnail && Thumbnail != null)
+            {
+                LoadThumbnailImage();
+            }
+            else if (_isShowingThumbnail && FullSize != null)
+            {
+                LoadFullSizeImage();
             }
         }
 
-        private void LoadFullSizeIfNeeded()
+        private void LoadThumbnailImage()
         {
-            if (!_isShowingFullSize && !_isLoadingFullSize && _size != null && _isShowingThumbnail && FullSize != null &&
-                (_image.PixelWidth < _size.Value.Width || _image.PixelHeight < _size.Value.Height))
-            {
-                LoadFullSizeImage().ContinueWith(result =>
-                {
-                    throw result.Exception;
-                }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
-            }
-        }
-
-        private async Task LoadThumbnailImage()
-        {
-            Debug.Assert(_thumbnail == null);
             Debug.Assert(_thumbCancel == null);
-            Debug.Assert(_isLoadingThumbnail == false);
-            Debug.Assert(_isShowingThumbnail == false);
+            Debug.Assert(_fullCancel == null);
+            Debug.Assert(!_isLoadingThumbnail);
+            Debug.Assert(!_isLoadingFullSize);
 
             _isLoadingThumbnail = true;
             _thumbCancel = new CancellationTokenSource();
-
-            try
-            {
-                _thumbnail = await LoadImage(Thumbnail, progress => {}, _thumbCancel.Token);
-            }
-            catch (Exception ex)
-            {
-                if (ex.HResult == -2146233088)
-                {
-                    // Image unrecognized
-                    _isLoadingThumbnail = false;
-                    _thumbCancel = null;
-
-                    return;
-                }
-                else
-                {
-                    throw;
-                }
-            }
-
-            if (_thumbnail != null)
+            LoadThumbnailImageAsync(_thumbCancel.Token).ContinueWith(result =>
             {
                 _isLoadingThumbnail = false;
-                _isShowingFullSize = false;
-                _isShowingThumbnail = true;
-            }
+                _thumbCancel = null;
 
-            LoadFullSizeIfNeeded();
+                if (_isShowingThumbnail && FullSize != null)
+                {
+                    LoadFullSizeImage();
+                }
+            }, TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        private async Task LoadFullSizeImage()
+        private void LoadFullSizeImage()
         {
-            Debug.Assert(_fullsize == null);
+            Debug.Assert(_thumbCancel == null);
             Debug.Assert(_fullCancel == null);
-            Debug.Assert(_isLoadingFullSize == false);
-            Debug.Assert(_isShowingFullSize == false);
+            Debug.Assert(!_isLoadingThumbnail);
+            Debug.Assert(!_isLoadingFullSize);
 
             _isLoadingFullSize = true;
             _fullCancel = new CancellationTokenSource();
+            LoadFullSizeImageAsync(_fullCancel.Token).ContinueWith(result =>
+            {
+                _isLoadingFullSize = false;
+                _fullCancel = null;
+            }, TaskContinuationOptions.ExecuteSynchronously);
+        }
 
+        private async Task LoadThumbnailImageAsync(CancellationToken token)
+        {
+            Debug.Assert(_thumbnail == null);
+            Debug.Assert(_isShowingThumbnail == false);
+            Debug.Assert(_isLoadingFullSize == false);
+            Debug.Assert(_fullCancel == null);
+            Debug.Assert(_isShowingFullSize == false);
+            
+            Stream stream;
             try
             {
-                _fullsize = await LoadImage(FullSize, progress =>
+                stream = await GetUriStream(Thumbnail, progress => { }, token);
+            }
+            catch
+            {
+                return;
+            }
+
+            if (token.IsCancellationRequested)
+            {
+                return;
+            }
+
+            bool success = await _image.SetStreamSource(stream, Path.GetExtension(Thumbnail.AbsolutePath), token);
+
+            if (success)
+            {
+                _thumbnail = stream;
+                _isShowingThumbnail = true;
+            }
+        }
+
+        private async Task LoadFullSizeImageAsync(CancellationToken token)
+        {
+            Debug.Assert(_fullsize == null);
+            Debug.Assert(_isShowingFullSize == false);
+            Debug.Assert(_isLoadingThumbnail == false);
+            Debug.Assert(_thumbCancel == null);
+            Debug.Assert(_isShowingThumbnail == true);
+
+            Stream stream;
+            try
+            {
+                stream = await GetUriStream(FullSize, progress =>
                 {
                     if (DownloadProgressCommand != null)
                     {
                         DownloadProgressCommand.Execute(progress);
                     }
-                }, _fullCancel.Token);
+                }, token);
             }
-            catch (Exception ex)
+            catch
             {
-                if (ex.HResult == -2146233088)
-                {
-                    // Image unrecognized
-                    _isLoadingFullSize = false;
-                    _fullCancel = null;
-                    return;
-                }
-                else
-                {
-                    throw;
-                }
+                return;
             }
 
-            if (_fullsize != null)
+            if (token.IsCancellationRequested)
             {
-                _isLoadingFullSize = false;
+                return;
+            }
+
+            bool success = await _image.SetStreamSource(stream, Path.GetExtension(FullSize.AbsolutePath), token);
+
+            if (success)
+            {
+                _fullsize = stream;
                 _isShowingThumbnail = false;
                 _isShowingFullSize = true;
             }
         }
 
-        private async Task<Stream> LoadImage(Uri uri, Action<int> progress, CancellationToken token)
+        private async Task<Stream> GetUriStream(Uri uri, Action<int> progress, CancellationToken token)
         {
             Stream stream;
             if (uri.Scheme == "file")
             {
-                try
-                {
-                    stream = await LoadLocalFile(uri, token);
-                }
-                catch (TaskCanceledException)
-                {
-                    return null;
-                }
+                stream = await LoadLocalFile(uri, token);
             }
             else
             {
-                try
-                {
-                    stream = await LoadRemoteFile(uri, progress, token);
-                }
-                catch (TaskCanceledException)
-                {
-                    return null;
-                }
+                stream = await LoadRemoteFile(uri, progress, token);
             }
-
-            if (token.IsCancellationRequested)
-            {
-                return null;
-            }
-
-            _image.SetStreamSource(stream, Path.GetExtension(uri.AbsolutePath));
             return stream;
         }
 
         private async Task<Stream> LoadRemoteFile(Uri uri, Action<int> progress, CancellationToken token)
         {
-            byte[] response = await new HttpClient().GetAsyncWithProgress(uri, progress, token);
+            byte[] response = await RequestManager.Current.GetByteArrayWithProgressAsync(uri, progress, token);
             return new MemoryStream(response);
         }
 
@@ -359,28 +397,6 @@ namespace _4charm.Controls
                     _isShowingFullSize = false;
                 }
             }
-        }
-
-        private void DisplayThumbnail()
-        {
-            Debug.Assert(!_isLoadingThumbnail);
-            Debug.Assert(_thumbnail != null);
-
-            _image.SetStreamSource(_thumbnail, Path.GetExtension(Thumbnail.AbsolutePath));
-
-            _isShowingFullSize = false;
-            _isShowingThumbnail = true;
-        }
-
-        private void DisplayFullSize()
-        {
-            Debug.Assert(!_isLoadingFullSize);
-            Debug.Assert(_fullsize != null);
-
-            _image.SetStreamSource(_fullsize, Path.GetExtension(FullSize.AbsolutePath));
-
-            _isShowingFullSize = true;
-            _isShowingThumbnail = false;
         }
     }
 }

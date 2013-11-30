@@ -4,39 +4,16 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using System;
 using System.Diagnostics;
+using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Markup;
+using System.Windows.Media;
 using System.Windows.Navigation;
-using System.Xml;
 
 namespace _4charm
 {
     public partial class App : Application
     {
-        public static string Version
-        {
-            get
-            {
-                string appManifestName = "WMAppManifest.xml";
-                string appNodeName = "App";
-
-                var settings = new XmlReaderSettings();
-                settings.XmlResolver = new XmlXapResolver();
-
-                using (XmlReader rdr = XmlReader.Create(appManifestName, settings))
-                {
-                    rdr.ReadToDescendant(appNodeName);
-                    if (!rdr.IsStartElement())
-                    {
-                        throw new System.FormatException(appManifestName + " is missing " + appNodeName);
-                    }
-
-                    return rdr.GetAttribute("Version");
-                }
-            }
-        }
-
         /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
         /// </summary>
@@ -44,39 +21,33 @@ namespace _4charm
         public static PhoneApplicationFrame RootFrame { get; private set; }
 
         /// <summary>
+        /// Task representing when the first frame of the application has been
+        /// rendered, and delay loaded visuals can be constructed.
+        /// </summary>
+        public static Task InitialFrameRenderedTask { get; private set; }
+        private TaskCompletionSource<bool> _initialFrameTCS;
+
+        /// <summary>
         /// Constructor for the Application object.
         /// </summary>
         public App()
         {
-            // Global handler for uncaught exceptions.
             UnhandledException += Application_UnhandledException;
 
-            // Standard XAML initialization
             InitializeComponent();
-
-            // Phone-specific initialization
             InitializePhoneApplication();
-
-            // Language display initialization
             InitializeLanguage();
 
-            // Show graphics profiling information while debugging.
+            _initialFrameTCS = new TaskCompletionSource<bool>();
+            InitialFrameRenderedTask = _initialFrameTCS.Task;
+            CompositionTarget.Rendering += CompositionTarget_Rendering;
+
             if (Debugger.IsAttached)
             {
-                // Display the current frame rate counters.
                 Application.Current.Host.Settings.EnableFrameRateCounter = true;
-
-                // Show the areas of the app that are being redrawn in each frame.
                 Application.Current.Host.Settings.EnableRedrawRegions = true;
-
-                // Enable non-production analysis visualization mode,
-                // which shows areas of a page that are handed off to GPU with a colored overlay.
                 //Application.Current.Host.Settings.EnableCacheVisualization = true;
 
-                // Prevent the screen from turning off while under the debugger by disabling
-                // the application's idle detection.
-                // Caution:- Use this under debug mode only. Application that disables user idle detection will continue to run
-                // and consume battery power when the user is not using the phone.
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
         }
@@ -92,11 +63,17 @@ namespace _4charm
         private void Application_Launching(object sender, LaunchingEventArgs e)
         {
 #if DEBUG
-            t = new System.Threading.Timer((state) =>
+            t = new System.Threading.Timer(state =>
             {
                 System.Diagnostics.Debug.WriteLine(((long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage") / (1024.0 * 1024)) + " MB");
             }, null, 0, 500);
 #endif
+        }
+
+        private void CompositionTarget_Rendering(object sender, EventArgs e)
+        {
+            _initialFrameTCS.SetResult(true);
+            CompositionTarget.Rendering -= CompositionTarget_Rendering;
         }
 
         // Code to execute when the application is activated (brought to foreground)

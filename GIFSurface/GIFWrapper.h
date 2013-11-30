@@ -17,7 +17,8 @@ namespace GIFSurface
 		GIFWrapper();
 
 		Windows::Phone::Graphics::Interop::IDrawingSurfaceContentProvider^ CreateContentProvider();
-		void SetGIF(const Platform::Array<unsigned char>^ resource);
+		Windows::Foundation::IAsyncAction^ SetGIF(const Platform::Array<unsigned char>^ resource, bool shouldAnimate);
+		void SetShouldAnimate(bool shouldAnimate);
 		void UnloadGIF();
 
 		event RequestAdditionalFrameHandler^ RequestAdditionalFrame;
@@ -39,9 +40,11 @@ namespace GIFSurface
 		ID3D11Texture2D* GetTexture();
 
 	private:
+		bool m_isActive;
+		bool m_isDirty;
 		GIFRenderer^ m_renderer;
+		std::recursive_mutex m_mutex;
 		BasicTimer^ m_timer;
 		Windows::Foundation::Size m_renderResolution;
-		const Platform::Array<unsigned char>^ m_resource;
     };
 }

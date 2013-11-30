@@ -58,12 +58,19 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public double AspectRatio
+        {
+            get { return GetProperty<double>(); }
+            set { SetProperty(value); }
+        }
+
         public ImageViewerPostViewModel(Post p)
         {
             Number = p.Number;
             RenamedFileName = p.RenamedFileName;
             ThumbnailSrc = p.ThumbnailSrc;
             ImageSrc = p.ImageSrc;
+            AspectRatio = p.ImageWidth / (double)p.ImageHeight;
 
             UpdateProgress = new ModelCommand<int>(DoUpdateProgress);
             IsDownloading = true;

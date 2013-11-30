@@ -13,12 +13,15 @@ public:
 	GIFRenderer();
 	virtual ~GIFRenderer();
 
-	// Method for loading GIF
-	void CreateGIFResources(const Platform::Array<unsigned char>^ resource);
-	void ReleaseGIFResources();
-
 	// Direct3DBase methods.
-	virtual void Render(float timeDelta) override;
+	virtual void Render(float timeDelta, bool forceUpdate) override;
+
+	// Method for loading GIF
+internal:
+	void Reset();
+	GifFileType *CreateGIFResource(const Platform::Array<unsigned char>^ resource);
+	void SetGIFResource(GifFileType *gif);
+	void ReleaseGIFResource();
 
 private:
 	void SelectNextFrame(float timeDelta);
@@ -36,7 +39,6 @@ private:
 	int m_previousFrame;
 	float m_pending;
 
-	std::mutex m_mutex;
 	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
 	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_resource;
 

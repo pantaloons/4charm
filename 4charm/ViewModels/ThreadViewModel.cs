@@ -4,7 +4,7 @@ using System.Windows.Media;
 
 namespace _4charm.ViewModels
 {
-    class ThreadViewModel : ImageViewModelBase
+    class ThreadViewModel : ViewModelBase
     {
         public string BoardName
         {
@@ -47,16 +47,6 @@ namespace _4charm.ViewModels
 
             Post initial = t.Posts.FirstOrDefault().Value;
             if (initial != null) InitialPost = new PostViewModel(initial, null);
-        }
-
-        public override void LoadImage(int displayWidth = 100)
-        {
-            if (InitialPost != null) InitialPost.LoadImage(displayWidth);
-        }
-
-        public override void UnloadImage()
-        {
-            if (InitialPost != null) InitialPost.UnloadImage();
         }
     }
 }

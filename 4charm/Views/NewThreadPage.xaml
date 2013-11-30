@@ -28,29 +28,12 @@
 
         <ScrollViewer x:Name="RootScroller" Grid.Row="1" Margin="12,0">
             <StackPanel>
-                <!-- More details area -->
-                <StackPanel Visibility="{Binding HasMoreDetails, Converter={StaticResource BoolVisibleConverter}}">
-                    <!-- Subject box -->
-                    <TextBlock Text="Subject" Style="{StaticResource PhoneTextSubtleStyle}" />
-                    <controls:SelectionBindableTextBox x:Name="SubjectTextBox"
+                <!-- Subject box -->
+                <TextBlock Text="Subject" Style="{StaticResource PhoneTextSubtleStyle}" />
+                <controls:SelectionBindableTextBox x:Name="SubjectTextBox"
                                                        Text="{Binding Subject, Mode=TwoWay}"
                                                        UpdateSourceOnTextChanged="True"
                                                        KeyDown="SubjectTextBox_KeyDown" />
-
-                    <!-- Name -->
-                    <TextBlock Text="Name" Style="{StaticResource PhoneTextSubtleStyle}" />
-                    <controls:SelectionBindableTextBox x:Name="NameTextBox"
-                                                       Text="{Binding Name, Mode=TwoWay}"
-                                                       UpdateSourceOnTextChanged="True"
-                                                       KeyDown="NameTextBox_KeyDown" />
-
-                    <!-- E-mail -->
-                    <TextBlock Text="E-mail" Style="{StaticResource PhoneTextSubtleStyle}" />
-                    <controls:SelectionBindableTextBox x:Name="EmailTextBox"
-                                                       Text="{Binding Email, Mode=TwoWay}"
-                                                       UpdateSourceOnTextChanged="True"
-                                                       KeyDown="EmailTextBox_KeyDown" />
-                </StackPanel>
 
                 <!-- Verification Captcha -->
                 <TextBlock Text="Verification" Style="{StaticResource PhoneTextSubtleStyle}" />
@@ -77,13 +60,32 @@
                 <TextBlock Text="Comment" Style="{StaticResource PhoneTextSubtleStyle}" />
                 <controls:SelectionBindableTextBox x:Name="CommentBox"
                                                    Text="{Binding Comment, Mode=TwoWay}"
+                                                   TextWrapping="Wrap"
                                                    UpdateSourceOnTextChanged="True"
                                                    AcceptsReturn="True"
-                                                   MinHeight="224"  />
+                                                   MinHeight="140"  />
 
                 <!-- More details button -->
                 <Button Content="more details" HorizontalAlignment="Left" Command="{Binding MoreDetails}"
                         Visibility="{Binding HasMoreDetails, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=not}"/>
+
+                <!-- More details area -->
+                <StackPanel Visibility="{Binding HasMoreDetails, Converter={StaticResource BoolVisibleConverter}}"
+                            Margin="0,0,0,12">
+                    <!-- Name -->
+                    <TextBlock Text="Name" Style="{StaticResource PhoneTextSubtleStyle}" />
+                    <controls:SelectionBindableTextBox x:Name="NameTextBox"
+                                                       Text="{Binding Name, Mode=TwoWay}"
+                                                       UpdateSourceOnTextChanged="True"
+                                                       KeyDown="NameTextBox_KeyDown" />
+
+                    <!-- E-mail -->
+                    <TextBlock Text="E-mail" Style="{StaticResource PhoneTextSubtleStyle}" />
+                    <controls:SelectionBindableTextBox x:Name="EmailTextBox"
+                                                       Text="{Binding Email, Mode=TwoWay}"
+                                                       UpdateSourceOnTextChanged="True"
+                                                       KeyDown="EmailTextBox_KeyDown" />
+                </StackPanel>
             </StackPanel>
         </ScrollViewer>
 

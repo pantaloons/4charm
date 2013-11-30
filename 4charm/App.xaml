@@ -18,9 +18,6 @@
         <converters:NullVisibleConverter x:Key="NullVisibleConverter" />
         <!-- Converts a CapCode type the the text color used when displaying that CapCode in a post. -->
         <converters:CapCodeColorConverter x:Key="CapCodeColorConverter" />
-        <!-- Converts empty collections to collapsed, and non-empty ones to visible.
-             Used to display empty list messages for favorites etc. -->
-        <converters:EmptyCollectionVisibleConverter x:Key="EmptyCollectionVisibleConverter" />
         <!-- Converts an index (0, 1, 2) into a SupportedOrientation, (PortraitOrLandscape, Portrait, Landscape),
              respectively. Used to bind between the orientation setting list picker and the orientation mode. -->
         <converters:IndexOrientationConverter x:Key="IndexOrientationConverter" />

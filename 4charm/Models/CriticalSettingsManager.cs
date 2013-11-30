@@ -1,11 +1,9 @@
-﻿using _4charm.ViewModels;
-using Microsoft.Phone.Controls;
+﻿using Microsoft.Phone.Controls;
 using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Linq;
 using System.Reflection;
-using System.Threading.Tasks;
 
 namespace _4charm.Models
 {
@@ -73,22 +71,20 @@ namespace _4charm.Models
 
         public ObservableCollection<Board> Favorites
         {
-            get { _rebuildTask.Wait(); return _favorites; }
+            get { Rebuild(); return _favorites; }
         }
 
         public ObservableCollection<Board> Boards
         {
-            get { _rebuildTask.Wait(); return _boards; }
+            get { Rebuild(); return _boards; }
         }
 
         private ObservableCollection<Board> _favorites, _boards;
 
         /// <summary>
-        /// Task tracking progress of collection rebuilding. This gets started off after
-        /// the restore completes, and should be waited on before attempting to use
-        /// the two rebuilt collections (favorites and all.)
+        /// If the settings have been rebuilt yet.
         /// </summary>
-        private Task _rebuildTask = null;
+        private bool _isRebuilt;
 
         public CriticalSettingsManager()
             : base(DefaultSettingsFileName, KnownTypes)
@@ -96,7 +92,7 @@ namespace _4charm.Models
             // We first "restore" the settings from a file, and then rebuild the history
             // and watchlist collections, which involves fixing up some references that
             // don't get persisted correctly.
-            _rebuildTask = Restore().ContinueWith(t => Rebuild(), TaskContinuationOptions.ExecuteSynchronously);
+            Restore();
         }
 
         /// <summary>
@@ -107,11 +103,19 @@ namespace _4charm.Models
         /// </summary>
         private void Rebuild()
         {
+            if (_isRebuilt)
+            {
+                return;
+            }
+
+            _isRebuilt = true;
+            Restore().Wait();
+
             List<string> boards = GetSetting<List<string>>("Boards", BoardList.Boards.Values.Where(x => !x.IsNSFW).Select(x => x.Name).ToList());
             _boards = new SortedObservableCollection<Board>(boards.Where(x => BoardList.Boards.ContainsKey(x))
                 .Select(x => ThreadCache.Current.EnforceBoard(x)));
 
-            List<string> favorites = GetSetting<List<string>>("Favorites", new List<string>() { "wsg", "a", "fa", "fit" });
+            List<string> favorites = GetSetting<List<string>>("Favorites", new List<string>() { "gif", "a", "fa", "fit" });
             _favorites = new ObservableCollection<Board>(favorites.Where(x => BoardList.Boards.ContainsKey(x))
                 .Select(x => ThreadCache.Current.EnforceBoard(x)));
 

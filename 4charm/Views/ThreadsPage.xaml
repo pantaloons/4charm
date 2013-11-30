@@ -1,4 +1,4 @@
-﻿<phone:PhoneApplicationPage
+﻿<controls:OrientLockablePage
     x:Class="_4charm.Views.ThreadsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
+    xmlns:controls="clr-namespace:_4charm.Controls"
     xmlns:models="clr-namespace:_4charm.Models"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -19,13 +20,13 @@
         <!-- Correct the LongListSelector template so that the scrollbar does not affect content width,
              otherwise adding threads 3/4 will cause the scrollbar to appear and snap the width of
              existing posts in a little bit. -->
-        <Style x:Key="OverlaidScrollbarLLS" TargetType="phone:LongListSelector">
+        <Style x:Key="OverlaidScrollbarLLS" TargetType="controls:PlaceHolderLongListSelector">
             <Setter Property="Background" Value="Transparent"/>
             <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
             <Setter Property="Template">
                 <Setter.Value>
-                    <ControlTemplate TargetType="phone:LongListSelector">
-                        <Grid Background="{TemplateBinding Background}" d:DesignWidth="480" d:DesignHeight="800">
+                    <ControlTemplate TargetType="controls:PlaceHolderLongListSelector">
+                        <Grid Background="{TemplateBinding Background}">
                             <VisualStateManager.VisualStateGroups>
                                 <VisualStateGroup x:Name="ScrollStates">
                                     <VisualStateGroup.Transitions>
@@ -44,6 +45,15 @@
                                     <ColumnDefinition Width="*"/>
                                     <ColumnDefinition Width="12"/>
                                 </Grid.ColumnDefinitions>
+
+                                <TextBlock x:Name="Placeholder"
+                                       TextWrapping="Wrap"
+                                       Visibility="Collapsed"
+                                       Grid.ColumnSpan="2"
+                                       FontSize="{StaticResource PhoneFontSizeLarge}"
+                                       Foreground="{StaticResource PhoneSubtleBrush}"
+                                       FontFamily="Segoe WP Light" />
+
                                 <ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
                                 <ScrollBar x:Name="VerticalScrollBar" Grid.Column="1" Margin="4,0,4,0" Opacity="0" Orientation="Vertical"/>
                             </Grid>
@@ -55,11 +65,11 @@
         
         <!-- Template for threads in the thread and watchlist views. -->
         <DataTemplate x:Key="ThreadItemTemplate">
-            <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24" DataContext="{Binding InitialPost}">
+            <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24">
                 <!-- Tapping anywhere on the thread will take you to that thread page. -->
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Tap">
-                        <i:InvokeCommandAction Command="{Binding ThreadNavigated}" />
+                        <i:InvokeCommandAction Command="{Binding InitialPost.ThreadNavigated}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
@@ -71,7 +81,7 @@
                     </Storyboard>
                 </Grid.Resources>
 
-                <Grid Margin="12">
+                <Grid Margin="12" DataContext="{Binding InitialPost}">
                     <Grid.RowDefinitions>
                         <RowDefinition Height="auto" />
                         <RowDefinition Height="auto" />
@@ -129,19 +139,20 @@
                          have their content area resize after the image loads. The margin binding is
                          because threads with no image should not add extra padding between the thread
                          border and the text area, where if an image is there will require another 12px -->
-                    <Image VerticalAlignment="Top"
-                           Grid.Row="2"
-                           Width="{Binding ThumbWidth}"
-                           Height="{Binding ThumbHeight}"
-                           Margin="{Binding ThumbMargin2}"
-                           Source="{Binding Image}">
-                        <!-- Tapping the image goes directly to the image viewer. -->
+                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
+                                                   Width="{Binding ThumbWidth}"
+                                                   Height="{Binding ThumbHeight}"
+                                                   Margin="0,6,12,6"
+                                                   VerticalAlignment="Top"
+                                                   Grid.Row="2"
+                                                   Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
+                         <!-- Tapping the image goes directly to the image viewer.--> 
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Tap">
                                 <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </Image>
+                    </controls:MultiResolutionImage>
 
                     <!-- Post comment. RichTextBox has its "Blocks" property set through
                          the attached FormattedText DependencyProperty. -->
@@ -174,7 +185,7 @@
             </Grid>
         </DataTemplate>
 
-        <DataTemplate x:Key="ImageItemTemplate">
+        <DataTemplate x:Key="CatalogItemTemplate">
             <Grid x:Name="RootGrid" Margin="12,0,0,12" Width="208" Height="208" Background="Transparent">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Tap">
@@ -193,16 +204,32 @@
                     <RowDefinition Height="*" />
                     <RowDefinition Height="90" />
                 </Grid.RowDefinitions>
-                
-                <Image Source="{Binding InitialPost.Image}" Stretch="UniformToFill" Grid.RowSpan="2" />
+
+                <controls:MultiResolutionImage Thumbnail="{Binding InitialPost.ThumbnailSrc}" Grid.RowSpan="2">
+                    <controls:MultiResolutionImage.Template>
+                        <ControlTemplate TargetType="controls:MultiResolutionImage">
+                            <controls:StaticImage x:Name="PreloadedImageContainer">
+                                <controls:StaticImage.Template>
+                                    <ControlTemplate TargetType="controls:StaticImage">
+                                        <Image x:Name="ImageContainer" Stretch="UniformToFill" />
+                                    </ControlTemplate>
+                                </controls:StaticImage.Template>
+                            </controls:StaticImage>
+                        </ControlTemplate>
+                    </controls:MultiResolutionImage.Template>
+                </controls:MultiResolutionImage>
 
                 <Rectangle Grid.Row="1" Fill="Black" Opacity="0.7" />
-                <TextBlock Grid.Row="1" MaxHeight="78" Margin="12"
-                           VerticalAlignment="Top" Foreground="White"
-                           Text="{Binding InitialPost.SimpleComment}"
-                           TextWrapping="Wrap" TextTrimming="WordEllipsis" />
                 <TextBlock Grid.Row="1"
-                           Margin="6,3,6,3"
+                           VerticalAlignment="Top"
+                           MaxHeight="78"
+                           Margin="12"
+                           Foreground="White"
+                           Text="{Binding InitialPost.SimpleComment}"
+                           TextWrapping="Wrap"
+                           TextTrimming="WordEllipsis" />
+                <TextBlock Grid.Row="1"
+                           Margin="6,3"
                            Style="{StaticResource PhoneTextSmallStyle}"
                            FontSize="15"
                            VerticalAlignment="Bottom" HorizontalAlignment="Right"
@@ -214,49 +241,40 @@
     </phone:PhoneApplicationPage.Resources>
 
     <Grid>
-        <phone:Pivot Title="{Binding PivotTitle}" SelectionChanged="PivotChanged">
-            <phone:PivotItem Header="threads">
-                <Grid>
-                    <phone:LongListSelector x:Name="ThreadsLLS"
-                                            Margin="12,0,0,0"
-                                            ItemsSource="{Binding Threads}"
-                                            ItemTemplate="{StaticResource ThreadItemTemplate}"
-                                            ItemRealized="ThreadRealized"
-                                            ItemUnrealized="ThreadUnrealized">
-                        <phone:LongListSelector.ListFooterTemplate>
-                            <DataTemplate>
-                                <Grid Height="600" />
-                            </DataTemplate>
-                        </phone:LongListSelector.ListFooterTemplate>
-                    </phone:LongListSelector>
-
-                    <TextBlock TextWrapping="Wrap"
-                               Visibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
-                               Margin="24,0"
-                               FontSize="{StaticResource PhoneFontSizeLarge}"
-                               Foreground="{StaticResource PhoneSubtleBrush}"
-                               FontFamily="Segoe WP Light"
-                               Text="There was an error retrieving the threads :("/>
-                </Grid>
+        <phone:Pivot Title="{Binding PivotTitle}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" SelectionChanged="PivotSelectionChanged">
+            <phone:PivotItem Header="{Binding Path=LocalizedResources.ThreadsPage_Threads, Source={StaticResource LocalizedStrings}}">
+                <controls:PlaceHolderLongListSelector
+                    Style="{StaticResource OverlaidScrollbarLLS}"
+                    Margin="12,0,0,0"
+                    ItemsSource="{Binding Threads}"
+                    ItemTemplate="{StaticResource ThreadItemTemplate}"
+                    PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
+                    PlaceholderText="{Binding Path=LocalizedResources.ThreadsPage_Error, Source={StaticResource LocalizedStrings}}">
+                    
+                    <phone:LongListSelector.ListFooterTemplate>
+                        <DataTemplate>
+                            <Grid Height="600" />
+                        </DataTemplate>
+                    </phone:LongListSelector.ListFooterTemplate>
+                </controls:PlaceHolderLongListSelector>
             </phone:PivotItem>
-            <phone:PivotItem Header="watchlist">
-                <phone:LongListSelector x:Name="WatchlistLLS"
-                                        ItemsSource="{Binding Watchlist}"
-                                        ItemTemplate="{StaticResource ThreadItemTemplate}"
-                                        ItemRealized="ThreadRealized"
-                                        ItemUnrealized="ThreadUnrealized"
-                                        Visibility="Collapsed" />
+            <phone:PivotItem Header="{Binding Path=LocalizedResources.ThreadsPage_Watchlist, Source={StaticResource LocalizedStrings}}">
+                <controls:PlaceHolderLongListSelector
+                    Style="{StaticResource OverlaidScrollbarLLS}"
+                    ItemsSource="{Binding Watchlist}"
+                    ItemTemplate="{StaticResource ThreadItemTemplate}"
+                    PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
+                    PlaceholderText="{Binding Path=LocalizedResources.ThreadsPage_Error, Source={StaticResource LocalizedStrings}}" />
             </phone:PivotItem>
-            <phone:PivotItem Header="catalog">
-                <phone:LongListSelector x:Name="CatalogLLS"
-                                        Style="{StaticResource OverlaidScrollbarLLS}"
-                                        ItemsSource="{Binding ImageThreads}"
-                                        ItemTemplate="{StaticResource ImageItemTemplate}"
-                                        ItemRealized="ImageThreadRealized"
-                                        ItemUnrealized="ThreadUnrealized"
-                                        LayoutMode="Grid"
-                                        GridCellSize="220,220"
-                                        Visibility="Collapsed"/>
+            <phone:PivotItem Header="{Binding Path=LocalizedResources.ThreadsPage_Catalog, Source={StaticResource LocalizedStrings}}">
+                <controls:PlaceHolderLongListSelector
+                    Style="{StaticResource OverlaidScrollbarLLS}"
+                    ItemsSource="{Binding ImageThreads}"
+                    ItemTemplate="{StaticResource CatalogItemTemplate}"
+                    LayoutMode="Grid"
+                    GridCellSize="220,220"
+                    PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
+                    PlaceholderText="{Binding Path=LocalizedResources.ThreadsPage_Error, Source={StaticResource LocalizedStrings}}" />
                                         
             </phone:PivotItem>
         </phone:Pivot>
@@ -265,5 +283,4 @@
                      IsIndeterminate="{Binding IsLoading}"
                      Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
     </Grid>
-
-</phone:PhoneApplicationPage>
+</controls:OrientLockablePage>

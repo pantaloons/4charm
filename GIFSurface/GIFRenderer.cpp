@@ -19,7 +19,7 @@ GIFRenderer::GIFRenderer()
 
 GIFRenderer::~GIFRenderer()
 {
-	ReleaseGIFResources();
+	ReleaseGIFResource();
 }
 
 static int ArraySlurp(GifFileType *gft, GifByteType *buffer, int length)
@@ -37,10 +37,14 @@ static int ArraySlurp(GifFileType *gft, GifByteType *buffer, int length)
 	return length;
 }
 
-void GIFRenderer::CreateGIFResources(const Platform::Array<unsigned char>^ resource)
+void GIFRenderer::Reset()
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
+	m_frame = 0;
+	m_pending = 0;
+}
 
+GifFileType *GIFRenderer::CreateGIFResource(const Platform::Array<unsigned char>^ resource)
+{
 	int error = 0;
 	GifArrayData data = { 0, resource->Length, resource->Data };
 	GifFileType *gif = DGifOpen(&data, ArraySlurp, &error);
@@ -60,6 +64,11 @@ void GIFRenderer::CreateGIFResources(const Platform::Array<unsigned char>^ resou
 		throw ref new Platform::FailureException(ref new Platform::String(GifErrorString(error)));
 	}
 
+	return gif;
+}
+
+void GIFRenderer::SetGIFResource(GifFileType *gif)
+{
 	m_gif = gif;
 
 	m_bufferIdx = 0;
@@ -70,10 +79,8 @@ void GIFRenderer::CreateGIFResources(const Platform::Array<unsigned char>^ resou
 	m_buffer[1] = nullptr;
 }
 
-void GIFRenderer::ReleaseGIFResources()
+void GIFRenderer::ReleaseGIFResource()
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
-
 	m_buffer[0] = nullptr;
 	m_buffer[1] = nullptr;
 
@@ -110,15 +117,13 @@ static bool GetGraphicsControlBlock(SavedImage image, GraphicsControlBlock *gcb)
 	return false;
 }
 
-void GIFRenderer::Render(float timeDelta)
+void GIFRenderer::Render(float timeDelta, bool forceUpdate)
 {
-	std::lock_guard<std::mutex> lock(m_mutex);
-
 	if (!m_gif) return;
 
 	SelectNextFrame(timeDelta);
 
-	if (m_frame == m_renderedFrame) return;
+	if (!forceUpdate && m_frame == m_renderedFrame) return;
 	m_renderedFrame = m_frame;
 
 	BlitIntermediateFrames();
@@ -255,7 +260,7 @@ void GIFRenderer::RenderToSurface()
 		yoff = 0;
 	}
 
-	RECT rect = { xoff, yoff, fwidth + xoff, fheight + yoff };
+	RECT rect = { (LONG)xoff, (LONG)yoff, (LONG)(fwidth + xoff), (LONG)(fheight + yoff) };
 	m_sprite->Begin();
 	m_sprite->Draw(resource.Get(), rect);
 	m_sprite->End();

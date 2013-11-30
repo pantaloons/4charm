@@ -6,7 +6,6 @@ using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
 using Microsoft.Phone.Tasks;
 using System;
-using System.Collections.Specialized;
 using System.Linq;
 using System.Windows;
 using System.Windows.Controls;
@@ -30,6 +29,13 @@ namespace _4charm.Views
             DataContext = _viewModel;
 
             BoardViewModel.NewBoardAdded += NewBoardAdded;
+        }
+
+        protected override void OnRemovedFromJournal(JournalEntryRemovedEventArgs e)
+        {
+            base.OnRemovedFromJournal(e);
+
+            BoardViewModel.NewBoardAdded -= NewBoardAdded;
         }
 
         private void InitializeApplicationBar()
@@ -78,7 +84,7 @@ namespace _4charm.Views
             }
         }
 
-        private void RootPivotChanged(object sender, SelectionChangedEventArgs e)
+        private void PivotSelectionChanged(object sender, SelectionChangedEventArgs e)
         {
             ApplicationBar.IsVisible = RootPivot.SelectedIndex == 2 || RootPivot.SelectedIndex == 3;
             if (RootPivot.SelectedIndex == 2)
@@ -90,22 +96,6 @@ namespace _4charm.Views
             {
                 ApplicationBar.Buttons.Clear();
                 ApplicationBar.Buttons.Add(_create);
-            }
-        }
-
-        private void ThreadRealized(object sender, ItemRealizationEventArgs e)
-        {
-            if (e.ItemKind == LongListSelectorItemKind.Item)
-            {
-                (e.Container.Content as ThreadViewModel).LoadImage();
-            }
-        }
-
-        private void ThreadUnrealized(object sender, ItemRealizationEventArgs e)
-        {
-            if (e.ItemKind == LongListSelectorItemKind.Item)
-            {
-                (e.Container.Content as ThreadViewModel).UnloadImage();
             }
         }
 

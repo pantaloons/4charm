@@ -3,19 +3,38 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.Diagnostics;
 using System.Linq;
 using System.Threading;
 using System.Threading.Tasks;
+using System.Windows;
 using System.Windows.Navigation;
 
 namespace _4charm.ViewModels
 {
-    class ThreadsPageViewModel : ViewModelBase
+    class ThreadsPageViewModel : PageViewModelBase
     {
+        // We use this hack to notify the threads page to reload
+        // after creating a new thread. The thread creation page
+        // calls GoBack() and then navigated to the new post page,
+        // but if the user hits back we want to show their thread
+        // at the top of the list.
+        internal static bool ForceReload = false;
+
         public string PivotTitle
         {
             get { return GetProperty<string>(); }
             set { SetProperty(value); }
+        }
+
+        public int SelectedIndex
+        {
+            get { return GetProperty<int>(); }
+            set
+            {
+                SetProperty(value);
+                SelectedIndexChanged();
+            }
         }
 
         public string Name
@@ -36,152 +55,137 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public ObservableCollection<ThreadViewModel> Threads
+        public DelayLoadingObservableCollection<ThreadViewModel> Threads
         {
-            get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
+            get { return GetProperty<DelayLoadingObservableCollection<ThreadViewModel>>(); }
             set { SetProperty(value); }
         }
 
-        public ObservableCollection<ThreadViewModel> ImageThreads
+        public DelayLoadingObservableCollection<ThreadViewModel> ImageThreads
         {
-            get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
+            get { return GetProperty<DelayLoadingObservableCollection<ThreadViewModel>>(); }
             set { SetProperty(value); }
         }
 
-        public ObservableCollection<ThreadViewModel> Watchlist
+        public DelayLoadingObservableCollection<ThreadViewModel> Watchlist
         {
-            get { return GetProperty<ObservableCollection<ThreadViewModel>>(); }
+            get { return GetProperty<DelayLoadingObservableCollection<ThreadViewModel>>(); }
             set { SetProperty(value); }
         }
 
+        private bool _removedFromJournal;
         private Board _board;
-        private Task _reloadTask;
+        private Task _downloadTask;
 
-        private Task<Task> _initialPostsTask;
-        private Task _extraPostsTask;
-        private bool _isExtraQueued;
-        private CancellationTokenSource _extraPostsCanceller;
-
-        private bool _initialized;
-
-        public void OnNavigatedTo(string boardName)
+        public override void Initialize(IDictionary<string, string> arguments, NavigationEventArgs e)
         {
-            if (!_initialized)
+            _board = ThreadCache.Current.EnforceBoard(arguments["board"]);
+
+            PivotTitle = _board.DisplayName;
+            Name = _board.Name;
+            IsLoading = false;
+            Threads = new DelayLoadingObservableCollection<ThreadViewModel>(100, false);
+            Watchlist = new DelayLoadingObservableCollection<ThreadViewModel>(100, true);
+            ImageThreads = new DelayLoadingObservableCollection<ThreadViewModel>(40, true);
+
+            ReloadThreads();
+
+            App.InitialFrameRenderedTask.ContinueWith(task =>
             {
-                _board = ThreadCache.Current.EnforceBoard(boardName);
+                Deployment.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    if (_removedFromJournal)
+                    {
+                        return;
+                    }
 
-                PivotTitle = _board.DisplayName;
-                Name = _board.Name;
-                IsLoading = false;
-                Watchlist = new ObservableCollection<ThreadViewModel>();
-                Threads = new ObservableCollection<ThreadViewModel>();
-                ImageThreads = new ObservableCollection<ThreadViewModel>();
-
-                Reload();
-
-                _initialized = true;
-            }
+                    Watchlist.AddRange(TransitorySettingsManager.Current.Watchlist.Where(x => x.Board.Name == _board.Name).Select(x => new ThreadViewModel(x)));
+                    TransitorySettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
+                });
+            }, TaskScheduler.Current);
         }
 
-        public void OnWatchlistNavigated()
+        public override void OnNavigatedTo(NavigationEventArgs e)
         {
-            Watchlist = new ObservableCollection<ThreadViewModel>(TransitorySettingsManager.Current.Watchlist.Where(x => x.Board.Name == _board.Name).Select(x => new ThreadViewModel(x)));
-            TransitorySettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
-        }
+            base.OnNavigatedTo(e);
 
-        public void OnNavigatedFrom(NavigationEventArgs e)
-        {
-            if (e.NavigationMode == NavigationMode.Back || e.NavigationMode == NavigationMode.Refresh || e.NavigationMode == NavigationMode.Reset)
+            if (ForceReload)
             {
-                foreach (ThreadViewModel tvm in Threads) tvm.UnloadImage();
-                foreach (ThreadViewModel tvm in ImageThreads) tvm.UnloadImage();
-                foreach (ThreadViewModel tvm in Watchlist) tvm.UnloadImage();
+                ForceReload = false;
+                ReloadThreads();
             }
+
+            SelectedIndexChanged();
         }
 
-        public void OnRemovedFromJournal()
+        public override void OnNavigatedFrom(NavigationEventArgs e)
         {
+            base.OnNavigatedFrom(e);
+
+            Threads.IsPaused = true;
+            ImageThreads.IsPaused = true;
+            Watchlist.IsPaused = true;
+        }
+
+        public override void OnRemovedFromJournal(JournalEntryRemovedEventArgs e)
+        {
+            base.OnRemovedFromJournal(e);
+
+            _removedFromJournal = true;
+
             TransitorySettingsManager.Current.Watchlist.CollectionChanged -= Watchlist_CollectionChanged;
         }
 
-        public Task Reload()
+        public void ReloadThreads()
         {
-            if (_reloadTask == null || _reloadTask.IsCompleted) _reloadTask = ReloadAsync();
-            return _reloadTask;
-        }
-
-        private async Task ReloadAsync()
-        {
-            if(_extraPostsCanceller != null) _extraPostsCanceller.Cancel();
+            if (_downloadTask != null && !_downloadTask.IsCompleted)
+            {
+                return;
+            }
 
             Threads.Clear();
             ImageThreads.Clear();
             IsLoading = true;
 
-            List<_4charm.Models.Thread> threads;
-            try
-            {
-                threads = await _board.GetThreadsAsync();
-            }
-            catch
+            Task<List<Models.Thread>> download = _board.GetThreadsAsync();
+            _downloadTask = download.ContinueWith(task =>
             {
                 IsLoading = false;
-                IsError = true;
-                return;
-            }
-
-            IsLoading = false;
-            IsError = false;
-
-            _initialPostsTask = new Task<Task>(async () =>
-            {
-                for (int j = 0; j < Math.Min(15, threads.Count); j++)
-                {
-                    _4charm.Models.Thread thread = threads[j];
-                    if (!thread.IsSticky || CriticalSettingsManager.Current.ShowStickies)
-                    {
-                        Threads.Add(new ThreadViewModel(thread));
-                        ImageThreads.Add(new ThreadViewModel(thread));
-                        await Task.Delay(100);
-                    }
+                if (task.IsFaulted)
+                {               
+                    IsError = true;
+                    return;
                 }
-            });
 
-            CancellationTokenSource local = new CancellationTokenSource();
-            _extraPostsCanceller = local;
-            _isExtraQueued = false;
-            _extraPostsTask = new Task(async () =>
-            {
-                for(int j = 15; j < threads.Count; j++)
-                {
-                    _4charm.Models.Thread thread = threads[j];
-                    if (!thread.IsSticky || CriticalSettingsManager.Current.ShowStickies)
-                    {
-                        if (local.Token.IsCancellationRequested)
-                        {
-                            return;
-                        }
-                        Threads.Add(new ThreadViewModel(thread));
-                        ImageThreads.Add(new ThreadViewModel(thread));
-                        if (j % 10 == 0) await Task.Delay(100);
-                    }
-                }
-            }, local.Token);
-
-            _initialPostsTask.Start(TaskScheduler.FromCurrentSynchronizationContext());
-            await _initialPostsTask.Unwrap();
+                IEnumerable<ThreadViewModel> threads = task.Result
+                    .Where(x => !x.IsSticky || CriticalSettingsManager.Current.ShowStickies)
+                    .Select(x => new ThreadViewModel(x));
+                Threads.AddRange(threads);
+                ImageThreads.AddRange(threads);
+            }, TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public void FinishInsertingPosts()
+        public void ClearWatchlist()
         {
-            if (_isExtraQueued) return;
-            _isExtraQueued = true;
-
-            TaskScheduler sched = TaskScheduler.FromCurrentSynchronizationContext();
-            _initialPostsTask.Unwrap().ContinueWith(t =>
+            for (int i = 0; i < TransitorySettingsManager.Current.Watchlist.Count; i++)
             {
-                _extraPostsTask.Start(sched);
-            });
+                if (TransitorySettingsManager.Current.Watchlist[i].Board.Name == Name)
+                {
+                    TransitorySettingsManager.Current.Watchlist.RemoveAt(i);
+                    i--;
+                }
+            }
+        }
+
+        private void SelectedIndexChanged()
+        {
+            Threads.IsPaused = true;
+            ImageThreads.IsPaused = true;
+            Watchlist.IsPaused = true;
+
+            if (SelectedIndex == 0) Threads.IsPaused = false;
+            else if (SelectedIndex == 1) Watchlist.IsPaused = false;
+            else if (SelectedIndex == 2) ImageThreads.IsPaused = false;
         }
 
         private void Watchlist_CollectionChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -189,18 +193,25 @@ namespace _4charm.ViewModels
             switch (e.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    if((e.NewItems[0] as ThreadViewModel).BoardName == _board.Name) Watchlist.Add(e.NewItems[0] as ThreadViewModel);
+                    if (((Models.Thread)e.NewItems[0]).Board.Name == _board.Name)
+                    {
+                        Watchlist.Add(new ThreadViewModel((Models.Thread)e.NewItems[0]));
+                    }
                     break;
                 case NotifyCollectionChangedAction.Remove:
-                    if ((e.OldItems[0] as ThreadViewModel).BoardName == _board.Name)
+                    if (((Models.Thread)e.OldItems[0]).Board.Name == _board.Name)
                     {
-                        ThreadViewModel tvm = Watchlist.FirstOrDefault(x => x.Number == (e.OldItems[0] as ThreadViewModel).Number);
-                        if (tvm != null) Watchlist.Remove(tvm);
+                        ThreadViewModel tvm = Watchlist.FirstOrDefault(x => x.Number == ((Models.Thread)e.OldItems[0]).Number);
+                        if (tvm != null)
+                        {
+                            Watchlist.Remove(tvm);
+                        }
                     }
                     
                     break;
                 default:
-                    throw new NotImplementedException();
+                    Debug.Assert(false);
+                    break;
             }
         }
     }
