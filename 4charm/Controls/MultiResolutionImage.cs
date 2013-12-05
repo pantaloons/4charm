@@ -99,6 +99,7 @@ namespace _4charm.Controls
 
         #endregion
 
+        private bool _isLoaded;
         private Size? _size;
         private IPreloadedImage _image;
 
@@ -118,11 +119,13 @@ namespace _4charm.Controls
 
         private void MultiResolutionImage_Loaded(object sender, RoutedEventArgs e)
         {
+            _isLoaded = true;
             LoadAppropriateImageIfNeeded();
         }
 
         private void MultiResolutionImage_Unloaded(object sender, RoutedEventArgs e)
         {
+            _isLoaded = false;
             CancelLoadingThumbnail();
             CancelLoadingFullSize();
             UnloadThumbnail();
@@ -202,7 +205,7 @@ namespace _4charm.Controls
 
         private void LoadAppropriateImageIfNeeded()
         {
-            if (_isShowingFullSize || _isLoadingThumbnail || _isLoadingFullSize || _size == null)
+            if (_isShowingFullSize || _isLoadingThumbnail || _isLoadingFullSize || !_isLoaded || _size == null)
             {
                 return;
             }
@@ -219,6 +222,7 @@ namespace _4charm.Controls
 
         private void LoadThumbnailImage()
         {
+            Debug.Assert(_isLoaded);
             Debug.Assert(_thumbCancel == null);
             Debug.Assert(_fullCancel == null);
             Debug.Assert(!_isLoadingThumbnail);
@@ -240,6 +244,7 @@ namespace _4charm.Controls
 
         private void LoadFullSizeImage()
         {
+            Debug.Assert(_isLoaded);
             Debug.Assert(_thumbCancel == null);
             Debug.Assert(_fullCancel == null);
             Debug.Assert(!_isLoadingThumbnail);
@@ -256,6 +261,7 @@ namespace _4charm.Controls
 
         private async Task LoadThumbnailImageAsync(CancellationToken token)
         {
+            Debug.Assert(_isLoaded);
             Debug.Assert(_thumbnail == null);
             Debug.Assert(_isShowingThumbnail == false);
             Debug.Assert(_isLoadingFullSize == false);
@@ -288,6 +294,7 @@ namespace _4charm.Controls
 
         private async Task LoadFullSizeImageAsync(CancellationToken token)
         {
+            Debug.Assert(_isLoaded);
             Debug.Assert(_fullsize == null);
             Debug.Assert(_isShowingFullSize == false);
             Debug.Assert(_isLoadingThumbnail == false);
@@ -341,6 +348,10 @@ namespace _4charm.Controls
 
         private async Task<Stream> LoadRemoteFile(Uri uri, Action<int> progress, CancellationToken token)
         {
+#if DEBUG
+            // In debug mode the cancellations spew too much junk into the debugger so we have to disable them.
+            token = CancellationToken.None;
+#endif
             byte[] response = await RequestManager.Current.GetByteArrayWithProgressAsync(uri, progress, token);
             return new MemoryStream(response);
         }

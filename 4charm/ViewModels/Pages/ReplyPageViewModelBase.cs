@@ -1,11 +1,11 @@
 ﻿using _4charm.Models;
 using _4charm.Models.API;
-using _4charm.Views;
+using _4charm.Resources;
 using Microsoft.Phone.Tasks;
 using System;
 using System.Collections.Generic;
-using System.ComponentModel;
 using System.IO;
+using System.Linq;
 using System.Net.Http;
 using System.Runtime.Serialization.Json;
 using System.Text;
@@ -17,34 +17,25 @@ using System.Windows.Navigation;
 
 namespace _4charm.ViewModels
 {
-    class NewThreadPageViewModel : PageViewModelBase
+    public abstract class ReplyPageViewModelBase : PageViewModelBase
     {
-        public enum NewThreadFocusResult
+        public enum SubmitResultType
         {
-            None,
-            Captcha,
-            Page
+            Success,
+            EmptyCaptchaError,
+            WrongCatpchaError,
+            EmptyCommentError,
+            NoImageError,
+            KnownError,
+            UnknownError
         };
 
         private static readonly Regex ErrorRegex = new Regex("<span id=\"errmsg\" style=\"color: red;\">(Error: [^<]+)<");
-
         private static readonly Regex SuccessRegex = new Regex("<title>Post successful!</title>");
-
-        public bool HasMoreDetails
-        {
-            get { return GetProperty<bool>(); }
-            set { SetProperty(value); }
-        }
 
         public bool IsPosting
         {
             get { return GetProperty<bool>(); }
-            set { SetProperty(value); }
-        }
-
-        public string PageTitle
-        {
-            get { return GetProperty<string>(); }
             set { SetProperty(value); }
         }
 
@@ -60,6 +51,12 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public string Board
+        {
+            get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
+
         public string Comment
         {
             get { return GetProperty<string>(); }
@@ -67,12 +64,6 @@ namespace _4charm.ViewModels
         }
 
         public string Subject
-        {
-            get { return GetProperty<string>(); }
-            set { SetProperty(value); }
-        }
-
-        public string Board
         {
             get { return GetProperty<string>(); }
             set { SetProperty(value); }
@@ -114,37 +105,40 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public bool IsCommentError
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
         public ICommand ReloadCaptcha
         {
             get { return GetProperty<ICommand>(); }
             set { SetProperty(value); }
         }
 
-        public ICommand AddImage
+        public ICommand SelectImage
         {
             get { return GetProperty<ICommand>(); }
             set { SetProperty(value); }
         }
 
-        public ICommand MoreDetails
-        {
-            get { return GetProperty<ICommand>(); }
-            set { SetProperty(value); }
-        }
-
+        private ulong _post;
+        private bool _isNewThread;
         private string _token;
         private byte[] _imageData;
-        private Regex _threadIDRegex;
 
-        public NewThreadPageViewModel()
+        public ReplyPageViewModelBase(bool isNewThread)
         {
-            ReloadCaptcha = new ModelCommand(async () => await LoadCaptcha());
-            AddImage = new ModelCommand(() => DoAddImage());
-            MoreDetails = new ModelCommand(() => HasMoreDetails = true);
+            _isNewThread = isNewThread;
+            ReloadCaptcha = new ModelCommand(async () => await DoLoadCaptcha());
+            SelectImage = new ModelCommand(() => DoSelectImage());
         }
 
         public override void Initialize(IDictionary<string, string> arguments, NavigationEventArgs e)
         {
+            base.Initialize(arguments, e);
+
             Comment = "";
             CaptchaText = "";
             Subject = "";
@@ -152,18 +146,16 @@ namespace _4charm.ViewModels
             Email = "";
 
             Board = arguments["board"];
-            _threadIDRegex = new Regex("<meta http-equiv=\"refresh\" content=\"1;URL=http://boards\\.4chan\\.org/" + Board + "/res/(\\d+)\">");
 
-            PageTitle = "NEW THREAD - /" + Board + "/";
-            FileName = "choose file";
+            FileName = AppResources.NewThreadPage_ChooseFile;
 
-            LoadCaptcha().ContinueWith(result =>
+            DoLoadCaptcha().ContinueWith(result =>
             {
                 throw result.Exception;
             }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public override void OnBackKeyPress(CancelEventArgs e)
+        public override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
         {
             base.OnBackKeyPress(e);
 
@@ -173,7 +165,7 @@ namespace _4charm.ViewModels
             }
         }
 
-        public async Task LoadCaptcha()
+        public async Task DoLoadCaptcha()
         {
             try
             {
@@ -181,7 +173,7 @@ namespace _4charm.ViewModels
             }
             catch
             {
-                MessageBox.Show("Captcha data is corrupt.");
+                MessageBox.Show(AppResources.NewThreadPage_CaptchaCorrupt);
                 return;
             }
 
@@ -207,117 +199,7 @@ namespace _4charm.ViewModels
             }
         }
 
-        public async Task<NewThreadFocusResult> Submit()
-        {
-            IsPosting = true;
-            NewThreadFocusResult result = await SubmitInternal();
-            IsPosting = false;
-            return result;
-        }
-
-        private async Task<NewThreadFocusResult> SubmitInternal()
-        {
-            IsCaptchaError = false;
-            IsImageError = false;
-
-            if (string.IsNullOrEmpty(CaptchaText))
-            {
-                IsCaptchaError = true;
-                if (!HasImage)
-                {
-                    IsImageError = true;
-                }
-
-                Task ignored = LoadCaptcha().ContinueWith(t =>
-                {
-                    throw t.Exception;
-                }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
-
-                return NewThreadFocusResult.Captcha;
-            }
-            else if (!HasImage)
-            {
-                IsImageError = true;
-
-                return NewThreadFocusResult.Page;
-            }
-
-            Uri uri = new Uri("https://sys.4chan.org/" + Board + "/post");
-            Uri referrer = new Uri("http://boards.4chan.org/" + Board);
-            Dictionary<string, string> formFields = new Dictionary<string, string>()
-            {
-                {"MAX_FILE_SIZE", "3145728"},
-                {"mode", "regist"},
-                {"name", Name},
-                {"email", Email},
-                {"sub", Subject},
-                {"com", Comment},
-                {"recaptcha_challenge_field", _token},
-                {"recaptcha_response_field", CaptchaText}
-            };
-
-            string result;
-            try
-            {
-                HttpResponseMessage message = await RequestManager.Current.PostAsync(uri, referrer, formFields, FileName, _imageData);
-                result = await message.Content.ReadAsStringAsync();
-            }
-            catch
-            {
-                MessageBox.Show("Unknown error encountered submitting thread.");
-                return NewThreadFocusResult.None;
-            }
-
-            Match m;
-            if (SuccessRegex.IsMatch(result))
-            {
-                ulong thread = 0;
-                if((m = _threadIDRegex.Match(result)).Success)
-                {
-                    ulong.TryParse(m.Groups[1].Value, out thread);
-                }
-
-                ThreadsPageViewModel.ForceReload = true;
-
-                GoBack();
-                if (thread != 0)
-                {
-                    Deployment.Current.Dispatcher.BeginInvoke(() =>
-                    {
-                        Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}",
-                            Uri.EscapeUriString(Board), Uri.EscapeUriString(thread + "")), UriKind.Relative));
-                    });
-                }
-
-                return NewThreadFocusResult.None;
-            }
-            else if ((m = ErrorRegex.Match(result)).Success)
-            {
-                if (m.Groups[1].Value.Contains("You forgot to solve the CAPTCHA"))
-                {
-                    IsCaptchaError = true;
-                    return NewThreadFocusResult.Captcha;
-                }
-                else if (m.Groups[1].Value.Contains("You seem to have mistyped the CAPTCHA"))
-                {
-                    CaptchaText = "";
-                    IsCaptchaError = true;
-                    return NewThreadFocusResult.Captcha;
-                }
-                else
-                {
-                    MessageBox.Show(m.Groups[1].Value);
-                    return NewThreadFocusResult.None;
-                }
-            }
-            else
-            {
-                MessageBox.Show("Unknown error encountered submitting thread.");
-                return NewThreadFocusResult.None;
-            }
-        }
-
-        private void DoAddImage()
+        private void DoSelectImage()
         {
             PhotoChooserTask task = new PhotoChooserTask() { ShowCamera = true };
             task.Completed += ImageSelected;
@@ -341,8 +223,128 @@ namespace _4charm.ViewModels
                 _imageData = null;
 
                 HasImage = false;
-                FileName = "choose file";
+                FileName = AppResources.NewThreadPage_ChooseFile;
             }
         }
+
+        protected async Task<SubmitResultType> SubmitInternal(ulong threadID = 0)
+        {
+            IsPosting = true;
+            SubmitResultType result = await SubmitInternalAsync(threadID);
+            IsPosting = false;
+            return result;
+        }
+
+        private async Task<SubmitResultType> SubmitInternalAsync(ulong threadID)
+        {
+            IsCaptchaError = false;
+            IsImageError = false;
+            IsCommentError = false;
+
+            if (!_isNewThread && string.IsNullOrEmpty(Comment) && !HasImage)
+            {
+                // Posts into an existing thread require either an image or comment
+                IsCommentError = true;
+                if (string.IsNullOrEmpty(CaptchaText))
+                {
+                    IsCaptchaError = true;
+                }
+                return SubmitResultType.EmptyCommentError;
+            }
+
+            if (string.IsNullOrEmpty(CaptchaText))
+            {
+                IsCaptchaError = true;
+                if (_isNewThread && !HasImage)
+                {
+                    IsImageError = true;
+                }
+
+                Task ignored = DoLoadCaptcha().ContinueWith(t =>
+                {
+                    throw t.Exception;
+                }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+
+                return SubmitResultType.EmptyCaptchaError;
+            }
+            else if (_isNewThread && !HasImage)
+            {
+                IsImageError = true;
+
+                return SubmitResultType.NoImageError;
+            }
+
+            Uri uri = new Uri("https://sys.4chan.org/" + Board + "/post");
+            Dictionary<string, string> formFields = new Dictionary<string, string>()
+            {
+                {"MAX_FILE_SIZE", "3145728"},
+                {"mode", "regist"},
+                {"name", Name},
+                {"email", Email},
+                {"sub", Subject},
+                {"com", Comment},
+                {"recaptcha_challenge_field", _token},
+                {"recaptcha_response_field", CaptchaText}
+            };
+
+            if (_isNewThread)
+            {
+                formFields["resto"] = threadID + "";
+            }
+
+            string result;
+            try
+            {
+                HttpResponseMessage message;
+                if (HasImage)
+                {
+                    message = await RequestManager.Current.PostAsync(uri, formFields, FileName, _imageData);
+                }
+                else
+                {
+                    message = await RequestManager.Current.PostAsync(uri, formFields);
+                }
+
+                result = await message.Content.ReadAsStringAsync();
+            }
+            catch
+            {
+                MessageBox.Show(AppResources.NewThreadPage_UnknownError);
+                return SubmitResultType.UnknownError;
+            }
+
+            Match m;
+            if (SuccessRegex.IsMatch(result))
+            {
+                OnSubmitSuccess(result);
+                return SubmitResultType.Success;
+            }
+            else if ((m = ErrorRegex.Match(result)).Success)
+            {
+                if (m.Groups[1].Value.Contains("You forgot to solve the CAPTCHA"))
+                {
+                    IsCaptchaError = true;
+                    return SubmitResultType.EmptyCaptchaError;
+                }
+                else if (m.Groups[1].Value.Contains("You seem to have mistyped the CAPTCHA"))
+                {
+                    CaptchaText = "";
+                    IsCaptchaError = true;
+                    return SubmitResultType.WrongCatpchaError;
+                }
+                else
+                {
+                    MessageBox.Show(m.Groups[1].Value);
+                    return SubmitResultType.KnownError;
+                }
+            }
+            else
+            {
+                MessageBox.Show(AppResources.NewThreadPage_UnknownError);
+                return SubmitResultType.UnknownError;
+            }
+        }
+
+        protected abstract void OnSubmitSuccess(string result);
     }
 }

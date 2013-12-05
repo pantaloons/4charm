@@ -98,6 +98,7 @@
     <Compile Include="Controls\BoundPage.cs" />
     <Compile Include="Controls\ErrorStateButton.cs" />
     <Compile Include="Controls\ErrorStateTextBox.cs" />
+    <Compile Include="Controls\FadingLongListSelector.cs" />
     <Compile Include="Controls\FlipView.cs" />
     <Compile Include="Controls\GIFImage.cs" />
     <Compile Include="Controls\IPreloadedImage.cs" />
@@ -105,6 +106,7 @@
     <Compile Include="Controls\OrientLockablePage.cs" />
     <Compile Include="Controls\PlaceHolderLongListSelector.cs" />
     <Compile Include="Controls\SelectionBindableTextBox.cs" />
+    <Compile Include="Controls\SplittingPanel.cs" />
     <Compile Include="Controls\StaticImage.cs" />
     <Compile Include="Controls\TilePicker.cs" />
     <Compile Include="Converters\BoolVisibleConverter.cs" />
@@ -117,7 +119,6 @@
     <Compile Include="Models\API\APIPost.cs" />
     <Compile Include="Models\API\APIThread.cs" />
     <Compile Include="Models\BindableTextBlock.cs" />
-    <Compile Include="Models\BitmapImageExtensions.cs" />
     <Compile Include="Models\Board.cs" />
     <Compile Include="Models\BoardID.cs" />
     <Compile Include="Models\BoardList.cs" />
@@ -146,20 +147,19 @@
       <DesignTime>True</DesignTime>
       <DependentUpon>AppResources.resx</DependentUpon>
     </Compile>
-    <Compile Include="ViewModels\AboutPageViewModel.cs" />
-    <Compile Include="ViewModels\AddBoardPageViewModel.cs" />
-    <Compile Include="ViewModels\BoardsPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\AboutPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\AddBoardPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\BoardsPageViewModel.cs" />
     <Compile Include="ViewModels\BoardViewModel.cs" />
-    <Compile Include="ViewModels\ImageViewerPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ImageViewerPageViewModel.cs" />
     <Compile Include="ViewModels\ImageViewerPostViewModel.cs" />
-    <Compile Include="ViewModels\ImageViewModelBase.cs" />
-    <Compile Include="ViewModels\NewThreadPageViewModel.cs" />
-    <Compile Include="ViewModels\PageViewModelBase.cs" />
-    <Compile Include="ViewModels\PostsPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\NewThreadPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\PageViewModelBase.cs" />
+    <Compile Include="ViewModels\Pages\PostsPageViewModel.cs" />
     <Compile Include="ViewModels\PostViewModel.cs" />
-    <Compile Include="ViewModels\ReplyViewModel.cs" />
-    <Compile Include="ViewModels\SettingsPageViewModel.cs" />
-    <Compile Include="ViewModels\ThreadsPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ReplyPageViewModelBase.cs" />
+    <Compile Include="ViewModels\Pages\SettingsPageViewModel.cs" />
+    <Compile Include="ViewModels\Pages\ThreadsPageViewModel.cs" />
     <Compile Include="ViewModels\ThreadViewModel.cs" />
     <Compile Include="ViewModels\ViewModelBase.cs" />
     <Compile Include="Views\AboutPage.xaml.cs">

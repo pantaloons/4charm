@@ -1,4 +1,5 @@
 ﻿using _4charm.Models.API;
+using _4charm.Resources;
 using Microsoft.Phone.Shell;
 using System;
 using System.Collections.Generic;
@@ -200,7 +201,7 @@ namespace _4charm.Models
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show("Board is already pinned.");
+                MessageBox.Show(AppResources.BoardsPage_AlreadyPinned);
             }
         }
 
@@ -221,6 +222,7 @@ namespace _4charm.Models
             heading.FontSize = 64 - 10 * (Name.Length - 1);
             heading.Margin = new Thickness(0, -16 + 4 * (Name.Length - 1), 0, 0);
             WriteableBitmap small = new WriteableBitmap(159, 159);
+            grid.UpdateLayout();
             grid.Measure(new Size(159, 159));
             grid.Arrange(new Rect(0, 0, 159, 159));
             small.Render(grid, null);
@@ -230,6 +232,7 @@ namespace _4charm.Models
             heading.FontSize = 126 - 20 * (Name.Length - 1);
             heading.Margin = new Thickness(0, -24 + 5 * (Name.Length - 1), 0, 0);
             WriteableBitmap large = new WriteableBitmap(336, 336);
+            grid.UpdateLayout();
             grid.Measure(new Size(336, 336));
             grid.Arrange(new Rect(0, 0, 336, 336));
             large.Render(grid, null);
@@ -239,6 +242,7 @@ namespace _4charm.Models
             heading.FontSize = 126;
             heading.Margin = new Thickness(0, -24, 0, 0);
             WriteableBitmap wide = new WriteableBitmap(691, 336);
+            grid.UpdateLayout();
             grid.Measure(new Size(691, 336));
             grid.Arrange(new Rect(0, 0, 691, 336));
             wide.Render(grid, null);
@@ -274,7 +278,7 @@ namespace _4charm.Models
             }
             catch (InvalidOperationException)
             {
-                MessageBox.Show("Board is already pinned.");
+                MessageBox.Show(AppResources.BoardsPage_AlreadyPinned);
             }
         }
 

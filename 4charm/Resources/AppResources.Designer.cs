@@ -367,6 +367,15 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Board is already pinned..
+        /// </summary>
+        public static string BoardsPage_AlreadyPinned {
+            get {
+                return ResourceManager.GetString("BoardsPage_AlreadyPinned", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to favorites.
         /// </summary>
         public static string BoardsPage_Favorites {
@@ -507,6 +516,51 @@ namespace _4charm.Resources {
         public static string ImageViewerPage_SavingImage {
             get {
                 return ResourceManager.GetString("ImageViewerPage_SavingImage", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Captcha data is corrupt..
+        /// </summary>
+        public static string NewThreadPage_CaptchaCorrupt {
+            get {
+                return ResourceManager.GetString("NewThreadPage_CaptchaCorrupt", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to choose file.
+        /// </summary>
+        public static string NewThreadPage_ChooseFile {
+            get {
+                return ResourceManager.GetString("NewThreadPage_ChooseFile", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to NEW THREAD - /{0}/.
+        /// </summary>
+        public static string NewThreadPage_PageTitle {
+            get {
+                return ResourceManager.GetString("NewThreadPage_PageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Unknown error encountered submitting thread..
+        /// </summary>
+        public static string NewThreadPage_UnknownError {
+            get {
+                return ResourceManager.GetString("NewThreadPage_UnknownError", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to There was an error retrieving the posts :(.
+        /// </summary>
+        public static string PostsPage_Error {
+            get {
+                return ResourceManager.GetString("PostsPage_Error", resourceCulture);
             }
         }
         

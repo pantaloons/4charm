@@ -2,6 +2,7 @@
 using _4charm.Resources;
 using Microsoft.Phone.Controls;
 using Microsoft.Phone.Shell;
+using System.Windows.Navigation;
 
 namespace _4charm.Controls
 {
@@ -11,7 +12,6 @@ namespace _4charm.Controls
 
         public OrientLockablePage()
         {
-            SupportedOrientations = CriticalSettingsManager.Current.LockOrientation;
             _orientLock = new ApplicationBarMenuItem(GetOrientationLockText());
             _orientLock.Click += (sender, e) =>
             {
@@ -33,9 +33,16 @@ namespace _4charm.Controls
             };
         }
 
+        protected override void OnNavigatedTo(NavigationEventArgs e)
+        {
+            base.OnNavigatedTo(e);
+
+            SupportedOrientations = CriticalSettingsManager.Current.LockOrientation;
+        }
+
         private string GetOrientationLockText()
         {
-            if (this.SupportedOrientations == SupportedPageOrientation.PortraitOrLandscape)
+            if (CriticalSettingsManager.Current.LockOrientation == SupportedPageOrientation.PortraitOrLandscape)
             {
                 return AppResources.ApplicationBar_LockOrientation;
             }

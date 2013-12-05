@@ -17,7 +17,6 @@ namespace _4charm.Views
 
         private void NameKeyDown(object sender, KeyEventArgs e)
         {
-            // Clear focus to hide the SIP when enter pressed
             if (e.Key == Key.Enter)
             {
                 Focus();

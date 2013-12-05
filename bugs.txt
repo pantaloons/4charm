@@ -1,7 +1,8 @@
-Text tile pinning
 try/catch new system.net
 task switch back to gif image
-decode gif async
+gif locking
 tombstoning
 add replies indicator after post number
-fade in
+single image gif black
+gifs sometimes dont start
+refactory posts page

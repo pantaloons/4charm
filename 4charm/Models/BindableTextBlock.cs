@@ -99,13 +99,13 @@ namespace _4charm.Models
                                 // grid and hit that tap event too. To work around this we set the rootframe
                                 // hit test property as a sentinel value to signal that tap handler to ignore
                                 // the invocation.
-                                App.RootFrame.IsHitTestVisible = false;
+                                App.IsPostTapAllowed = false;
                                 PostViewModel pvm = (PostViewModel)textBlock.DataContext;
                                 pvm.QuoteLinkTapped(m.Groups[2].Value, ulong.Parse(m.Groups[3].Value), ulong.Parse(m.Groups[4].Value));
 
                                 // We clear this sentinel property on the dispatcher, since the routed tap events actually get queued on
                                 // the dispatcher and don't happen until this current function returns.
-                                Deployment.Current.Dispatcher.BeginInvoke(() => App.RootFrame.IsHitTestVisible = true);
+                                Deployment.Current.Dispatcher.BeginInvoke(() => App.IsPostTapAllowed = true);
                             }
                         };
                         h.Inlines.Add(new Run()
@@ -126,9 +126,9 @@ namespace _4charm.Models
                             {
                                 if (textBlock.DataContext is PostViewModel)
                                 {
-                                    App.RootFrame.IsHitTestVisible = false;
+                                    App.IsPostTapAllowed = false;
                                     (textBlock.DataContext as PostViewModel).BoardLinkTapped(m3.Groups[1].Value + m3.Groups[2].Value);
-                                    Deployment.Current.Dispatcher.BeginInvoke(() => App.RootFrame.IsHitTestVisible = true);
+                                    Deployment.Current.Dispatcher.BeginInvoke(() => App.IsPostTapAllowed = true);
                                 }
                             };
                             h.Inlines.Add(new Run()
@@ -216,11 +216,11 @@ namespace _4charm.Models
                         if (isClicked) return;
 
                         isClicked = true;
-                        App.RootFrame.IsHitTestVisible = false;
+                        App.IsPostTapAllowed = false;
                         r.Text = WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ",");
                         r.FontSize = 17;
                         h.TextDecorations = null;
-                        Deployment.Current.Dispatcher.BeginInvoke(() => App.RootFrame.IsHitTestVisible = true);
+                        Deployment.Current.Dispatcher.BeginInvoke(() => App.IsPostTapAllowed = true);
                     };
                     h.Inlines.Add(r);
                     para.Inlines.Add(h);
@@ -231,8 +231,8 @@ namespace _4charm.Models
                     Hyperlink h = new Hyperlink() { NavigateUri = new Uri(_node.Attributes["href"].Value), TargetName = "_blank" };
                     h.Click += (hsender, he) =>
                     {
-                        App.RootFrame.IsHitTestVisible = false;
-                        Deployment.Current.Dispatcher.BeginInvoke(() => App.RootFrame.IsHitTestVisible = true);
+                        App.IsPostTapAllowed = false;
+                        Deployment.Current.Dispatcher.BeginInvoke(() => App.IsPostTapAllowed = true);
                     };
                     h.Inlines.Add(new Run()
                     {
@@ -322,9 +322,9 @@ namespace _4charm.Models
                     });
                     h.Click += (sender, e) =>
                     {
-                        App.RootFrame.IsHitTestVisible = false;
+                        App.IsPostTapAllowed = false;
                         new WebBrowserTask() { Uri = uri }.Show();
-                        Deployment.Current.Dispatcher.BeginInvoke(() => App.RootFrame.IsHitTestVisible = true);
+                        Deployment.Current.Dispatcher.BeginInvoke(() => App.IsPostTapAllowed = true);
                     };
                     inlines.Add(new Run() { Text = text.Substring(filledIndex, minIndex - filledIndex) });
                     inlines.Add(h);

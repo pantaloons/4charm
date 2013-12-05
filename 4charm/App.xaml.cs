@@ -15,6 +15,12 @@ namespace _4charm
     public partial class App : Application
     {
         /// <summary>
+        /// Because the tap events of the RichTextBox aren't routed, they can't be cancelled.
+        /// We use this to mark "cancellation", and just have other tap targets check it first.
+        /// </summary>
+        public static bool IsPostTapAllowed { get; set; }
+
+        /// <summary>
         /// Provides easy access to the root frame of the Phone Application.
         /// </summary>
         /// <returns>The root frame of the Phone Application.</returns>
@@ -41,6 +47,8 @@ namespace _4charm
             _initialFrameTCS = new TaskCompletionSource<bool>();
             InitialFrameRenderedTask = _initialFrameTCS.Task;
             CompositionTarget.Rendering += CompositionTarget_Rendering;
+
+            IsPostTapAllowed = true;
 
             if (Debugger.IsAttached)
             {

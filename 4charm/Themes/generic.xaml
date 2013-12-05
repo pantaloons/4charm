@@ -82,10 +82,11 @@
                                 <VisualState x:Name="NotScrolling"/>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
+                        
                         <Grid Margin="{TemplateBinding Padding}">
                             <Grid.ColumnDefinitions>
                                 <ColumnDefinition Width="*"/>
-                                <ColumnDefinition Width="auto"/>
+                                <ColumnDefinition Width="12"/>
                             </Grid.ColumnDefinitions>
 
                             <TextBlock x:Name="Placeholder"
@@ -96,7 +97,7 @@
                                        Foreground="{StaticResource PhoneSubtleBrush}"
                                        FontFamily="Segoe WP Light" />
 
-                                <ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
+                            <ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
                             <ScrollBar x:Name="VerticalScrollBar" Grid.Column="1" Margin="4,0,4,0" Opacity="0" Orientation="Vertical"/>
                         </Grid>
                     </Grid>

@@ -28,6 +28,11 @@ namespace _4charm.Models
             _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("4charm", Version));
         }
 
+        public async Task<HttpResponseMessage> GetAsync(Uri uri)
+        {
+            return await _client.GetAsync(EnforceHTTPS(uri));
+        }
+
         public async Task<Stream> GetStreamAsync(Uri uri)
         {
             return await _client.GetStreamAsync(EnforceHTTPS(uri));
@@ -43,25 +48,13 @@ namespace _4charm.Models
             return await _client.GetAsyncWithProgress(EnforceHTTPS(uri), progress, token);
         }
 
-        public async Task<HttpResponseMessage> PostAsync(Uri uri, Uri referrer, Dictionary<string, string> fields)
+        public async Task<HttpResponseMessage> PostAsync(Uri uri, Dictionary<string, string> fields)
         {
-            _client.DefaultRequestHeaders.Referrer = referrer;
-            HttpResponseMessage response;
-            try
-            {
-                response = await _client.PostAsync(EnforceHTTPS(uri), new FormUrlEncodedContent(fields));
-            }
-            catch
-            {
-                _client.DefaultRequestHeaders.Referrer = null;
-                throw;
-            }
-            _client.DefaultRequestHeaders.Referrer = null;
-            return response;
+            return await _client.PostAsync(EnforceHTTPS(uri), new FormUrlEncodedContent(fields));
         }
 
 
-        public async Task<HttpResponseMessage> PostAsync(Uri uri, Uri referrer, Dictionary<string, string> fields, string fileName, byte[] imageData)
+        public async Task<HttpResponseMessage> PostAsync(Uri uri, Dictionary<string, string> fields, string fileName, byte[] imageData)
         {
             ByteArrayContent file = new ByteArrayContent(imageData);
 
@@ -69,19 +62,7 @@ namespace _4charm.Models
             foreach (KeyValuePair<string, string> field in fields) form.Add(new StringContent(field.Value), "\"" + field.Key + "\"");
             form.Add(file, "\"upfile\"", "\"" + fileName + "\"");
 
-            _client.DefaultRequestHeaders.Referrer = referrer;
-            HttpResponseMessage response;
-            try
-            {
-                response = await _client.PostAsync(EnforceHTTPS(uri), form);
-            }
-            catch
-            {
-                _client.DefaultRequestHeaders.Referrer = null;
-                throw;
-            }
-            _client.DefaultRequestHeaders.Referrer = null;
-            return response;
+            return await _client.PostAsync(EnforceHTTPS(uri), form);
         }
 
         public Uri EnforceHTTPS(Uri uri)

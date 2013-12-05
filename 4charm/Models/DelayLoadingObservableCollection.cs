@@ -40,40 +40,60 @@ namespace _4charm.Models
             ResolveChanges();
         }
 
+        public new void Add(T item)
+        {
+            _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+
+            ResolveChanges();
+        }
+
         public new void Insert(int index, T item)
         {
             _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
+
+            ResolveChanges();
         }
 
-        protected override void InsertItem(int index, T item)
-        {
-            _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
-        }
-
-        protected override void MoveItem(int oldIndex, int newIndex)
+        public new void Move(int oldIndex, int newIndex)
         {
             _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, new object(), newIndex, oldIndex));
+
+            ResolveChanges();
         }
 
-        protected override void RemoveItem(int index)
+        protected new void RemoveItem(int index)
         {
             _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new object(), index));
+
+            ResolveChanges();
         }
 
         public new void RemoveAt(int index)
         {
             _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new object(), index));
+
+            ResolveChanges();
         }
 
-        protected override void SetItem(int index, T item)
+        protected new void SetItem(int index, T item)
         {
             Debug.Assert(false);
         }
 
-        protected override void ClearItems()
+        public new void Clear()
         {
-            base.ClearItems();
+            base.Clear();
             _actions.Clear();
+        }
+
+        public void Flush()
+        {
+            while (_actions.Count > 0)
+            {
+                NotifyCollectionChangedEventArgs args = _actions.First.Value;
+                _actions.RemoveFirst();
+                ResolveChange(args);
+            }
         }
 
         private void ResolveChanges()
@@ -113,7 +133,7 @@ namespace _4charm.Models
             switch (args.Action)
             {
                 case NotifyCollectionChangedAction.Add:
-                    base.InsertItem(base.Count, (T)args.NewItems[0]);
+                    base.InsertItem(args.NewStartingIndex >= 0 ? args.NewStartingIndex : Count, (T)args.NewItems[0]);
                     break;
                 case NotifyCollectionChangedAction.Move:
                     base.MoveItem(args.OldStartingIndex, args.NewStartingIndex);

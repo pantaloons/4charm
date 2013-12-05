@@ -54,7 +54,7 @@
 
                 <!-- File selector -->
                 <TextBlock Text="File" Style="{StaticResource PhoneTextSubtleStyle}" />
-                <controls:ErrorStateButton Content="{Binding FileName}" IsErrorState="{Binding IsImageError}" Command="{Binding AddImage}" />
+                <controls:ErrorStateButton Content="{Binding FileName}" IsErrorState="{Binding IsImageError}" Command="{Binding SelectImage}" />
 
                 <!-- Comment box -->
                 <TextBlock Text="Comment" Style="{StaticResource PhoneTextSubtleStyle}" />

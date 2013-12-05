@@ -46,7 +46,7 @@ namespace _4charm.ViewModels
             Background = t.Board.Brush;
 
             Post initial = t.Posts.FirstOrDefault().Value;
-            if (initial != null) InitialPost = new PostViewModel(initial, null);
+            if (initial != null) InitialPost = new PostViewModel(initial);
         }
     }
 }

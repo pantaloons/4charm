@@ -16,53 +16,7 @@
     mc:Ignorable="d"
     shell:SystemTray.IsVisible="False">
 
-    <phone:PhoneApplicationPage.Resources>
-        <!-- Correct the LongListSelector template so that the scrollbar does not affect content width,
-             otherwise adding threads 3/4 will cause the scrollbar to appear and snap the width of
-             existing posts in a little bit. -->
-        <Style x:Key="OverlaidScrollbarLLS" TargetType="controls:PlaceHolderLongListSelector">
-            <Setter Property="Background" Value="Transparent"/>
-            <Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="controls:PlaceHolderLongListSelector">
-                        <Grid Background="{TemplateBinding Background}">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="ScrollStates">
-                                    <VisualStateGroup.Transitions>
-                                        <VisualTransition GeneratedDuration="00:00:00.5"/>
-                                    </VisualStateGroup.Transitions>
-                                    <VisualState x:Name="Scrolling">
-                                        <Storyboard>
-                                            <DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="VerticalScrollBar"/>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="NotScrolling"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Grid Margin="{TemplateBinding Padding}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="12"/>
-                                </Grid.ColumnDefinitions>
-
-                                <TextBlock x:Name="Placeholder"
-                                       TextWrapping="Wrap"
-                                       Visibility="Collapsed"
-                                       Grid.ColumnSpan="2"
-                                       FontSize="{StaticResource PhoneFontSizeLarge}"
-                                       Foreground="{StaticResource PhoneSubtleBrush}"
-                                       FontFamily="Segoe WP Light" />
-
-                                <ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
-                                <ScrollBar x:Name="VerticalScrollBar" Grid.Column="1" Margin="4,0,4,0" Opacity="0" Orientation="Vertical"/>
-                            </Grid>
-                        </Grid>
-                    </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
-        
+    <phone:PhoneApplicationPage.Resources>        
         <!-- Template for threads in the thread and watchlist views. -->
         <DataTemplate x:Key="ThreadItemTemplate">
             <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24">
@@ -72,14 +26,6 @@
                         <i:InvokeCommandAction Command="{Binding InitialPost.ThreadNavigated}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-
-                <Grid.Resources>
-                    <!-- Storyboard to fade the thread in when it is initially loaded. -->
-                    <Storyboard x:Key="FadeInStoryboard">
-                        <DoubleAnimation Duration="0:0:0.5" From="0" To="1"
-                                         Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Opacity"/>
-                    </Storyboard>
-                </Grid.Resources>
 
                 <Grid Margin="12" DataContext="{Binding InitialPost}">
                     <Grid.RowDefinitions>
@@ -193,13 +139,6 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <Grid.Resources>
-                    <Storyboard x:Key="FadeInStoryboard">
-                        <DoubleAnimation Duration="0:0:0.5" From="0" To="1"
-                                         Storyboard.TargetName="RootGrid" Storyboard.TargetProperty="Opacity"/>
-                    </Storyboard>
-                </Grid.Resources>
-
                 <Grid.RowDefinitions>
                     <RowDefinition Height="*" />
                     <RowDefinition Height="90" />
@@ -236,15 +175,14 @@
                            Foreground="White"
                            Text="{Binding InitialPost.TruncatedCounterText}" />
             </Grid>
-
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
 
     <Grid>
         <phone:Pivot Title="{Binding PivotTitle}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}" SelectionChanged="PivotSelectionChanged">
             <phone:PivotItem Header="{Binding Path=LocalizedResources.ThreadsPage_Threads, Source={StaticResource LocalizedStrings}}">
-                <controls:PlaceHolderLongListSelector
-                    Style="{StaticResource OverlaidScrollbarLLS}"
+                <controls:FadingLongListSelector
+                    FadeLimit="10"
                     Margin="12,0,0,0"
                     ItemsSource="{Binding Threads}"
                     ItemTemplate="{StaticResource ThreadItemTemplate}"
@@ -256,19 +194,19 @@
                             <Grid Height="600" />
                         </DataTemplate>
                     </phone:LongListSelector.ListFooterTemplate>
-                </controls:PlaceHolderLongListSelector>
+                </controls:FadingLongListSelector>
             </phone:PivotItem>
             <phone:PivotItem Header="{Binding Path=LocalizedResources.ThreadsPage_Watchlist, Source={StaticResource LocalizedStrings}}">
-                <controls:PlaceHolderLongListSelector
-                    Style="{StaticResource OverlaidScrollbarLLS}"
+                <controls:FadingLongListSelector
+                    FadeLimit="10"
                     ItemsSource="{Binding Watchlist}"
                     ItemTemplate="{StaticResource ThreadItemTemplate}"
                     PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
                     PlaceholderText="{Binding Path=LocalizedResources.ThreadsPage_Error, Source={StaticResource LocalizedStrings}}" />
             </phone:PivotItem>
             <phone:PivotItem Header="{Binding Path=LocalizedResources.ThreadsPage_Catalog, Source={StaticResource LocalizedStrings}}">
-                <controls:PlaceHolderLongListSelector
-                    Style="{StaticResource OverlaidScrollbarLLS}"
+                <controls:FadingLongListSelector
+                    FadeLimit="16"
                     ItemsSource="{Binding ImageThreads}"
                     ItemTemplate="{StaticResource CatalogItemTemplate}"
                     LayoutMode="Grid"

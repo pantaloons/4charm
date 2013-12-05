@@ -27,6 +27,21 @@ namespace GIFSurface
 
 	Windows::Foundation::IAsyncAction^ GIFWrapper::SetGIF(const Platform::Array<unsigned char>^ resource, bool shouldAnimate)
 	{
+		{
+			std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+			m_isActive = shouldAnimate;
+			if (!m_isActive)
+			{
+				if (m_renderer)
+				{
+					m_renderer->Render(0, false);
+				}
+				
+				m_isDirty = true;
+				m_timer->Reset();
+			}
+		}
 		return concurrency::create_async([resource, this, shouldAnimate]()
 		{
 			GifFileType *gif = nullptr;
@@ -39,17 +54,20 @@ namespace GIFSurface
 
 			if (m_renderer && gif)
 			{
+				m_timer->Reset();
 				m_renderer->SetGIFResource(gif);
 			}
 
-			m_isActive = shouldAnimate;
 			if (!m_isActive)
 			{
-				m_renderer->Render(0, false);
-				m_isDirty = true;
-			}
+				if (m_renderer)
+				{
+					m_renderer->Render(0, false);
+				}
 
-			m_timer->Reset();
+				m_isDirty = true;
+				m_timer->Reset();
+			}
 		});
 	}
 

@@ -21,7 +21,7 @@
                            ItemUnzoomed="MediaViewer_ItemUnzoomed">
             <controls:FlipView.ItemTemplate>
                 <DataTemplate>
-                    <Grid CacheMode="BitmapCache">
+                    <Grid CacheMode="BitmapCache" Background="Transparent">
                         <ViewportControl x:Name="FlipperViewport">
                             <Canvas x:Name="FlipperCanvas">
                                 <Grid x:Name="FlipperZoomableContent" CacheMode="BitmapCache" RenderTransformOrigin="0,0">
@@ -35,7 +35,8 @@
                                                                    DownloadProgressCommand="{Binding UpdateProgress}">
                                         <controls:MultiResolutionImage.Template>
                                             <ControlTemplate TargetType="controls:MultiResolutionImage">
-                                                <controls:GIFImage x:Name="PreloadedImageContainer" ShouldAnimate="{Binding IsSelected}" />
+                                                <controls:GIFImage x:Name="PreloadedImageContainer"
+                                                                   ShouldAnimate="{Binding IsSelected}" />
                                             </ControlTemplate>
                                         </controls:MultiResolutionImage.Template>
                                     </controls:MultiResolutionImage>

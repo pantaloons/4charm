@@ -175,7 +175,8 @@ namespace _4charm.ViewModels
             Stream responseStream;
             try
             {
-                responseStream = await RequestManager.Current.GetStreamAsync(item.ImageSrc);
+                HttpResponseMessage response = await RequestManager.Current.GetAsync(item.ImageSrc);
+                responseStream = await response.Content.ReadAsStreamAsync();
             }
             catch
             {

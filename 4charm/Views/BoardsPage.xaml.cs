@@ -57,6 +57,7 @@ namespace _4charm.Views
 
         private void NewBoardAdded(object sender, Board e)
         {
+            _viewModel.Favorites.Flush();
             BoardViewModel bvm = _viewModel.Favorites.FirstOrDefault(x => x.Name == e.Name);
             if (bvm != null)
             {
@@ -72,12 +73,16 @@ namespace _4charm.Views
 
             if (e.NavigationMode == NavigationMode.Back && SetBoard != null)
             {
-                BoardViewModel bvm = _viewModel.All.FirstOrDefault(x => x.Name == SetBoard.Name);
-                if(bvm != null)
+                _viewModel.All.Flush();
+                for (int i = 0; i < _viewModel.All.Count; i++)
                 {
-                    RootPivot.SelectedIndex = 3;
-                    All.UpdateLayout();
-                    All.ScrollTo(bvm);
+                    if (_viewModel.All[i].Name == SetBoard.Name)
+                    {
+                        RootPivot.SelectedIndex = 3;
+                        All.UpdateLayout();
+                        All.ScrollTo(_viewModel.All[Math.Min(i - 2, _viewModel.All.Count - 1)]);
+                        break;
+                    }
                 }
 
                 SetBoard = null;

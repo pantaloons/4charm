@@ -14,7 +14,7 @@ using System.Windows.Media.Imaging;
 
 namespace _4charm.ViewModels
 {
-    public class PostViewModel : ImageViewModelBase
+    public class PostViewModel : ViewModelBase
     {
         public bool IsWatchlisted
         {
@@ -109,16 +109,6 @@ namespace _4charm.ViewModels
             get { return GetProperty<double>(); }
             set { SetProperty(value); }
         }
-        public Thickness ThumbMargin
-        {
-            get { return GetProperty<Thickness>(); }
-            set { SetProperty(value); }
-        }
-        public Thickness ThumbMargin2
-        {
-            get { return GetProperty<Thickness>(); }
-            set { SetProperty(value); }
-        }
 
         public ulong RenamedFileName
         {
@@ -170,7 +160,13 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public ICommand TextCopied
+        public ICommand Tapped
+        {
+            get { return GetProperty<ICommand>(); }
+            set { SetProperty(value); }
+        }
+
+        public ICommand CopyToClipboard
         {
             get { return GetProperty<ICommand>(); }
             set { SetProperty(value); }
@@ -182,9 +178,9 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public bool IsGIF
+        public ICommand QuoteTapped
         {
-            get { return GetProperty<bool>(); }
+            get { return GetProperty<ICommand>(); }
             set { SetProperty(value); }
         }
 
@@ -200,17 +196,15 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        internal Post _post;
-        private Action<ulong> _quoteTapped;
+        private Post _post;
 
-        public PostViewModel()
+        private PostViewModel()
         {
         }
 
-        public PostViewModel(Post p, Action<ulong> quoteTapped)
+        public PostViewModel(Post p)
         {
             _post = p;
-            _quoteTapped = quoteTapped;
 
             IsSticky = p.IsSticky;
             IsClosed = p.IsClosed;
@@ -239,16 +233,10 @@ namespace _4charm.ViewModels
 
             ThumbHeight = p.ThumbHeight;
             ThumbWidth = p.RenamedFileName != 0 ? 100 : 0;
-            ThumbMargin = p.RenamedFileName != 0 ? new Thickness(0, 0, 12, 0) : new Thickness(0);
-            ThumbMargin2 = p.RenamedFileName != 0 ? new Thickness(0, 6, 12, 6) : new Thickness(0);
 
             RenamedFileName = p.RenamedFileName;
             ImageWidth = p.ImageWidth;
             ImageHeight = p.ImageHeight;
-
-            IsGIF = p.FileType == APIPost.FileTypes.gif;
-            ThumbnailSrc = p.ThumbnailSrc;
-            ImageSrc = p.ImageSrc;
 
             string posts = p.PostCount != 1 ? "posts" : "post";
             string images = p.ImageCount != 1 ? "images" : "image";
@@ -259,11 +247,15 @@ namespace _4charm.ViewModels
             LongNumber = p.LongNumber;
 
             HasImage = _post.RenamedFileName != 0;
+            if (HasImage)
+            {
+                ThumbnailSrc = p.ThumbnailSrc;
+                ImageSrc = p.ImageSrc;
+            }
 
             ThreadNavigated = new ModelCommand(DoThreadNavigated);
             ImageNavigated = new ModelCommand(DoImageNavigated);
-            NumberTapped = new ModelCommand(DoNumberTapped);
-            TextCopied = new ModelCommand(DoTextCopied);
+            CopyToClipboard = new ModelCommand(DoCopyToClipboard);
             ViewQuotes = new ModelCommand(DoViewQuotes);
         }
 
@@ -272,9 +264,9 @@ namespace _4charm.ViewModels
         /// </summary>
         private void DoThreadNavigated()
         {
-            // App.RootFrame.IsHitTestVisible is used to mark the tap routed event as handled, since tapping post quotes
+            // App.IsPostTapAllowed is used to mark the tap routed event as handled, since tapping post quotes
             // can only be handled by a click event, they can't cancel it normally.
-            if (!App.RootFrame.IsHitTestVisible) return;
+            if (!App.IsPostTapAllowed) return;
 
             Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}", Uri.EscapeUriString(_post.Thread.Board.Name), Uri.EscapeUriString(Number + "")), UriKind.Relative));
         }
@@ -284,27 +276,18 @@ namespace _4charm.ViewModels
         /// </summary>
         private void DoImageNavigated()
         {
-            // App.RootFrame.IsHitTestVisible is used to mark the tap routed event as handled, since tapping post quotes
+            // App.IsPostTapAllowed is used to mark the tap routed event as handled, since tapping post quotes
             // can only be handled by a click event, they can't cancel it normally.
-            if (!App.RootFrame.IsHitTestVisible) return;
+            if (!App.IsPostTapAllowed) return;
 
             Navigate(new Uri(String.Format("/Views/ImageViewer.xaml?board={0}&thread={1}&post={2}&skipped=true",
                 Uri.EscapeUriString(_post.Thread.Board.Name), Uri.EscapeUriString(_post.Thread.Number + ""), Uri.EscapeUriString(Number + "")), UriKind.Relative));
         }
 
         /// <summary>
-        /// User tapped the post number. View determines how to handle this, usually does nothing but in the posts view
-        /// the replies area is shown for this post.
-        /// </summary>
-        private void DoNumberTapped()
-        {
-            if (_quoteTapped != null) _quoteTapped(Number);
-        }
-
-        /// <summary>
         /// User copied post text from the context menu.
         /// </summary>
-        private void DoTextCopied()
+        private void DoCopyToClipboard()
         {
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml((_post.Comment ?? "").Replace("<br>", "\n"));
@@ -320,12 +303,6 @@ namespace _4charm.ViewModels
             MessageBox.Show("Tap the post number in the top right corner to view quotes.");
         }
 
-        public override void LoadImage(int displayWidth = 100)
-        {
-            if (_post.RenamedFileName == 0 || _post.FileDeleted) return;
-            base.LoadImage(_post.ThumbnailSrc, displayWidth);
-        }
-
         /// <summary>
         /// If this post quotes the given post.
         /// </summary>
@@ -339,27 +316,27 @@ namespace _4charm.ViewModels
         /// <summary>
         /// User tapped a quote on the post. Show the reply box or navigate as appropriate.
         /// </summary>
-        /// <param name="board">Board part of the quote hyperlink.</param>
-        /// <param name="newThread">Thread ID of the quote hyperlink.</param>
-        /// <param name="post">Post ID of the quote hyperlink.</param>
-        public void QuoteLinkTapped(string board, ulong newThread, ulong post)
+        /// <param name="boardID">Board part of the quote hyperlink.</param>
+        /// <param name="threadID">Thread ID of the quote hyperlink.</param>
+        /// <param name="postID">Post ID of the quote hyperlink.</param>
+        public void QuoteLinkTapped(string boardID, ulong threadID, ulong postID)
         {
-            if ((board == "" || board == _post.Thread.Board.Name) && newThread == _post.Thread.Number)
+            if ((boardID == "" || boardID == _post.Thread.Board.Name) && threadID == _post.Thread.Number && QuoteTapped != null)
             {
                 // The quote links into the current thread. The view model was constructed with an appropriate handler,
                 // since the existing thread view wants to handle this.
-                if (_quoteTapped != null) _quoteTapped(post);
+                QuoteTapped.Execute(postID);
             }
             else
             {
-                string newBoard = board;
+                string newBoard = boardID;
                 // If the board part is empty, assume it is the current board.
                 if (newBoard == "") newBoard = _post.Thread.Board.Name;
 
                 if (BoardList.Boards.ContainsKey(newBoard))
                 {
                     Navigate(new Uri(String.Format("/Views/PostsPage.xaml?board={0}&thread={1}&post={2}",
-                        Uri.EscapeUriString(newBoard), Uri.EscapeUriString(newThread + ""), Uri.EscapeUriString(post + "")), UriKind.Relative));
+                        Uri.EscapeUriString(newBoard), Uri.EscapeUriString(threadID + ""), Uri.EscapeUriString(postID + "")), UriKind.Relative));
                 }
             }
         }

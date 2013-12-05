@@ -87,7 +87,7 @@ namespace _4charm.ViewModels
             _board = b;
             Name = b.Name;
             DisplayName = "/" + b.Name + "/";
-            Description = "/" + b.Name + "/ - " + b.Description;
+            Description = DisplayName + " - " + b.Description;
             WideURI = b.WideURI;
             IconURI = b.IconURI;
             IsNSFW = b.IsNSFW;

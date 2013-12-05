@@ -305,6 +305,9 @@
   <data name="ThreadsPage_Error" xml:space="preserve">
     <value>There was an error retrieving the threads :(</value>
   </data>
+  <data name="BoardsPage_AlreadyPinned" xml:space="preserve">
+    <value>Board is already pinned.</value>
+  </data>
   <data name="ImageViewerPage_ImageFailed" xml:space="preserve">
     <value>Image download failed.</value>
   </data>
@@ -313,6 +316,22 @@
   </data>
   <data name="ImageViewerPage_SavingImage" xml:space="preserve">
     <value>Saving to Saved Pictures...</value>
+  </data>
+  <data name="NewThreadPage_CaptchaCorrupt" xml:space="preserve">
+    <value>Captcha data is corrupt.</value>
+  </data>
+  <data name="NewThreadPage_ChooseFile" xml:space="preserve">
+    <value>choose file</value>
+  </data>
+  <data name="NewThreadPage_PageTitle" xml:space="preserve">
+    <value>NEW THREAD - /{0}/</value>
+    <comment>0 is the name of the board, eg /fit/</comment>
+  </data>
+  <data name="NewThreadPage_UnknownError" xml:space="preserve">
+    <value>Unknown error encountered submitting thread.</value>
+  </data>
+  <data name="PostsPage_Error" xml:space="preserve">
+    <value>There was an error retrieving the posts :(</value>
   </data>
   <data name="ThreadsPage_Catalog" xml:space="preserve">
     <value>catalog</value>

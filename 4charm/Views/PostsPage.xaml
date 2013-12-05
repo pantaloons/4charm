@@ -1,4 +1,4 @@
-﻿<phone:PhoneApplicationPage
+﻿<controls:OrientLockablePage
     x:Class="_4charm.Views.PostsPage"
     xmlns="http://schemas.microsoft.com/winfx/2006/xaml/presentation"
     xmlns:x="http://schemas.microsoft.com/winfx/2006/xaml"
@@ -8,6 +8,7 @@
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
+    xmlns:controls="clr-namespace:_4charm.Controls"
     xmlns:models="clr-namespace:_4charm.Models"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
@@ -18,36 +19,21 @@
     
     <phone:PhoneApplicationPage.Resources>
         <DataTemplate x:Key="PostItemTemplate">
-            <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24" Tap="RootGridTap">
-                <Grid.Triggers>
-                    <EventTrigger RoutedEvent="Grid.Loaded">
-                        <BeginStoryboard>
-                            <Storyboard>
-                                <DoubleAnimation Duration="0:0:0.5" From="0" To="1"
-                                                 Storyboard.TargetName="RootGrid"
-                                                 Storyboard.TargetProperty="Opacity">
-                                </DoubleAnimation>
-                            </Storyboard>
-                        </BeginStoryboard>
-                    </EventTrigger>
-                </Grid.Triggers>
-
+            <Grid x:Name="RootGrid" Background="{Binding Background}" Margin="0,0,0,24">
+                <i:Interaction.Triggers>
+                    <i:EventTrigger EventName="Tap">
+                        <i:InvokeCommandAction Command="{Binding Tapped}" />
+                    </i:EventTrigger>
+                </i:Interaction.Triggers>
+                    
                 <toolkit:ContextMenuService.ContextMenu>
                     <toolkit:ContextMenu Opened="ContextMenuOpened">
                         <toolkit:MenuItem Header="{Binding Path=LocalizedResources.PostTemplate_SeeQuotes, Source={StaticResource LocalizedStrings}}"
                                           Command="{Binding ViewQuotes}"/>
                         <toolkit:MenuItem Header="{Binding Path=LocalizedResources.PostTemplate_CopyText, Source={StaticResource LocalizedStrings}}"
-                                          Command="{Binding TextCopied}"/>
+                                          Command="{Binding CopyToClipboard}"/>
                     </toolkit:ContextMenu>
                 </toolkit:ContextMenuService.ContextMenu>
-
-                <Grid.Resources>
-                    <Storyboard x:Key="FlashStoryboard">
-                        <ColorAnimation To="#FF7449" AutoReverse="True" Duration="0:0:0.1" BeginTime="0:0:0"
-                                        Storyboard.TargetName="RootGrid"
-                                        Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"/>
-                    </Storyboard>
-                </Grid.Resources>
 
                 <Grid Margin="12">
                     <Grid.RowDefinitions>
@@ -104,18 +90,19 @@
                                    Text="{Binding Number}" />
                     </Grid>
 
-                    <Image VerticalAlignment="Top"
-                           Grid.Row="2"
-                           Width="{Binding ThumbWidth}"
-                           Height="{Binding ThumbHeight}"
-                           Margin="{Binding ThumbMargin2}"
-                           Source="{Binding Image}">
+                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
+                                                   Width="{Binding ThumbWidth}"
+                                                   Height="{Binding ThumbHeight}"
+                                                   Margin="0,6,12,6"
+                                                   VerticalAlignment="Top"
+                                                   Grid.Row="2"
+                                                   Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Tap">
                                 <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </Image>
+                    </controls:MultiResolutionImage>
 
                     <RichTextBox VerticalAlignment="Top" Grid.Column="1" Grid.Row="2"
                                  models:BindableTextBlock.FormattedText="{Binding HtmlComment}"
@@ -137,234 +124,41 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ImageItemTemplate">
-            <Image Source="{Binding Image}"
-                   Width="98"
-                   Height="98"
-                   Margin="12,0,0,12"
-                   Stretch="UniformToFill">
+            <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}" Width="98" Height="98" Margin="12,0,0,12">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Tap">
                         <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-            </Image>
-        </DataTemplate>
-        
-        <Style x:Key="OverlaidScrollbarLLS" TargetType="phone:LongListSelector">
-        	<Setter Property="Background" Value="Transparent"/>
-        	<Setter Property="Foreground" Value="{StaticResource PhoneForegroundBrush}"/>
-        	<Setter Property="Template">
-        		<Setter.Value>
-        			<ControlTemplate TargetType="phone:LongListSelector">
-        				<Grid Background="{TemplateBinding Background}" d:DesignWidth="480" d:DesignHeight="800">
-        					<VisualStateManager.VisualStateGroups>
-        						<VisualStateGroup x:Name="ScrollStates">
-        							<VisualStateGroup.Transitions>
-        								<VisualTransition GeneratedDuration="00:00:00.5"/>
-        							</VisualStateGroup.Transitions>
-        							<VisualState x:Name="Scrolling">
-        								<Storyboard>
-        									<DoubleAnimation Duration="0" To="1" Storyboard.TargetProperty="Opacity" Storyboard.TargetName="VerticalScrollBar"/>
-        								</Storyboard>
-        							</VisualState>
-        							<VisualState x:Name="NotScrolling"/>
-        						</VisualStateGroup>
-        					</VisualStateManager.VisualStateGroups>
-        					<Grid Margin="{TemplateBinding Padding}">
-                                <Grid.ColumnDefinitions>
-                                    <ColumnDefinition Width="*"/>
-                                    <ColumnDefinition Width="12"/>
-                                </Grid.ColumnDefinitions>
-        						<ViewportControl x:Name="ViewportControl" HorizontalContentAlignment="Stretch" VerticalAlignment="Top"/>
-        						<ScrollBar x:Name="VerticalScrollBar" Grid.Column="1" Margin="4,0,4,0" Opacity="0" Orientation="Vertical"/>
-        					</Grid>
-        				</Grid>
-        			</ControlTemplate>
-        		</Setter.Value>
-        	</Setter>
-        </Style>
-
-        <Style x:Key="WhiteTextBox" TargetType="TextBox">
-            <Setter Property="FontFamily" Value="{StaticResource PhoneFontFamilyNormal}"/>
-            <Setter Property="FontSize" Value="{StaticResource PhoneFontSizeMediumLarge}"/>
-            <Setter Property="Background" Value="{StaticResource PhoneTextBoxBrush}"/>
-            <Setter Property="Foreground" Value="{StaticResource PhoneTextBoxForegroundBrush}"/>
-            <Setter Property="BorderBrush" Value="{StaticResource PhoneTextBoxBrush}"/>
-            <Setter Property="SelectionBackground" Value="{StaticResource PhoneAccentBrush}"/>
-            <Setter Property="SelectionForeground" Value="{StaticResource PhoneTextBoxSelectionForegroundBrush}"/>
-            <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
-            <Setter Property="Padding" Value="2"/>
-            <Setter Property="Template">
-                <Setter.Value>
-                    <ControlTemplate TargetType="TextBox">
-                        <Grid Background="Transparent">
-                            <VisualStateManager.VisualStateGroups>
-                                <VisualStateGroup x:Name="CommonStates">
-                                    <VisualState x:Name="Normal"/>
-                                    <VisualState x:Name="MouseOver"/>
-                                    <VisualState x:Name="Disabled">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="MainBorder">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="Transparent"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="MainBorder">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneDisabledBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentElement">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneDisabledBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="ReadOnly">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="MainBorder">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <Visibility>Collapsed</Visibility>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Visibility" Storyboard.TargetName="ReadonlyBorder">
-                                                <DiscreteObjectKeyFrame KeyTime="0">
-                                                    <DiscreteObjectKeyFrame.Value>
-                                                        <Visibility>Visible</Visibility>
-                                                    </DiscreteObjectKeyFrame.Value>
-                                                </DiscreteObjectKeyFrame>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="ReadonlyBorder">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneTextBoxBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="ReadonlyBorder">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneTextBoxBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Foreground" Storyboard.TargetName="ContentElement">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneTextBoxReadOnlyBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                </VisualStateGroup>
-                                <VisualStateGroup x:Name="FocusStates">
-                                    <VisualState x:Name="Focused">
-                                        <Storyboard>
-                                            <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="MainBorder">
-                                                <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneTextBoxEditBorderBrush}"/>
-                                            </ObjectAnimationUsingKeyFrames>
-                                        </Storyboard>
-                                    </VisualState>
-                                    <VisualState x:Name="Unfocused"/>
-                                </VisualStateGroup>
-                            </VisualStateManager.VisualStateGroups>
-                            <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Margin="{StaticResource PhoneTouchTargetOverhang}"/>
-                            <Border x:Name="ReadonlyBorder" BorderBrush="{StaticResource PhoneDisabledBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="{StaticResource PhoneTouchTargetOverhang}" Visibility="Collapsed"/>
-                            <Border BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="{StaticResource PhoneTouchTargetOverhang}">
-                                <ContentControl x:Name="ContentElement" BorderThickness="0" HorizontalContentAlignment="Stretch" Margin="{StaticResource PhoneTextBoxInnerMargin}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="Stretch"/>
-                            </Border>
-                        </Grid>
+                
+                <controls:MultiResolutionImage.Template>
+                    <ControlTemplate TargetType="controls:MultiResolutionImage">
+                        <controls:StaticImage x:Name="PreloadedImageContainer">
+                            <controls:StaticImage.Template>
+                                <ControlTemplate TargetType="controls:StaticImage">
+                                    <Image x:Name="ImageContainer" Stretch="UniformToFill" />
+                                </ControlTemplate>
+                            </controls:StaticImage.Template>
+                        </controls:StaticImage>
                     </ControlTemplate>
-                </Setter.Value>
-            </Setter>
-        </Style>
+                </controls:MultiResolutionImage.Template>
+            </controls:MultiResolutionImage>
+        </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
 
     <Grid x:Name="LayoutRoot">
-        <phone:Pivot x:Name="MainPivot" Title="{Binding PivotTitle}" SelectionChanged="MainPivotSelectionChanged">
-            <phone:PivotItem x:Name="TextPivot">
-                <Grid>
+        <!--<controls:SplittingPanel SplitRatio="0.25" IsExpanded="{Binding IsSpecialRegionExpanded}">
+            <Grid>
+                <controls:FadingLongListSelector x:Name="SelectionLLS"
+                                                 FadeLimit="3"
+                                                 UseFlashAnimation="True"
+                                                 Margin="12,0,0,0"
+                                                 ItemTemplate="{StaticResource PostItemTemplate}"
+                                                 ItemsSource="{Binding SelectedPosts}">
+                </controls:FadingLongListSelector>
+
+                <Grid x:Name="ReplyArea" Margin="12,0">
                     <Grid.Resources>
-                        <Storyboard x:Name="ExpandSelectionStoryboard" Completed="ExpandStoryboardCompleted">
-                            <DoubleAnimation From="-224" To="0" Duration="0:0:0.75"
-                                             Storyboard.TargetName="SelectionLLS"
-                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DoubleAnimation.EasingFunction>
-                                    <ElasticEase EasingMode="EaseOut" Oscillations="3" Springiness="7"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                            <DoubleAnimation From="0" To="224" Duration="0:0:0.75"
-                                             Storyboard.TargetName="TextLLS"
-                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DoubleAnimation.EasingFunction>
-                                    <ElasticEase EasingMode="EaseOut" Oscillations="3" Springiness="7"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                        </Storyboard>
-
-                        <Storyboard x:Name="CollapseSelectionStoryboard">
-                            <DoubleAnimation From="0" To="-223" Duration="0:0:0.15"
-                                             Storyboard.TargetName="SelectionLLS"
-                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DoubleAnimation.EasingFunction>
-                                    <ExponentialEase EasingMode="EaseOut"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                            <DoubleAnimation From="224" To="0" Duration="0:0:0.15"
-                                             Storyboard.TargetName="TextLLS"
-                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DoubleAnimation.EasingFunction>
-                                    <ExponentialEase EasingMode="EaseOut"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                        </Storyboard>
-
-                        <Storyboard x:Name="ExpandReplyStoryboard" Completed="ExpandStoryboardCompleted">
-                            <DoubleAnimation From="-224" To="0" Duration="0:0:0.75"
-                                             Storyboard.TargetName="ReplyArea"
-                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DoubleAnimation.EasingFunction>
-                                    <ElasticEase EasingMode="EaseOut" Oscillations="3" Springiness="7"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                            <DoubleAnimation From="0" To="224" Duration="0:0:0.75"
-                                             Storyboard.TargetName="TextLLS"
-                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DoubleAnimation.EasingFunction>
-                                    <ElasticEase EasingMode="EaseOut" Oscillations="3" Springiness="7"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                        </Storyboard>
-
-                        <Storyboard x:Name="CollapseReplyStoryboard">
-                            <DoubleAnimation From="0" To="-224" Duration="0:0:0.15"
-                                             Storyboard.TargetName="ReplyArea"
-                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DoubleAnimation.EasingFunction>
-                                    <ExponentialEase EasingMode="EaseOut"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                            <DoubleAnimation From="224" To="0" Duration="0:0:0.15"
-                                             Storyboard.TargetName="TextLLS"
-                                             Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DoubleAnimation.EasingFunction>
-                                    <ExponentialEase EasingMode="EaseOut"/>
-                                </DoubleAnimation.EasingFunction>
-                            </DoubleAnimation>
-                        </Storyboard>
-
-                        <Storyboard x:Name="HideSelectionStoryboard">
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS"
-                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DiscreteDoubleKeyFrame KeyTime="0" Value="-223" />
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Name="ShowSelectionStoryboard">
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="SelectionLLS"
-                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-
-                        <Storyboard x:Name="HideReplyStoryboard">
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea"
-                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DiscreteDoubleKeyFrame KeyTime="0" Value="-223" />
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        <Storyboard x:Name="ShowReplyStoryboard">
-                            <DoubleAnimationUsingKeyFrames Storyboard.TargetName="ReplyArea"
-                                                           Storyboard.TargetProperty="(UIElement.RenderTransform).(CompositeTransform.TranslateY)">
-                                <DiscreteDoubleKeyFrame KeyTime="0" Value="0" />
-                            </DoubleAnimationUsingKeyFrames>
-                        </Storyboard>
-                        
                         <Storyboard x:Name="BeginPostingStoryboard">
                             <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ReplyObscureBox" Storyboard.TargetProperty="Visibility">
                                 <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
@@ -375,235 +169,201 @@
                         </Storyboard>
                     </Grid.Resources>
                     
-                    <Grid>
-                        <Grid.Clip>
-                            <RectangleGeometry Rect="0,0,2048,2048"/>
-                        </Grid.Clip>
-                        <Grid>
-                            <phone:LongListSelector x:Name="SelectionLLS"
-                                                    Height="200"
-                                                    VerticalAlignment="Top"
-                                                    Style="{StaticResource OverlaidScrollbarLLS}"
-                                                    ItemTemplate="{StaticResource PostItemTemplate}"
-                                                    Margin="12,0,0,0" ItemsSource="{Binding SelectedPosts}"
-                                                    ItemRealized="SelectionLLS_ItemRealized"
-                                                    ItemUnrealized="LLS_ItemUnrealized">
-                                <phone:LongListSelector.RenderTransform>
-                                    <CompositeTransform TranslateY="-223"/>
-                                </phone:LongListSelector.RenderTransform>
-                            </phone:LongListSelector>
-                        </Grid>
+                    <ScrollViewer x:Name="ReplyScroller"
+                                  IsHitTestVisible="{Binding IsPosting}"
+                                  Background="{Binding Background}"
+                                  Margin="12,0">
+                        <Grid x:Name="InnerReplyGrid" Margin="12">
+                            <Grid.ColumnDefinitions>
+                                <ColumnDefinition Width="108"/>
+                                <ColumnDefinition Width="6"/>
+                                <ColumnDefinition Width="*"/>
+                            </Grid.ColumnDefinitions>
+                            <Grid.RowDefinitions>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="auto"/>
+                                <RowDefinition Height="6"/>
+                                <RowDefinition Height="auto"/>
+                            </Grid.RowDefinitions>
 
-                        
-                        <Grid x:Name="ReplyArea"
-                              DataContext="{Binding ReplyViewModel}"
-                              Height="200"
-                              VerticalAlignment="Top"
-                              Margin="12,0,12,0">
-                            <Grid.Resources>
-                                <Storyboard x:Name="HighlightCaptchaStoryboard">
-                                    <ColorAnimation To="#FF4040" Duration="0:0:0.4" BeginTime="0:0:0"
-                                                    Storyboard.TargetName="CaptchaTextBox"
-                                                    Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"/>
-                                </Storyboard>
-                                <Storyboard x:Name="HighlightCommentStoryboard">
-                                    <ColorAnimation To="#FF4040" Duration="0:0:0.4" BeginTime="0:0:0"
-                                                    Storyboard.TargetName="CommentTextBox"
-                                                    Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"/>
-                                </Storyboard>
-                            </Grid.Resources>
-                            <Grid.RenderTransform>
-                                <CompositeTransform TranslateY="-223"/>
-                            </Grid.RenderTransform>
-                            <ScrollViewer x:Name="ReplyScroller" Background="{Binding Background}">
-                                <Grid x:Name="InnerReplyGrid" Margin="12">
-                                    <Grid.ColumnDefinitions>
-                                        <ColumnDefinition Width="108"/>
-                                        <ColumnDefinition Width="6"/>
-                                        <ColumnDefinition Width="*"/>
-                                    </Grid.ColumnDefinitions>
-                                    <Grid.RowDefinitions>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="6"/>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="6"/>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="6"/>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="6"/>
-                                        <RowDefinition Height="auto"/>
-                                        <RowDefinition Height="6"/>
-                                        <RowDefinition Height="auto"/>
-                                    </Grid.RowDefinitions>
-
-                                    <Rectangle Grid.Row="0" Fill="{Binding ReplyBackBrush}"/>
-                                    <Border Grid.Row="0" BorderThickness="2" BorderBrush="Black">
-                                        <TextBlock Text="comment" Style="{StaticResource PhoneTextNormalStyle}"
-                                                FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                Foreground="{Binding ReplyForeBrush}"
-                                                VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBox x:Name="CommentTextBox"
-                                             FontSize="{StaticResource PhoneFontSizeSmall}"
-                                             InputScope="Chat"
-                                             Style="{StaticResource WhiteTextBox}"
-                                             Text="{Binding Comment, Mode=TwoWay}"
-                                             Grid.Row="0" Grid.Column="2"
-                                             TextWrapping="Wrap"
-                                             AcceptsReturn="True"
-                                             MinHeight="94" MaxHeight="180"
-                                             Background="White"
-                                             Margin="-12" />
-
-                                    <Rectangle Grid.Row="2" Fill="{Binding ReplyBackBrush}"/>
-                                    <Border Grid.Row="2" BorderThickness="2" BorderBrush="Black">
-                                        <TextBlock Text="captcha" Style="{StaticResource PhoneTextNormalStyle}"
+                            <Rectangle Grid.Row="0" Fill="{Binding ReplyBackBrush}"/>
+                            <Border Grid.Row="0" BorderThickness="2" BorderBrush="Black">
+                                <TextBlock Text="comment"
+                                                   Style="{StaticResource PhoneTextNormalStyle}"
                                                    FontSize="{StaticResource PhoneFontSizeSmall}"
                                                    Foreground="{Binding ReplyForeBrush}"
                                                    VerticalAlignment="Center"/>
-                                    </Border>
-                                    <StackPanel Grid.Row="2" Grid.Column="2">
-                                        <Image Source="{Binding CaptchaImage}" Height="56">
-                                            <i:Interaction.Triggers>
-                                                <i:EventTrigger EventName="Tap">
-                                                    <i:InvokeCommandAction Command="{Binding ReloadCaptcha}" />
-                                                </i:EventTrigger>
-                                            </i:Interaction.Triggers>
-                                        </Image>
-                                        <TextBox x:Name="CaptchaTextBox"
-                                                 FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                 Style="{StaticResource WhiteTextBox}"
-                                                 Text="{Binding CaptchaText, Mode=TwoWay}"
-                                                 Background="White"
-                                                 Margin="-12,-6,-12,-12"/>
-                                    </StackPanel>
+                            </Border>
 
-                                    <Rectangle Grid.Row="4" Fill="{Binding ReplyBackBrush}" />
-                                    <Border Grid.Row="4" BorderThickness="2" BorderBrush="Black">
-                                        <TextBlock Text="name" Style="{StaticResource PhoneTextNormalStyle}"
+                            <controls:ErrorStateTextBox x:Name="CommentTextBox"
+                                                        Text="{Binding Comment, Mode=TwoWay}"
+                                                        SelectionStart="{Binding CommentSelectionStart, Mode=TwoWay}"
+                                                        UpdateSourceOnTextChanged="True"
+                                                        IsErrorState="{Binding IsCommentError}"
+                                                        FontSize="{StaticResource PhoneFontSizeSmall}"
+                                                        InputScope="Chat"
+                                                        Grid.Row="0"
+                                                        Grid.Column="2"
+                                                        TextWrapping="Wrap"
+                                                        AcceptsReturn="True"
+                                                        MinHeight="94"
+                                                        MaxHeight="180"
+                                                        Background="White"
+                                                        Margin="-12" />
+
+                            <Rectangle Grid.Row="2" Fill="{Binding ReplyBackBrush}"/>
+                            <Border Grid.Row="2" BorderThickness="2" BorderBrush="Black">
+                                <TextBlock Text="captcha" Style="{StaticResource PhoneTextNormalStyle}"
                                                    FontSize="{StaticResource PhoneFontSizeSmall}"
                                                    Foreground="{Binding ReplyForeBrush}"
                                                    VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBox FontSize="{StaticResource PhoneFontSizeSmall}"
-                                             Style="{StaticResource WhiteTextBox}"
-                                             Text="{Binding Name, Mode=TwoWay}"
-                                             Grid.Row="4" Grid.Column="2"
-                                             Background="White"
-                                             Margin="-12"/>
+                            </Border>
+                            <StackPanel Grid.Row="2" Grid.Column="2">
+                                <controls:MultiResolutionImage Thumbnail="{Binding CaptchaUri}" Height="56">
+                                    <i:Interaction.Triggers>
+                                        <i:EventTrigger EventName="Tap">
+                                            <i:InvokeCommandAction Command="{Binding ReloadCaptcha}" />
+                                        </i:EventTrigger>
+                                    </i:Interaction.Triggers>
+                                </controls:MultiResolutionImage>
 
-                                    <Rectangle Grid.Row="6" Fill="{Binding ReplyBackBrush}" />
-                                    <Border Grid.Row="6" BorderThickness="2" BorderBrush="Black">
-                                        <TextBlock Text="e-mail" Style="{StaticResource PhoneTextNormalStyle}"
+                                <controls:ErrorStateTextBox x:Name="CaptchaTextBox"
+                                                                    UpdateSourceOnTextChanged="True"
+                                                                    IsErrorState="{Binding IsCaptchaError}"
+                                                                    FontSize="{StaticResource PhoneFontSizeSmall}"
+                                                                    Text="{Binding CaptchaText, Mode=TwoWay}"
+                                                                    Margin="-12,-6,-12,-12"/>
+                            </StackPanel>
+
+                            <Rectangle Grid.Row="4" Fill="{Binding ReplyBackBrush}" />
+                            <Border Grid.Row="4" BorderThickness="2" BorderBrush="Black">
+                                <TextBlock Text="name" Style="{StaticResource PhoneTextNormalStyle}"
                                                    FontSize="{StaticResource PhoneFontSizeSmall}"
                                                    Foreground="{Binding ReplyForeBrush}"
                                                    VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBox FontSize="{StaticResource PhoneFontSizeSmall}"
-                                             Style="{StaticResource WhiteTextBox}"
-                                             Text="{Binding Email, Mode=TwoWay}"
-                                             Grid.Row="6" Grid.Column="2"
-                                             Background="White"
-                                             Margin="-12"/>
+                            </Border>
+                            <controls:SelectionBindableTextBox FontSize="{StaticResource PhoneFontSizeSmall}"
+                                                                       UpdateSourceOnTextChanged="True"
+                                                                       Text="{Binding Name, Mode=TwoWay}"
+                                                                       Grid.Row="4" Grid.Column="2"
+                                                                       Background="White"
+                                                                       Margin="-12"/>
 
-                                    <Rectangle Grid.Row="8" Fill="{Binding ReplyBackBrush}"/>
-                                    <Border Grid.Row="8" BorderThickness="2" BorderBrush="Black">
-                                        <TextBlock Text="subject" Style="{StaticResource PhoneTextNormalStyle}"
+                            <Rectangle Grid.Row="6" Fill="{Binding ReplyBackBrush}" />
+                            <Border Grid.Row="6" BorderThickness="2" BorderBrush="Black">
+                                <TextBlock Text="e-mail" Style="{StaticResource PhoneTextNormalStyle}"
+                                                   FontSize="{StaticResource PhoneFontSizeSmall}"
+                                                   Foreground="{Binding ReplyForeBrush}"
+                                                   VerticalAlignment="Center"/>
+                            </Border>
+                            <controls:SelectionBindableTextBox FontSize="{StaticResource PhoneFontSizeSmall}"
+                                                                       UpdateSourceOnTextChanged="True"
+                                                                       Text="{Binding Email, Mode=TwoWay}"
+                                                                       Grid.Row="6" Grid.Column="2"
+                                                                       Margin="-12"/>
+
+                            <Rectangle Grid.Row="8" Fill="{Binding ReplyBackBrush}"/>
+                            <Border Grid.Row="8" BorderThickness="2" BorderBrush="Black">
+                                <TextBlock Text="subject" Style="{StaticResource PhoneTextNormalStyle}"
                                                         FontSize="{StaticResource PhoneFontSizeSmall}"
                                                         Foreground="{Binding ReplyForeBrush}"
                                                         VerticalAlignment="Center"/>
-                                    </Border>
-                                    <TextBox FontSize="{StaticResource PhoneFontSizeSmall}"
-                                             Style="{StaticResource WhiteTextBox}"
-                                             Text="{Binding Subject, Mode=TwoWay}"
-                                             Grid.Row="8" Grid.Column="2"
-                                             Background="White"
-                                             Margin="-12"/>
+                            </Border>
+                            <controls:SelectionBindableTextBox FontSize="{StaticResource PhoneFontSizeSmall}"
+                                                                       UpdateSourceOnTextChanged="True"
+                                                                       Text="{Binding Subject, Mode=TwoWay}"
+                                                                       Grid.Row="8" Grid.Column="2"
+                                                                       Margin="-12"/>
 
-                                    <Rectangle Grid.Row="10" Fill="{Binding ReplyBackBrush}"/>
-                                    <Border Grid.Row="10" BorderThickness="2" BorderBrush="Black">
-                                        <Grid Margin="0,6,0,6">
-                                            <TextBlock Text="file" Style="{StaticResource PhoneTextNormalStyle}"
+                            <Rectangle Grid.Row="10" Fill="{Binding ReplyBackBrush}"/>
+                            <Border Grid.Row="10" BorderThickness="2" BorderBrush="Black">
+                                <Grid Margin="0,6,0,6">
+                                    <TextBlock Text="file" Style="{StaticResource PhoneTextNormalStyle}"
                                                        FontSize="{StaticResource PhoneFontSizeSmall}"
                                                        Foreground="{Binding ReplyForeBrush}"
                                                        VerticalAlignment="Center"/>
-                                        </Grid>
-                                    </Border>
-                                    <Grid Grid.Row="10" Grid.Column="3" Background="#01000000">
-                                        <i:Interaction.Triggers>
-                                            <i:EventTrigger EventName="Tap">
-                                                <i:InvokeCommandAction Command="{Binding SelectImage}"/>
-                                            </i:EventTrigger>
-                                        </i:Interaction.Triggers>
-                                        <TextBlock Foreground="Black"
-                                                   FontSize="{StaticResource PhoneFontSizeNormal}"
-                                                   VerticalAlignment="Center"
-                                                   Text="{Binding FileName}"/>
-                                        <Grid Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=flip}">
-                                            <Button Foreground="Black"
-                                                FontSize="{StaticResource PhoneFontSizeNormal}"
-                                                Margin="-12"
-                                                BorderBrush="Black"
-                                                Command="{Binding SelectImage}">
-                                                choose file
-                                            </Button>
-                                        </Grid>
-                                    </Grid>
                                 </Grid>
-                            </ScrollViewer>
-                            
-                            <Rectangle x:Name="ReplyObscureBox" Visibility="Collapsed" Fill="Black" Opacity="0"/>
-
-                            <Grid VerticalAlignment="Center">
-                                <ProgressBar IsIndeterminate="{Binding IsPosting}"
-                                             Visibility="{Binding IsPosting, Converter={StaticResource BoolVisibleConverter}}"/>
+                            </Border>
+                            <Grid Grid.Row="10" Grid.Column="3">
+                                <Button Content="{Binding FileName}" Command="{Binding SelectImage}" />
                             </Grid>
                         </Grid>
+                    </ScrollViewer>
+
+                    <Rectangle x:Name="ReplyObscureBox" Visibility="Collapsed" Fill="Black" Opacity="0"/>
+
+                    <Grid VerticalAlignment="Center">
+                        <ProgressBar IsIndeterminate="{Binding IsPosting}"
+                                     Visibility="{Binding IsPosting, Converter={StaticResource BoolVisibleConverter}}"/>
                     </Grid>
-                    
-                    <phone:LongListSelector x:Name="TextLLS"
-                                            Style="{StaticResource OverlaidScrollbarLLS}"
-                                            ItemTemplate="{StaticResource PostItemTemplate}"
-                                            Margin="12,0,0,0" ItemsSource="{Binding AllPosts}"
-                                            ItemRealized="LLS_ItemRealized"
-                                            ItemUnrealized="LLS_ItemUnrealized">
-                        <phone:LongListSelector.RenderTransform>
-                            <CompositeTransform />
-                        </phone:LongListSelector.RenderTransform>
+                </Grid>
+            </Grid>-->
+        <!--</controls:SplittingPanel>-->
+
+        <controls:SplittingPanel SplitRatio="0.35" IsExpanded="{Binding IsSpecialRegionExpanded}">
+            <Grid>
+                <Grid.RowDefinitions>
+                    <RowDefinition Height="auto" />
+                    <RowDefinition Height="*" />
+                </Grid.RowDefinitions>
+                
+                <TextBlock Text=">>111111111"
+                           Grid.Row="0"
+                           HorizontalAlignment="Left"
+                           Margin="24,17,0,-7"
+                           FontFamily="{StaticResource PhoneFontFamilySemiBold}"
+                           FontSize="{StaticResource PivotTitleFontSize}" />
+
+                <controls:FadingLongListSelector x:Name="SelectionLLS"
+                                                 Grid.Row="1"
+                                                 FadeLimit="3"
+                                                 UseFlashAnimation="True"
+                                                 Margin="24,24,12,0"
+                                                 ItemTemplate="{StaticResource PostItemTemplate}"
+                                                 ItemsSource="{Binding SelectedPosts}" />
+            </Grid>
+
+
+            <phone:Pivot x:Name="MainPivot" Title="{Binding PivotTitle}" SelectedIndex="{Binding SelectedIndex, Mode=TwoWay}">
+                <phone:PivotItem x:Name="TextPivot">
+                    <controls:FadingLongListSelector x:Name="TextLLS"
+                                                     FadeLimit="10"
+                                                     Margin="12,0,0,0"
+                                                     ItemTemplate="{StaticResource PostItemTemplate}"
+                                                     ItemsSource="{Binding AllPosts}"
+                                                     PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
+                                                     PlaceholderText="{Binding Path=LocalizedResources.PostsPage_Error, Source={StaticResource LocalizedStrings}}">
                         <phone:LongListSelector.ListFooterTemplate>
                             <DataTemplate>
                                 <Rectangle Height="180"/>
                             </DataTemplate>
                         </phone:LongListSelector.ListFooterTemplate>
-                    </phone:LongListSelector>
+                    </controls:FadingLongListSelector>
+                </phone:PivotItem>
 
-                    <TextBlock TextWrapping="Wrap"
-                               Visibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
-                               Margin="24,0,24,0"
-                               FontSize="{StaticResource PhoneFontSizeLarge}"
-                               Foreground="{StaticResource PhoneSubtleBrush}"
-                               FontFamily="Segoe WP Light"
-                               Text="There was an error retrieving the posts :("/>
-                </Grid>
-            </phone:PivotItem>
-
-            <phone:PivotItem>
-                <phone:LongListSelector x:Name="ImageLLS" 
-                                        Visibility="Collapsed"
-                                        Style="{StaticResource OverlaidScrollbarLLS}"
-                                        ItemTemplate="{StaticResource ImageItemTemplate}"
-                                        Margin="0" ItemsSource="{Binding ImagePosts}"
-                                        ItemRealized="LLS_ItemRealized"
-                                        ItemUnrealized="LLS_ItemUnrealized"
-                                        LayoutMode="Grid"
-                                        GridCellSize="110,110">
-                </phone:LongListSelector>
-            </phone:PivotItem>
-        </phone:Pivot>
+                <phone:PivotItem>
+                    <controls:FadingLongListSelector x:Name="ImageLLS"
+                                                     FadeLimit="30"
+                                                     ItemTemplate="{StaticResource ImageItemTemplate}"
+                                                     ItemsSource="{Binding ImagePosts}"
+                                                     LayoutMode="Grid"
+                                                     GridCellSize="110,110"
+                                                     PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
+                                                     PlaceholderText="{Binding Path=LocalizedResources.PostsPage_Error, Source={StaticResource LocalizedStrings}}" />
+                </phone:PivotItem>
+            </phone:Pivot>
+        </controls:SplittingPanel>
 
         <ProgressBar VerticalAlignment="Top"
                      IsIndeterminate="{Binding IsLoading}"
                      Visibility="{Binding IsLoading, Converter={StaticResource BoolVisibleConverter}}"/>
     </Grid>
 
-</phone:PhoneApplicationPage>
+</controls:OrientLockablePage>

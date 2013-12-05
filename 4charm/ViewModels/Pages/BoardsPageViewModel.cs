@@ -49,7 +49,7 @@ namespace _4charm.ViewModels
 
         public BoardsPageViewModel()
         {
-            Favorites = new DelayLoadingObservableCollection<BoardViewModel>(250, true);
+            Favorites = new DelayLoadingObservableCollection<BoardViewModel>(200, true);
             All = new DelayLoadingObservableCollection<BoardViewModel>(50, true);
             Watchlist = new DelayLoadingObservableCollection<ThreadViewModel>(100, true);
             History = new DelayLoadingObservableCollection<ThreadViewModel>(100, true);
@@ -114,14 +114,14 @@ namespace _4charm.ViewModels
                 e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new BoardViewModel((Board)e.NewItems[0]));
             }
 
-            ListCollectionChanged<BoardViewModel>(Favorites, new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add));
+            ListCollectionChanged<BoardViewModel>(Favorites, e);
         }
 
         private void AllChanged(object sender, NotifyCollectionChangedEventArgs e)
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new BoardViewModel((Board)e.NewItems[0]));
+                e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new BoardViewModel((Board)e.NewItems[0]), e.NewStartingIndex);
             }
             
             ListCollectionChanged<BoardViewModel>(All, e);
@@ -160,8 +160,10 @@ namespace _4charm.ViewModels
                 case NotifyCollectionChangedAction.Remove:
                     target.RemoveAt(e.OldStartingIndex);
                     break;
-                case NotifyCollectionChangedAction.Replace:
                 case NotifyCollectionChangedAction.Reset:
+                    target.Clear();
+                    break;
+                case NotifyCollectionChangedAction.Replace:
                     Debug.Assert(false);
                     break;
             }
