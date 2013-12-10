@@ -214,6 +214,15 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to edit.
+        /// </summary>
+        public static string ApplicationBar_Edit {
+            get {
+                return ResourceManager.GetString("ApplicationBar_Edit", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to lock orientation.
         /// </summary>
         public static string ApplicationBar_LockOrientation {
@@ -538,11 +547,20 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to REPLY TO - /{0}/ - {1}.
+        /// </summary>
+        public static string NewThreadPage_NewPostPageTitle {
+            get {
+                return ResourceManager.GetString("NewThreadPage_NewPostPageTitle", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to NEW THREAD - /{0}/.
         /// </summary>
-        public static string NewThreadPage_PageTitle {
+        public static string NewThreadPage_NewThreadPageTitle {
             get {
-                return ResourceManager.GetString("NewThreadPage_PageTitle", resourceCulture);
+                return ResourceManager.GetString("NewThreadPage_NewThreadPageTitle", resourceCulture);
             }
         }
         

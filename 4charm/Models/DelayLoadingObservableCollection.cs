@@ -3,6 +3,7 @@ using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Threading.Tasks;
+using System.Linq;
 
 namespace _4charm.Models
 {
@@ -11,6 +12,11 @@ namespace _4charm.Models
         private bool _isResolving;
         private int _delay;
         private LinkedList<NotifyCollectionChangedEventArgs> _actions;
+
+        private int _flushCount;
+        private int _flushLimit;
+        private int _flushDelay;
+        private int _flushGroupCount;
 
         private bool _isPaused;
         public bool IsPaused
@@ -23,11 +29,16 @@ namespace _4charm.Models
             }
         }
 
-        public DelayLoadingObservableCollection(int delay, bool isPaused)
+        public DelayLoadingObservableCollection(int delay, bool isPaused, int bulkAfter, int bulkDelay, int bulkCount)
         {
             _delay = delay;
             _actions = new LinkedList<NotifyCollectionChangedEventArgs>();
-            _isPaused = isPaused;            
+            _isPaused = isPaused;
+
+            _flushCount = 0;
+            _flushLimit = bulkAfter;
+            _flushDelay = bulkDelay;
+            _flushGroupCount = bulkCount;
         }
 
         public void AddRange(IEnumerable<T> items)
@@ -52,6 +63,11 @@ namespace _4charm.Models
             _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
 
             ResolveChanges();
+        }
+
+        public IEnumerable<T> All()
+        {
+            return Items.Union(_actions.Where(x => x.Action == NotifyCollectionChangedAction.Add).Select(x => (T)x.NewItems[0]));
         }
 
         public new void Move(int oldIndex, int newIndex)
@@ -83,12 +99,23 @@ namespace _4charm.Models
         public new void Clear()
         {
             base.Clear();
+            _flushCount = 0;
             _actions.Clear();
         }
 
         public void Flush()
         {
             while (_actions.Count > 0)
+            {
+                NotifyCollectionChangedEventArgs args = _actions.First.Value;
+                _actions.RemoveFirst();
+                ResolveChange(args);
+            }
+        }
+
+        public void Flush(int count)
+        {
+            for (int i = 0; i < count && _actions.Count > 0; i++)
             {
                 NotifyCollectionChangedEventArgs args = _actions.First.Value;
                 _actions.RemoveFirst();
@@ -124,7 +151,19 @@ namespace _4charm.Models
 
                 ResolveChange(args);
 
-                await Task.Delay(_delay);
+                if (_flushCount < _flushLimit)
+                {
+                    await Task.Delay(_delay);
+                }
+                else
+                {
+                    if ((_flushCount + _flushLimit) % _flushGroupCount == 0 && _flushDelay > 0)
+                    {
+                        await Task.Delay(_flushDelay);
+                    }
+                }
+
+                _flushCount++;
             }
         }
 

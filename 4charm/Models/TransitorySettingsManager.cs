@@ -101,8 +101,11 @@ namespace _4charm.Models
                 .Select(x =>
                 {
                     Thread t = ThreadCache.Current.EnforceBoard(x.BoardName).EnforceThread(x.Number);
-                    x.Initial.Thread = t;
-                    t.Merge(x.Initial);
+                    if (x.Initial != null)
+                    {
+                        x.Initial.Thread = t;
+                        t.Merge(x.Initial);
+                    }
                     return t;
                 }));
 
@@ -112,8 +115,11 @@ namespace _4charm.Models
                 .Select(x =>
                 {
                     Thread t = ThreadCache.Current.EnforceBoard(x.BoardName).EnforceThread(x.Number);
-                    x.Initial.Thread = t;
-                    t.Merge(x.Initial);
+                    if (x.Initial != null)
+                    {
+                        x.Initial.Thread = t;
+                        t.Merge(x.Initial);
+                    }
                     return t;
                 }));
 
@@ -121,12 +127,12 @@ namespace _4charm.Models
             // queueing ensures it won't do redudnant save work.
             _watchlist.CollectionChanged += (sender, e) =>
             {
-                SetSetting<List<ThreadID>>("Watchlist", _watchlist.Select(x => new ThreadID(x.Board.Name, x.Number, x.Posts.First().Value)).ToList());
+                SetSetting<List<ThreadID>>("Watchlist", _watchlist.Select(x => new ThreadID(x.Board.Name, x.Number, x.Posts.FirstOrDefault().Value)).ToList());
             };
 
             _history.CollectionChanged += (sender, e) =>
             {
-                SetSetting<List<ThreadID>>("History", _history.Select(x => new ThreadID(x.Board.Name, x.Number, x.Posts.First().Value)).Take(MaxHistoryEntries).ToList());
+                SetSetting<List<ThreadID>>("History", _history.Select(x => new ThreadID(x.Board.Name, x.Number, x.Posts.FirstOrDefault().Value)).Take(MaxHistoryEntries).ToList());
             };
         }
     }

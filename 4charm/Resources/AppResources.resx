@@ -305,6 +305,9 @@
   <data name="ThreadsPage_Error" xml:space="preserve">
     <value>There was an error retrieving the threads :(</value>
   </data>
+  <data name="ApplicationBar_Edit" xml:space="preserve">
+    <value>edit</value>
+  </data>
   <data name="BoardsPage_AlreadyPinned" xml:space="preserve">
     <value>Board is already pinned.</value>
   </data>
@@ -323,7 +326,10 @@
   <data name="NewThreadPage_ChooseFile" xml:space="preserve">
     <value>choose file</value>
   </data>
-  <data name="NewThreadPage_PageTitle" xml:space="preserve">
+  <data name="NewThreadPage_NewPostPageTitle" xml:space="preserve">
+    <value>REPLY TO - /{0}/ - {1}</value>
+  </data>
+  <data name="NewThreadPage_NewThreadPageTitle" xml:space="preserve">
     <value>NEW THREAD - /{0}/</value>
     <comment>0 is the name of the board, eg /fit/</comment>
   </data>

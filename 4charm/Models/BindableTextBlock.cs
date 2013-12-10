@@ -66,6 +66,11 @@ namespace _4charm.Models
             textBlock.Blocks.Clear();
 
             HtmlDocument doc = e.NewValue as HtmlDocument;
+            if (doc == null)
+            {
+                return;
+            }
+
             Paragraph para = new Paragraph();
             foreach (var node in doc.DocumentNode.ChildNodes)
             {

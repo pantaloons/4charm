@@ -14,9 +14,10 @@ namespace _4charm.Views
 {
     public partial class PostsPage : OrientLockablePage
     {
+        private bool _isFixingCaptchaFocus;
         private PostsPageViewModel _viewModel;
 
-        private ApplicationBarIconButton _refresh, _watch, _reply, _send;
+        private ApplicationBarIconButton _refresh, _watch, _reply, _send, _edit;
 
         public PostsPage()
         {
@@ -28,6 +29,27 @@ namespace _4charm.Views
 
             _viewModel.ViewStateChanged += ViewStateChanged;
             _viewModel.ScrollTargetLoaded += ScrollTargetLoaded;
+            _viewModel.CaptchaFocused += CaptchaFocused;
+
+            OrientationChanged += PostsPage_OrientationChanged;
+        }
+
+        private void PostsPage_OrientationChanged(object sender, OrientationChangedEventArgs e)
+        {
+            switch (e.Orientation)
+            {
+                case PageOrientation.Portrait:
+                case PageOrientation.PortraitDown:
+                case PageOrientation.PortraitUp:
+                case PageOrientation.None:
+                    SplittingPane.SplitRatio = 0.5;
+                    break;
+                case PageOrientation.Landscape:
+                case PageOrientation.LandscapeLeft:
+                case PageOrientation.LandscapeRight:
+                    SplittingPane.SplitRatio = 0.75;
+                    break;
+            }
         }
 
         private void InitializeApplicationBar()
@@ -49,26 +71,25 @@ namespace _4charm.Views
             _send.Click += async (sender, e) =>
             {
                 _send.IsEnabled = false;
-                //BeginPostingStoryboard.Begin();
+                Focus();
                 ReplyPageViewModelBase.SubmitResultType result = await _viewModel.Submit();
                 _send.IsEnabled = true;
-                //BeginPostingStoryboard.Stop();
 
                 switch(result)
                 {
                     case ReplyPageViewModelBase.SubmitResultType.Success:
-                        //ReplyScroller.ScrollToVerticalOffset(0);
-                        await _viewModel.Update();
-                        //TextLLS.ScrollTo(_viewModel.AllPosts.Last());
+                        ScrollToBottom();
                         break;
                     case ReplyPageViewModelBase.SubmitResultType.EmptyCaptchaError:
                     case ReplyPageViewModelBase.SubmitResultType.WrongCatpchaError:
-                        //CaptchaTextBox.Focus();
-                        //ReplyScroller.ScrollToVerticalOffset(InnerReplyGrid.RowDefinitions[0].ActualHeight - 10);
+                        Focus();
+                        Deployment.Current.Dispatcher.BeginInvoke(() =>
+                        {
+                            CaptchaTextBox.Focus();
+                        });
                         break;
                     case ReplyPageViewModelBase.SubmitResultType.EmptyCommentError:
-                        //CommentTextBox.Focus();
-                        //ReplyScroller.ScrollToVerticalOffset(0);
+                        CommentBox.Focus();
                         break;
                     case ReplyPageViewModelBase.SubmitResultType.KnownError:
                     case ReplyPageViewModelBase.SubmitResultType.NoImageError:
@@ -76,6 +97,9 @@ namespace _4charm.Views
                         break;
                 }
             };
+
+            _edit = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.edit.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Edit };
+            _edit.Click += (sender, e) => _viewModel.EditReply();
 
             ApplicationBarMenuItem bottom = new ApplicationBarMenuItem(AppResources.ApplicationBar_ScrollToBottom);
             bottom.Click += (sender, e) => ScrollToBottom();
@@ -110,8 +134,18 @@ namespace _4charm.Views
             _viewModel.AllPosts.Flush();
 
             MainPivot.SelectedIndex = 0;
-            //TextLLS.UpdateLayout();
-            //TextLLS.ScrollTo(target);
+            TextLLS.UpdateLayout();
+            TextLLS.ScrollTo(target);
+        }
+
+        private void CaptchaFocused(object sender, EventArgs e)
+        {
+            Focus();
+            // We have to dispatch to fix a SIP scrollviewer glitch
+            Deployment.Current.Dispatcher.BeginInvoke(() =>
+            {
+                CaptchaTextBox.Focus();
+            });
         }
 
         protected override void OnNavigatedTo(NavigationEventArgs e)
@@ -119,18 +153,30 @@ namespace _4charm.Views
             base.OnNavigatedTo(e);
 
             UpdateWatchButton();
+
+            if (e.NavigationMode == NavigationMode.Back && PostsPageViewModel.ForceReload)
+            {
+                System.Diagnostics.Debug.WriteLine("scroll to bot gen");
+                ScrollToBottom();
+                PostsPageViewModel.ForceReload = false;
+            }
         }
 
         private void ScrollToBottom()
         {
             _viewModel.InitialUpdateTask.ContinueWith(task =>
             {
+                System.Diagnostics.Debug.WriteLine("scroll to bot goo");
                 if (MainPivot.SelectedIndex == 0)
                 {
+                    System.Diagnostics.Debug.WriteLine("before: " + _viewModel.AllPosts.Count);
                     _viewModel.AllPosts.Flush();
+                    System.Diagnostics.Debug.WriteLine("after: " + _viewModel.AllPosts.Count + " :: " + _viewModel.AllPosts.Last().Number);
+
                     if (_viewModel.AllPosts.Count > 0)
                     {
-                        //TextLLS.ScrollTo(_viewModel.AllPosts.Last());
+                        TextLLS.UpdateLayout();
+                        TextLLS.ScrollTo(_viewModel.AllPosts.Last());
                     }
                 }
                 else
@@ -138,7 +184,8 @@ namespace _4charm.Views
                     _viewModel.ImagePosts.Flush();
                     if (_viewModel.ImagePosts.Count > 0)
                     {
-                        //ImageLLS.ScrollTo(_viewModel.ImagePosts.Last());
+                        ImageLLS.UpdateLayout();
+                        ImageLLS.ScrollTo(_viewModel.ImagePosts.Last());
                     }
                 }
             }, TaskContinuationOptions.ExecuteSynchronously);
@@ -164,8 +211,41 @@ namespace _4charm.Views
                         ApplicationBar.Buttons.Add(_refresh);
                     }
                     ApplicationBar.Buttons.Add(_send);
+                    ApplicationBar.Buttons.Add(_edit);
                     break;
             }
+        }
+
+        private void CaptchaTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == System.Windows.Input.Key.Enter)
+            {
+                CommentBox.Focus();
+            }
+        }
+
+        /// <summary>
+        /// This function ensures the captcha box is correctly scrolled when it gets focus,
+        /// since sometimes it can be off the screen.
+        /// </summary>
+        private void CaptchaTextBox_GotFocus(object sender, RoutedEventArgs e)
+        {
+            if (_isFixingCaptchaFocus)
+            {
+                return;
+            }
+
+            Focus();
+            _isFixingCaptchaFocus = true;
+            
+            Deployment.Current.Dispatcher.BeginInvoke(() =>
+            {
+                CaptchaTextBox.Focus();
+                Deployment.Current.Dispatcher.BeginInvoke(() =>
+                {
+                    _isFixingCaptchaFocus = false;
+                });
+            });
         }
 
         private void ContextMenuOpened(object sender, System.Windows.RoutedEventArgs e)

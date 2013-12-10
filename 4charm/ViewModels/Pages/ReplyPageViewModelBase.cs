@@ -4,6 +4,7 @@ using _4charm.Resources;
 using Microsoft.Phone.Tasks;
 using System;
 using System.Collections.Generic;
+using System.ComponentModel;
 using System.IO;
 using System.Linq;
 using System.Net.Http;
@@ -123,14 +124,11 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        private ulong _post;
-        private bool _isNewThread;
-        private string _token;
+        protected string _token;
         private byte[] _imageData;
 
-        public ReplyPageViewModelBase(bool isNewThread)
+        public ReplyPageViewModelBase()
         {
-            _isNewThread = isNewThread;
             ReloadCaptcha = new ModelCommand(async () => await DoLoadCaptcha());
             SelectImage = new ModelCommand(() => DoSelectImage());
         }
@@ -148,14 +146,9 @@ namespace _4charm.ViewModels
             Board = arguments["board"];
 
             FileName = AppResources.NewThreadPage_ChooseFile;
-
-            DoLoadCaptcha().ContinueWith(result =>
-            {
-                throw result.Exception;
-            }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
         }
 
-        public override void OnBackKeyPress(System.ComponentModel.CancelEventArgs e)
+        public override void OnBackKeyPress(CancelEventArgs e)
         {
             base.OnBackKeyPress(e);
 
@@ -227,7 +220,7 @@ namespace _4charm.ViewModels
             }
         }
 
-        protected async Task<SubmitResultType> SubmitInternal(ulong threadID = 0)
+        protected async Task<SubmitResultType> SubmitInternal(ulong threadID)
         {
             IsPosting = true;
             SubmitResultType result = await SubmitInternalAsync(threadID);
@@ -241,37 +234,34 @@ namespace _4charm.ViewModels
             IsImageError = false;
             IsCommentError = false;
 
-            if (!_isNewThread && string.IsNullOrEmpty(Comment) && !HasImage)
-            {
-                // Posts into an existing thread require either an image or comment
-                IsCommentError = true;
-                if (string.IsNullOrEmpty(CaptchaText))
-                {
-                    IsCaptchaError = true;
-                }
-                return SubmitResultType.EmptyCommentError;
-            }
-
             if (string.IsNullOrEmpty(CaptchaText))
             {
                 IsCaptchaError = true;
-                if (_isNewThread && !HasImage)
+                if (threadID == 0 && !HasImage)
                 {
                     IsImageError = true;
                 }
-
-                Task ignored = DoLoadCaptcha().ContinueWith(t =>
+                else if (threadID != 0 && string.IsNullOrEmpty(Comment) && !HasImage)
                 {
-                    throw t.Exception;
-                }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+                    IsCommentError = true;
+                }
+
+                CaptchaText = "";
 
                 return SubmitResultType.EmptyCaptchaError;
             }
-            else if (_isNewThread && !HasImage)
+            else if (threadID == 0 && !HasImage)
             {
                 IsImageError = true;
 
                 return SubmitResultType.NoImageError;
+            }
+            else if (threadID != 0 && string.IsNullOrEmpty(Comment) && !HasImage)
+            {
+                // Posts into an existing thread require either an image or comment.
+                IsCommentError = true;
+
+                return SubmitResultType.EmptyCommentError;
             }
 
             Uri uri = new Uri("https://sys.4chan.org/" + Board + "/post");
@@ -287,7 +277,7 @@ namespace _4charm.ViewModels
                 {"recaptcha_response_field", CaptchaText}
             };
 
-            if (_isNewThread)
+            if (threadID != 0)
             {
                 formFields["resto"] = threadID + "";
             }
@@ -324,10 +314,28 @@ namespace _4charm.ViewModels
                 if (m.Groups[1].Value.Contains("You forgot to solve the CAPTCHA"))
                 {
                     IsCaptchaError = true;
+
+                    if (CaptchaText.Length > 0)
+                    {
+                        // We actually did solve the captcha... usually this is if it didn't
+                        // have a space in it.
+                        Task ignore = DoLoadCaptcha().ContinueWith(eresult =>
+                        {
+                            throw eresult.Exception;
+                        }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+
+                        CaptchaText = "";
+                    }
+
                     return SubmitResultType.EmptyCaptchaError;
                 }
                 else if (m.Groups[1].Value.Contains("You seem to have mistyped the CAPTCHA"))
                 {
+                    Task ignore = DoLoadCaptcha().ContinueWith(eresult =>
+                    {
+                        throw eresult.Exception;
+                    }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+
                     CaptchaText = "";
                     IsCaptchaError = true;
                     return SubmitResultType.WrongCatpchaError;

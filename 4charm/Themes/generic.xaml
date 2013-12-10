@@ -199,6 +199,7 @@
         <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
         <Setter Property="Padding" Value="2"/>
         <Setter Property="Template">
+            
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Grid Background="Transparent">
@@ -250,6 +251,9 @@
                             <VisualStateGroup x:Name="FocusStates">
                                 <VisualState x:Name="Focused">
                                     <Storyboard>
+                                        <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="Background" Storyboard.TargetName="MainBorder">
+                                            <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneTextBoxEditBackgroundBrush}"/>
+                                        </ObjectAnimationUsingKeyFrames>
                                         <ObjectAnimationUsingKeyFrames Storyboard.TargetProperty="BorderBrush" Storyboard.TargetName="MainBorder">
                                             <DiscreteObjectKeyFrame KeyTime="0" Value="{StaticResource PhoneTextBoxEditBorderBrush}"/>
                                         </ObjectAnimationUsingKeyFrames>
@@ -260,15 +264,21 @@
                             <VisualStateGroup x:Name="ErrorStates">
                                 <VisualState x:Name="Errored">
                                     <Storyboard>
-                                        <ColorAnimation Storyboard.TargetName="MainBorder" Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"
-                                                        To="#FF4040" Duration="0:0:0.4" BeginTime="0:0:0" />
+                                        <ColorAnimation Storyboard.TargetName="ErrorBorder" Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"
+                                                        To="#FFFF4040" Duration="0:0:0.4" BeginTime="0:0:0" />
                                     </Storyboard>
                                 </VisualState>
-                                <VisualState x:Name="Unerrored" />
+                                <VisualState x:Name="Unerrored">
+                                    <Storyboard>
+                                        <ColorAnimation Storyboard.TargetName="ErrorBorder" Storyboard.TargetProperty="(UIElement.Background).(SolidColorBrush.Color)"
+                                                        To="#00000000" Duration="0:0:0.4" BeginTime="0:0:0" />
+                                    </Storyboard>
+                                </VisualState>
                             </VisualStateGroup>
                         </VisualStateManager.VisualStateGroups>
                         <Border x:Name="MainBorder" BorderBrush="{TemplateBinding BorderBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="{TemplateBinding Background}" Margin="{StaticResource PhoneTouchTargetOverhang}"/>
                         <Border x:Name="ReadonlyBorder" BorderBrush="{StaticResource PhoneDisabledBrush}" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="{StaticResource PhoneTouchTargetOverhang}" Visibility="Collapsed"/>
+                        <Border x:Name="ErrorBorder" BorderBrush="#00000000" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="{StaticResource PhoneTouchTargetOverhang}" />
                         <Border BorderBrush="Transparent" BorderThickness="{TemplateBinding BorderThickness}" Background="Transparent" Margin="{StaticResource PhoneTouchTargetOverhang}">
                             <ContentControl x:Name="ContentElement" BorderThickness="0" HorizontalContentAlignment="Stretch" Margin="{StaticResource PhoneTextBoxInnerMargin}" Padding="{TemplateBinding Padding}" VerticalContentAlignment="Stretch"/>
                         </Border>

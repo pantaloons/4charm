@@ -3,6 +3,7 @@ using _4charm.Resources;
 using _4charm.ViewModels;
 using Microsoft.Phone.Shell;
 using System;
+using System.Windows;
 using System.Windows.Input;
 
 namespace _4charm.Views
@@ -18,6 +19,8 @@ namespace _4charm.Views
 
             _viewModel = new NewThreadPageViewModel();
             DataContext = _viewModel;
+
+            _viewModel.ElementFocused += ElementFocused;
         }
 
         private void InitializeApplicationBar()
@@ -26,31 +29,50 @@ namespace _4charm.Views
             submit.Click += async (sender, e) =>
             {
                 submit.IsEnabled = false;
-                NewThreadPageViewModel.NewThreadFocusResult result = await _viewModel.Submit();
+                Focus();
+                await _viewModel.Submit();
                 submit.IsEnabled = true;
-
-                switch (result)
-                {
-                    case NewThreadPageViewModel.NewThreadFocusResult.Captcha:
-                        CaptchaTextBox.Focus();
-                        break;
-                    case NewThreadPageViewModel.NewThreadFocusResult.Page:
-                        Focus();
-                        break;
-                    default:
-                        break;
-                }
             };
 
             ApplicationBar = new ApplicationBar();
             ApplicationBar.Buttons.Add(submit);
         }
 
-        private void SubjectTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        private void ElementFocused(object sender, NewThreadPageViewModel.NewThreadFocusResult e)
+        {
+            switch (e)
+            {
+                case NewThreadPageViewModel.NewThreadFocusResult.Captcha:
+                    Focus();
+                    Deployment.Current.Dispatcher.BeginInvoke(() =>
+                    {
+                        CaptchaTextBox.Focus();
+                    });
+                    break;
+                case NewThreadPageViewModel.NewThreadFocusResult.Comment:
+                    CommentBox.Focus();
+                    break;
+                case NewThreadPageViewModel.NewThreadFocusResult.Page:
+                    Focus();
+                    break;
+                default:
+                    break;
+            }
+        }
+
+        private void SubjectTextBoxNewThread_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
         {
             if (e.Key == Key.Enter)
             {
                 CaptchaTextBox.Focus();
+            }
+        }
+
+        private void SubjectTextBoxReply_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
+        {
+            if (e.Key == Key.Enter)
+            {
+                NameTextBox.Focus();
             }
         }
 
@@ -59,14 +81,7 @@ namespace _4charm.Views
             if (e.Key == Key.Enter)
             {
                 EmailTextBox.Focus();
-            }
-        }
-
-        private void EmailTextBox_KeyDown(object sender, System.Windows.Input.KeyEventArgs e)
-        {
-            if (e.Key == Key.Enter)
-            {
-                CaptchaTextBox.Focus();
+                RootScroller.ScrollToVerticalOffset(double.MaxValue);
             }
         }
 

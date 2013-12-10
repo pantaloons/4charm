@@ -146,188 +146,73 @@
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
 
-    <Grid x:Name="LayoutRoot">
-        <!--<controls:SplittingPanel SplitRatio="0.25" IsExpanded="{Binding IsSpecialRegionExpanded}">
+    <Grid>
+        <controls:SplittingPanel x:Name="SplittingPane" SplitRatio="0.5" IsExpanded="{Binding IsSpecialRegionExpanded}">
             <Grid>
-                <controls:FadingLongListSelector x:Name="SelectionLLS"
-                                                 FadeLimit="3"
-                                                 UseFlashAnimation="True"
-                                                 Margin="12,0,0,0"
-                                                 ItemTemplate="{StaticResource PostItemTemplate}"
-                                                 ItemsSource="{Binding SelectedPosts}">
-                </controls:FadingLongListSelector>
+                <!-- Quoted posts area. -->
+                <Grid Visibility="{Binding QuoteAreaVisibility, FallbackValue=Collapsed, TargetNullValue=Collapsed}">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <Grid x:Name="ReplyArea" Margin="12,0">
-                    <Grid.Resources>
-                        <Storyboard x:Name="BeginPostingStoryboard">
-                            <ObjectAnimationUsingKeyFrames Storyboard.TargetName="ReplyObscureBox" Storyboard.TargetProperty="Visibility">
-                                <DiscreteObjectKeyFrame KeyTime="0" Value="Visible"/>
-                            </ObjectAnimationUsingKeyFrames>
-                            <DoubleAnimation To="0.7" Duration="0:0:0.4" BeginTime="0:0:0"
-                                             Storyboard.TargetName="ReplyObscureBox"
-                                             Storyboard.TargetProperty="Opacity"/>
-                        </Storyboard>
-                    </Grid.Resources>
-                    
-                    <ScrollViewer x:Name="ReplyScroller"
-                                  IsHitTestVisible="{Binding IsPosting}"
-                                  Background="{Binding Background}"
-                                  Margin="12,0">
-                        <Grid x:Name="InnerReplyGrid" Margin="12">
-                            <Grid.ColumnDefinitions>
-                                <ColumnDefinition Width="108"/>
-                                <ColumnDefinition Width="6"/>
-                                <ColumnDefinition Width="*"/>
-                            </Grid.ColumnDefinitions>
-                            <Grid.RowDefinitions>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="6"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="6"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="6"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="6"/>
-                                <RowDefinition Height="auto"/>
-                                <RowDefinition Height="6"/>
-                                <RowDefinition Height="auto"/>
-                            </Grid.RowDefinitions>
+                    <TextBlock Text="{Binding QuotedTitle}"
+                               Grid.Row="0"
+                               HorizontalAlignment="Left"
+                               Margin="24,17,0,-7"
+                               FontFamily="{StaticResource PhoneFontFamilySemiBold}"
+                               FontSize="{StaticResource PivotTitleFontSize}" />
 
-                            <Rectangle Grid.Row="0" Fill="{Binding ReplyBackBrush}"/>
-                            <Border Grid.Row="0" BorderThickness="2" BorderBrush="Black">
-                                <TextBlock Text="comment"
-                                                   Style="{StaticResource PhoneTextNormalStyle}"
-                                                   FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                   Foreground="{Binding ReplyForeBrush}"
-                                                   VerticalAlignment="Center"/>
-                            </Border>
-
-                            <controls:ErrorStateTextBox x:Name="CommentTextBox"
-                                                        Text="{Binding Comment, Mode=TwoWay}"
-                                                        SelectionStart="{Binding CommentSelectionStart, Mode=TwoWay}"
-                                                        UpdateSourceOnTextChanged="True"
-                                                        IsErrorState="{Binding IsCommentError}"
-                                                        FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                        InputScope="Chat"
-                                                        Grid.Row="0"
-                                                        Grid.Column="2"
-                                                        TextWrapping="Wrap"
-                                                        AcceptsReturn="True"
-                                                        MinHeight="94"
-                                                        MaxHeight="180"
-                                                        Background="White"
-                                                        Margin="-12" />
-
-                            <Rectangle Grid.Row="2" Fill="{Binding ReplyBackBrush}"/>
-                            <Border Grid.Row="2" BorderThickness="2" BorderBrush="Black">
-                                <TextBlock Text="captcha" Style="{StaticResource PhoneTextNormalStyle}"
-                                                   FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                   Foreground="{Binding ReplyForeBrush}"
-                                                   VerticalAlignment="Center"/>
-                            </Border>
-                            <StackPanel Grid.Row="2" Grid.Column="2">
-                                <controls:MultiResolutionImage Thumbnail="{Binding CaptchaUri}" Height="56">
-                                    <i:Interaction.Triggers>
-                                        <i:EventTrigger EventName="Tap">
-                                            <i:InvokeCommandAction Command="{Binding ReloadCaptcha}" />
-                                        </i:EventTrigger>
-                                    </i:Interaction.Triggers>
-                                </controls:MultiResolutionImage>
-
-                                <controls:ErrorStateTextBox x:Name="CaptchaTextBox"
-                                                                    UpdateSourceOnTextChanged="True"
-                                                                    IsErrorState="{Binding IsCaptchaError}"
-                                                                    FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                                    Text="{Binding CaptchaText, Mode=TwoWay}"
-                                                                    Margin="-12,-6,-12,-12"/>
-                            </StackPanel>
-
-                            <Rectangle Grid.Row="4" Fill="{Binding ReplyBackBrush}" />
-                            <Border Grid.Row="4" BorderThickness="2" BorderBrush="Black">
-                                <TextBlock Text="name" Style="{StaticResource PhoneTextNormalStyle}"
-                                                   FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                   Foreground="{Binding ReplyForeBrush}"
-                                                   VerticalAlignment="Center"/>
-                            </Border>
-                            <controls:SelectionBindableTextBox FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                                       UpdateSourceOnTextChanged="True"
-                                                                       Text="{Binding Name, Mode=TwoWay}"
-                                                                       Grid.Row="4" Grid.Column="2"
-                                                                       Background="White"
-                                                                       Margin="-12"/>
-
-                            <Rectangle Grid.Row="6" Fill="{Binding ReplyBackBrush}" />
-                            <Border Grid.Row="6" BorderThickness="2" BorderBrush="Black">
-                                <TextBlock Text="e-mail" Style="{StaticResource PhoneTextNormalStyle}"
-                                                   FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                   Foreground="{Binding ReplyForeBrush}"
-                                                   VerticalAlignment="Center"/>
-                            </Border>
-                            <controls:SelectionBindableTextBox FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                                       UpdateSourceOnTextChanged="True"
-                                                                       Text="{Binding Email, Mode=TwoWay}"
-                                                                       Grid.Row="6" Grid.Column="2"
-                                                                       Margin="-12"/>
-
-                            <Rectangle Grid.Row="8" Fill="{Binding ReplyBackBrush}"/>
-                            <Border Grid.Row="8" BorderThickness="2" BorderBrush="Black">
-                                <TextBlock Text="subject" Style="{StaticResource PhoneTextNormalStyle}"
-                                                        FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                        Foreground="{Binding ReplyForeBrush}"
-                                                        VerticalAlignment="Center"/>
-                            </Border>
-                            <controls:SelectionBindableTextBox FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                                       UpdateSourceOnTextChanged="True"
-                                                                       Text="{Binding Subject, Mode=TwoWay}"
-                                                                       Grid.Row="8" Grid.Column="2"
-                                                                       Margin="-12"/>
-
-                            <Rectangle Grid.Row="10" Fill="{Binding ReplyBackBrush}"/>
-                            <Border Grid.Row="10" BorderThickness="2" BorderBrush="Black">
-                                <Grid Margin="0,6,0,6">
-                                    <TextBlock Text="file" Style="{StaticResource PhoneTextNormalStyle}"
-                                                       FontSize="{StaticResource PhoneFontSizeSmall}"
-                                                       Foreground="{Binding ReplyForeBrush}"
-                                                       VerticalAlignment="Center"/>
-                                </Grid>
-                            </Border>
-                            <Grid Grid.Row="10" Grid.Column="3">
-                                <Button Content="{Binding FileName}" Command="{Binding SelectImage}" />
-                            </Grid>
-                        </Grid>
-                    </ScrollViewer>
-
-                    <Rectangle x:Name="ReplyObscureBox" Visibility="Collapsed" Fill="Black" Opacity="0"/>
-
-                    <Grid VerticalAlignment="Center">
-                        <ProgressBar IsIndeterminate="{Binding IsPosting}"
-                                     Visibility="{Binding IsPosting, Converter={StaticResource BoolVisibleConverter}}"/>
-                    </Grid>
+                    <controls:FadingLongListSelector x:Name="SelectionLLS"
+                                                     Grid.Row="1"
+                                                     FadeLimit="3"
+                                                     Margin="24,24,12,0"
+                                                     ItemTemplate="{StaticResource PostItemTemplate}"
+                                                     ItemsSource="{Binding SelectedPosts}" />
                 </Grid>
-            </Grid>-->
-        <!--</controls:SplittingPanel>-->
 
-        <controls:SplittingPanel SplitRatio="0.35" IsExpanded="{Binding IsSpecialRegionExpanded}">
-            <Grid>
-                <Grid.RowDefinitions>
-                    <RowDefinition Height="auto" />
-                    <RowDefinition Height="*" />
-                </Grid.RowDefinitions>
-                
-                <TextBlock Text=">>111111111"
-                           Grid.Row="0"
-                           HorizontalAlignment="Left"
-                           Margin="24,17,0,-7"
-                           FontFamily="{StaticResource PhoneFontFamilySemiBold}"
-                           FontSize="{StaticResource PivotTitleFontSize}" />
+                <!-- Reply area. -->
+                <Grid Visibility="{Binding ReplyAreaVisibility, FallbackValue=Collapsed, TargetNullValue=Collapsed}" Margin="12,12,12,0">
+                    <Grid.RowDefinitions>
+                        <RowDefinition Height="auto" />
+                        <RowDefinition Height="*" />
+                    </Grid.RowDefinitions>
 
-                <controls:FadingLongListSelector x:Name="SelectionLLS"
-                                                 Grid.Row="1"
-                                                 FadeLimit="3"
-                                                 UseFlashAnimation="True"
-                                                 Margin="24,24,12,0"
-                                                 ItemTemplate="{StaticResource PostItemTemplate}"
-                                                 ItemsSource="{Binding SelectedPosts}" />
+                    <StackPanel>
+                        <!-- Verification CAPTCHA. -->
+                        <TextBlock Text="Verification" Style="{StaticResource PhoneTextSubtleStyle}" />
+
+                        <controls:MultiResolutionImage Thumbnail="{Binding CaptchaUri}" Height="100" Margin="12,0" Background="Transparent">
+                            <i:Interaction.Triggers>
+                                <i:EventTrigger EventName="Tap">
+                                    <i:InvokeCommandAction Command="{Binding ReloadCaptcha}" />
+                                </i:EventTrigger>
+                            </i:Interaction.Triggers>
+                        </controls:MultiResolutionImage>
+
+                        <controls:ErrorStateTextBox x:Name="CaptchaTextBox"
+                                                    CacheMode="BitmapCache"
+                                                    Padding="6,2"
+                                                    Text="{Binding CaptchaText, Mode=TwoWay}"
+                                                    UpdateSourceOnTextChanged="True"
+                                                    KeyDown="CaptchaTextBox_KeyDown"
+                                                    GotFocus="CaptchaTextBox_GotFocus"
+                                                    IsErrorState="{Binding IsCaptchaError}" />
+
+                        <!-- Comment. -->
+                        <TextBlock Text="Comment" Style="{StaticResource PhoneTextSubtleStyle}" />
+                    </StackPanel>
+
+                    <controls:SelectionBindableTextBox x:Name="CommentBox"
+                                                       CacheMode="BitmapCache"
+                                                       Grid.Row="1"
+                                                       Padding="6,2"
+                                                       InputScope="Chat"
+                                                       Text="{Binding Comment, Mode=TwoWay}"
+                                                       TextWrapping="Wrap"
+                                                       UpdateSourceOnTextChanged="True"
+                                                       AcceptsReturn="True" />
+                </Grid>
             </Grid>
 
 
@@ -356,7 +241,11 @@
                                                      LayoutMode="Grid"
                                                      GridCellSize="110,110"
                                                      PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
-                                                     PlaceholderText="{Binding Path=LocalizedResources.PostsPage_Error, Source={StaticResource LocalizedStrings}}" />
+                                                     PlaceholderText="{Binding Path=LocalizedResources.PostsPage_Error, Source={StaticResource LocalizedStrings}}">
+                        <controls:FadingLongListSelector.Easing>
+                            <ExponentialEase EasingMode="EaseIn" Exponent="4" />
+                        </controls:FadingLongListSelector.Easing>
+                    </controls:FadingLongListSelector>
                 </phone:PivotItem>
             </phone:Pivot>
         </controls:SplittingPanel>

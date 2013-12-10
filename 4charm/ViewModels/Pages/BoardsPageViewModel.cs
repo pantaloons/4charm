@@ -49,12 +49,13 @@ namespace _4charm.ViewModels
 
         public BoardsPageViewModel()
         {
-            Favorites = new DelayLoadingObservableCollection<BoardViewModel>(200, true);
-            All = new DelayLoadingObservableCollection<BoardViewModel>(50, true);
-            Watchlist = new DelayLoadingObservableCollection<ThreadViewModel>(100, true);
-            History = new DelayLoadingObservableCollection<ThreadViewModel>(100, true);
+            Favorites = new DelayLoadingObservableCollection<BoardViewModel>(100, true, 15, 100, 10);
+            All = new DelayLoadingObservableCollection<BoardViewModel>(50, true, 15, 100, 10);
+            Watchlist = new DelayLoadingObservableCollection<ThreadViewModel>(100, true, 15, 100, 10);
+            History = new DelayLoadingObservableCollection<ThreadViewModel>(100, true, 15, 100, 10);
 
             Favorites.AddRange(CriticalSettingsManager.Current.Favorites.Select(x => new BoardViewModel(x)));
+            Favorites.Flush(2);
             All.AddRange(CriticalSettingsManager.Current.Boards.Select(x => new BoardViewModel(x)));
 
             CriticalSettingsManager.Current.Favorites.CollectionChanged += FavoritesChanged;
@@ -131,7 +132,7 @@ namespace _4charm.ViewModels
         {
             if (e.Action == NotifyCollectionChangedAction.Add)
             {
-                e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new ThreadViewModel((Thread)e.NewItems[0]));
+                e = new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, new ThreadViewModel((Thread)e.NewItems[0]), e.NewStartingIndex);
             }
 
             ListCollectionChanged<ThreadViewModel>(History, e);

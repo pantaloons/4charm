@@ -212,7 +212,11 @@
                     LayoutMode="Grid"
                     GridCellSize="220,220"
                     PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
-                    PlaceholderText="{Binding Path=LocalizedResources.ThreadsPage_Error, Source={StaticResource LocalizedStrings}}" />
+                    PlaceholderText="{Binding Path=LocalizedResources.ThreadsPage_Error, Source={StaticResource LocalizedStrings}}">
+                    <controls:FadingLongListSelector.Easing>
+                        <ExponentialEase EasingMode="EaseIn" Exponent="4" />
+                    </controls:FadingLongListSelector.Easing>
+                </controls:FadingLongListSelector>
                                         
             </phone:PivotItem>
         </phone:Pivot>

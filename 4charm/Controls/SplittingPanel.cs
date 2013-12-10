@@ -15,12 +15,17 @@ namespace _4charm.Controls
             "SplitRatio",
             typeof(double),
             typeof(SplittingPanel),
-            new PropertyMetadata(0.0));
+            new PropertyMetadata(0.0, OnSplitRatioChanged));
 
         public double SplitRatio
         {
             get { return (double)GetValue(SplitRatioProperty); }
             set { SetValue(SplitRatioProperty, value); }
+        }
+
+        private static void OnSplitRatioChanged(DependencyObject d, DependencyPropertyChangedEventArgs e)
+        {
+            (d as SplittingPanel).SplitRatioChanged();
         }
 
         #endregion
@@ -76,6 +81,12 @@ namespace _4charm.Controls
             }
 
             return finalSize;
+        }
+
+        private void SplitRatioChanged()
+        {
+            InvalidateMeasure();
+            InvalidateArrange();
         }
 
         private void IsExpandedChanged()

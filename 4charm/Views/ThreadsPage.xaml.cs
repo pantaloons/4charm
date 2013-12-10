@@ -33,7 +33,7 @@ namespace _4charm.Views
             _clear.Click += (sender, e) => _viewModel.ClearWatchlist();
 
             ApplicationBarMenuItem newThread = new ApplicationBarMenuItem(AppResources.ApplicationBar_NewThread);
-            newThread.Click += (sender, e) => NavigationService.Navigate(new Uri(String.Format("/Views/NewThreadPage.xaml?board={0}", Uri.EscapeUriString(_viewModel.Name)), UriKind.Relative));
+            newThread.Click += (sender, e) => _viewModel.CreateNewThread();
 
             ApplicationBar = new ApplicationBar();
             ApplicationBar.Buttons.Add(_refresh);

@@ -196,6 +196,7 @@
     <Content Include="Assets\Appbar\appbar.add.png" />
     <Content Include="Assets\Appbar\appbar.delete.png" />
     <Content Include="Assets\Appbar\appbar.download.png" />
+    <Content Include="Assets\Appbar\appbar.edit.png" />
     <Content Include="Assets\Appbar\appbar.eye.check.png" />
     <Content Include="Assets\Appbar\appbar.eye.png" />
     <Content Include="Assets\Appbar\appbar.refresh.png" />

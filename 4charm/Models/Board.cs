@@ -69,16 +69,6 @@ namespace _4charm.Models
         public Brush Brush { get { return IsNSFW ? App.Current.Resources["NSFWBrush"] as SolidColorBrush : App.Current.Resources["SFWBrush"] as SolidColorBrush; } }
 
         /// <summary>
-        /// Background color for field descriptions in the inline reply area of posts page.
-        /// </summary>
-        public Brush ReplyBackBrush { get { return IsNSFW ? App.Current.Resources["NSFWReplyBackBrush"] as SolidColorBrush : App.Current.Resources["SFWReplyBackBrush"] as SolidColorBrush; } }
-
-        /// <summary>
-        /// Text color for field descriptions in the inline reply area of posts page.
-        /// </summary>
-        public Brush ReplyForeBrush { get { return IsNSFW ? App.Current.Resources["NSFWReplyForeBrush"] as SolidColorBrush : App.Current.Resources["SFWReplyForeBrush"] as SolidColorBrush; } }
-
-        /// <summary>
         /// Square icon for use on home screen tiles.
         /// </summary>
         public Uri IconURI { get { return new Uri(Path.Combine(Windows.ApplicationModel.Package.Current.InstalledLocation.Path, "Assets", "Boards", "Icons", Name + ".jpg"), UriKind.Absolute); } }

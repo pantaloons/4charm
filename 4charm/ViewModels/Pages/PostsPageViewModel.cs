@@ -13,6 +13,11 @@ namespace _4charm.ViewModels
 {
     class PostsPageViewModel : ReplyPageViewModelBase
     {
+        // We use this hack to notify the posts page to reload
+        // after creating a new post. The post creation page
+        // calls GoBack() and we want to show the post immediately.
+        internal static bool ForceReload = false;
+
         public enum PostsPageViewState
         {
             None,
@@ -90,21 +95,27 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public Brush ReplyBackBrush
-        {
-            get { return GetProperty<Brush>(); }
-            set { SetProperty(value); }
-        }
-
-        public Brush ReplyForeBrush
-        {
-            get { return GetProperty<Brush>(); }
-            set { SetProperty(value); }
-        }
-
         public int CommentSelectionStart
         {
             get { return GetProperty<int>(); }
+            set { SetProperty(value); }
+        }
+
+        public string QuotedTitle
+        {
+            get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
+
+        public Visibility ReplyAreaVisibility
+        {
+            get { return GetProperty<Visibility>(); }
+            set { SetProperty(value); }
+        }
+
+        public Visibility QuoteAreaVisibility
+        {
+            get { return GetProperty<Visibility>(); }
             set { SetProperty(value); }
         }
 
@@ -116,6 +127,7 @@ namespace _4charm.ViewModels
 
         public event EventHandler ViewStateChanged;
         public event EventHandler<PostViewModel> ScrollTargetLoaded;
+        public event EventHandler CaptchaFocused;
 
         private Thread _thread;
         private ulong _scrollTarget;
@@ -126,12 +138,20 @@ namespace _4charm.ViewModels
 
         private System.Threading.Timer _refreshTimer;
 
-        public PostsPageViewModel() : base(false)
+        public PostsPageViewModel()
         {
+            ReloadCaptcha = new ModelCommand(async () =>
+            {
+                CaptchaText = "";
+                CaptchaFocused(this, null);
+                await DoLoadCaptcha();
+            });
         }
 
         public override void Initialize(IDictionary<string, string> arguments, NavigationEventArgs e)
         {
+            base.Initialize(arguments, e);
+
             _thread = ThreadCache.Current.EnforceBoard(arguments["board"]).EnforceThread(ulong.Parse(arguments["thread"]));
             _seenPosts = new HashSet<ulong>();
 
@@ -144,13 +164,15 @@ namespace _4charm.ViewModels
             PivotTitle = _thread.Board.DisplayName + " - " + (string.IsNullOrEmpty(_thread.Subject) ? _thread.Number + "" : _thread.Subject);
             IsWatchlisted = TransitorySettingsManager.Current.Watchlist.Count(x => x.Board.Name == _thread.Board.Name && x.Number == _thread.Number) > 0;
 
-            AllPosts = new DelayLoadingObservableCollection<PostViewModel>(100, false);
-            ImagePosts = new DelayLoadingObservableCollection<PostViewModel>(25, true);
-            SelectedPosts = new DelayLoadingObservableCollection<PostViewModel>(100, true);
+            AllPosts = new DelayLoadingObservableCollection<PostViewModel>(100, false, 15, 100, 10);
+            ImagePosts = new DelayLoadingObservableCollection<PostViewModel>(25, true, 35, 100, 10);
+            SelectedPosts = new DelayLoadingObservableCollection<PostViewModel>(50, true, 3, 100, 10);
 
+            QuotedTitle = "";
             Background = _thread.Board.Brush;
-            ReplyBackBrush = _thread.Board.ReplyBackBrush;
-            ReplyForeBrush = _thread.Board.ReplyForeBrush;
+
+            QuoteAreaVisibility = Visibility.Collapsed;
+            ReplyAreaVisibility = Visibility.Collapsed;
 
             Thread thread = TransitorySettingsManager.Current.History.FirstOrDefault(x => x.Board.Name == _thread.Board.Name && x.Number == _thread.Number);
             if (thread != null)
@@ -161,6 +183,7 @@ namespace _4charm.ViewModels
 
             InsertPostList(_thread.Posts.Values);
             InitialUpdateTask = Update();
+            System.Diagnostics.Debug.WriteLine("iupdate");
 
             if (!CriticalSettingsManager.Current.EnableManualRefresh)
             {
@@ -169,6 +192,11 @@ namespace _4charm.ViewModels
                     Deployment.Current.Dispatcher.BeginInvoke(async () => await Update());
                 }, null, 30 * 1000, 30 * 1000);
             }
+
+            DoLoadCaptcha().ContinueWith(result =>
+            {
+                throw result.Exception;
+            }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
@@ -176,6 +204,12 @@ namespace _4charm.ViewModels
             base.OnNavigatedTo(e);
 
             SelectedIndexChanged();
+            
+            if (e.NavigationMode == NavigationMode.Back && ForceReload)
+            {
+                OnSubmitSuccess("");
+                System.Diagnostics.Debug.WriteLine("vm nav too");
+            }
         }
 
         public override void OnNavigatedFrom(NavigationEventArgs e)
@@ -199,7 +233,7 @@ namespace _4charm.ViewModels
         {
             base.OnBackKeyPress(e);
 
-            if (ViewState != PostsPageViewState.None)
+            if (ViewState != PostsPageViewState.None && !IsPosting)
             {
                 GoToState(PostsPageViewState.None);
                 e.Cancel = true;
@@ -212,10 +246,42 @@ namespace _4charm.ViewModels
             if (thread != null)
             {
                 TransitorySettingsManager.Current.Watchlist.Remove(thread);
+                IsWatchlisted = false;
             }
             else
             {
                 TransitorySettingsManager.Current.Watchlist.Add(_thread);
+                IsWatchlisted = true;
+            }
+        }
+
+        public void EditReply()
+        {
+            Navigate(new Uri(String.Format("/Views/NewThreadPage.xaml?board={0}&thread={1}&token={2}&captcha={3}&comment={4}",
+                Uri.EscapeUriString(_thread.Board.Name),
+                Uri.EscapeUriString(_thread.Number + ""),
+                Uri.EscapeUriString(_token),
+                Uri.EscapeUriString(CaptchaText),
+                Uri.EscapeUriString(Comment)),
+                UriKind.Relative));
+        }
+
+        public Task ForceUpdate()
+        {
+            if (_updateTask == null || _updateTask.IsCompleted)
+            {
+                return Update();
+            }
+            else
+            {
+                // We queue another update after the existing one, since the
+                // existing one might not pick up the new post.
+                _updateTask = _updateTask.ContinueWith(async task =>
+                {
+                    await Update();
+                }, TaskContinuationOptions.ExecuteSynchronously).Unwrap();
+
+                return _updateTask;
             }
         }
 
@@ -231,18 +297,20 @@ namespace _4charm.ViewModels
             Task<List<Post>> download = _thread.GetPostsAsync();
             _updateTask = download.ContinueWith(task =>
             {
-                IsLoading = false;
+                System.Diagnostics.Debug.WriteLine("download done!");
                 if (!task.IsFaulted)
                 {
                     IsError = false;
                 }
                 else
                 {
+                    IsLoading = false;
                     IsError = AllPosts.Count == 0;
                     return;
                 }
 
                 InsertPostList(task.Result);
+                IsLoading = false;
             }, TaskContinuationOptions.ExecuteSynchronously);
 
             return _updateTask;
@@ -256,6 +324,7 @@ namespace _4charm.ViewModels
                 {
                     Tapped = new ModelCommand(() => PostTapped(x.Number)),
                     NumberTapped = new ModelCommand(() => OpenQuoteRegion(x.Number)),
+                    ViewQuotes = new ModelCommand(() => OpenQuoteRegion(x.Number)),
                     QuoteTapped = new ModelCommand<ulong>(postID => OpenQuoteRegion(postID))
                 }).ToList();
 
@@ -296,7 +365,7 @@ namespace _4charm.ViewModels
 
         private void PostTapped(ulong postID)
         {
-            if (ViewState != PostsPageViewState.Quotes || IsPosting)
+            if (ViewState != PostsPageViewState.Reply || IsPosting)
             {
                 return;
             }
@@ -312,11 +381,19 @@ namespace _4charm.ViewModels
 
         private void OpenQuoteRegion(ulong postID)
         {
-            IEnumerable<PostViewModel> posts = AllPosts.Where(x => x.Number == postID || x.QuotesPost(postID));
+            if (IsPosting)
+            {
+                return;
+            }
+
+            // We have to use .All() to get posts that are queued, but not yet inserted too.
+            IEnumerable<PostViewModel> posts = AllPosts.All().Where(x => x.Number == postID || x.QuotesPost(postID));
 
             SelectedPosts.Clear();
             SelectedPosts.IsPaused = false;
             SelectedPosts.AddRange(posts);
+
+            QuotedTitle = ">>" + postID;
 
             _quotedPost = postID;
 
@@ -340,7 +417,18 @@ namespace _4charm.ViewModels
 
             ViewState = target;
 
+            ReplyAreaVisibility = ViewState == PostsPageViewState.Reply ? Visibility.Visible : Visibility.Collapsed;
+            QuoteAreaVisibility = ViewState == PostsPageViewState.Quotes ? Visibility.Visible : Visibility.Collapsed;
+
             ViewStateChanged(this, null);
+
+            AllPosts.IsPaused = true;
+            ImagePosts.IsPaused = true;
+
+            Task.Delay(500).ContinueWith(task =>
+            {
+                SelectedIndexChanged();
+            }, TaskScheduler.FromCurrentSynchronizationContext());
         }
 
         public async Task<SubmitResultType> Submit()
@@ -350,17 +438,17 @@ namespace _4charm.ViewModels
 
         protected override void OnSubmitSuccess(string result)
         {
+            DoLoadCaptcha().ContinueWith(eresult =>
+            {
+                throw eresult.Exception;
+            }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+
             Comment = "";
             CaptchaText = "";
-            Name = "";
-            Email = "";
-            Subject = "";
-            FileName = "";
-            HasImage = false;
 
             GoToState(PostsPageViewState.None);
 
-            Update();
+            InitialUpdateTask = ForceUpdate();
         }
     }
 }

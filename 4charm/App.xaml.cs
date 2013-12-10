@@ -53,7 +53,7 @@ namespace _4charm
             if (Debugger.IsAttached)
             {
                 Application.Current.Host.Settings.EnableFrameRateCounter = true;
-                Application.Current.Host.Settings.EnableRedrawRegions = true;
+                //Application.Current.Host.Settings.EnableRedrawRegions = true;
                 //Application.Current.Host.Settings.EnableCacheVisualization = true;
 
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
@@ -119,7 +119,7 @@ namespace _4charm
         // Code to execute on Unhandled Exceptions
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
-#if DEBUG
+//#if DEBUG
             if (Debugger.IsAttached)
             {
                 // An unhandled exception has occurred; break into the debugger
@@ -128,7 +128,7 @@ namespace _4charm
             MessageBox.Show(((long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage") / (1024.0 * 1024)) + " MB");
             MessageBox.Show(e.ExceptionObject.Message);
             MessageBox.Show(e.ExceptionObject.StackTrace);
-#endif
+//#endif
         }
 
         #region Phone application initialization

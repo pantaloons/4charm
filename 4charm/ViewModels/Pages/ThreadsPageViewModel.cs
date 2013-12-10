@@ -84,9 +84,9 @@ namespace _4charm.ViewModels
             PivotTitle = _board.DisplayName;
             Name = _board.Name;
             IsLoading = false;
-            Threads = new DelayLoadingObservableCollection<ThreadViewModel>(100, false);
-            Watchlist = new DelayLoadingObservableCollection<ThreadViewModel>(100, true);
-            ImageThreads = new DelayLoadingObservableCollection<ThreadViewModel>(40, true);
+            Threads = new DelayLoadingObservableCollection<ThreadViewModel>(100, false, 15, 100, 10);
+            Watchlist = new DelayLoadingObservableCollection<ThreadViewModel>(100, true, 15, 100, 10);
+            ImageThreads = new DelayLoadingObservableCollection<ThreadViewModel>(40, true, 15, 100, 10);
 
             ReloadThreads();
 
@@ -150,19 +150,31 @@ namespace _4charm.ViewModels
             Task<List<Models.Thread>> download = _board.GetThreadsAsync();
             _downloadTask = download.ContinueWith(task =>
             {
-                IsLoading = false;
                 if (task.IsFaulted)
-                {               
+                {
                     IsError = true;
+                    IsLoading = false;
                     return;
                 }
 
                 IEnumerable<ThreadViewModel> threads = task.Result
                     .Where(x => !x.IsSticky || CriticalSettingsManager.Current.ShowStickies)
                     .Select(x => new ThreadViewModel(x));
+
                 Threads.AddRange(threads);
                 ImageThreads.AddRange(threads);
+
+                IsLoading = false;
             }, TaskContinuationOptions.ExecuteSynchronously);
+        }
+
+        public void CreateNewThread()
+        {
+            Threads.IsPaused = true;
+            ImageThreads.IsPaused = true;
+            Watchlist.IsPaused = true;
+
+            Navigate(new Uri(String.Format("/Views/NewThreadPage.xaml?board={0}", Uri.EscapeUriString(Name)), UriKind.Relative));
         }
 
         public void ClearWatchlist()

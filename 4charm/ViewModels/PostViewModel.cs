@@ -256,7 +256,6 @@ namespace _4charm.ViewModels
             ThreadNavigated = new ModelCommand(DoThreadNavigated);
             ImageNavigated = new ModelCommand(DoImageNavigated);
             CopyToClipboard = new ModelCommand(DoCopyToClipboard);
-            ViewQuotes = new ModelCommand(DoViewQuotes);
         }
 
         /// <summary>
@@ -292,15 +291,6 @@ namespace _4charm.ViewModels
             HtmlDocument doc = new HtmlDocument();
             doc.LoadHtml((_post.Comment ?? "").Replace("<br>", "\n"));
             Clipboard.SetText(doc.DocumentNode.InnerText);
-        }
-
-        /// <summary>
-        /// User tried to show quotes from the context menu.
-        /// </summary>
-        private void DoViewQuotes()
-        {
-            // Just inform them of a better way to do it, for discoverability.
-            MessageBox.Show("Tap the post number in the top right corner to view quotes.");
         }
 
         /// <summary>

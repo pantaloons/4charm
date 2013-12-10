@@ -43,14 +43,6 @@
         <SolidColorBrush x:Key="ModBrush" Color="#800080"/>
         <!-- Text color for names ("Anonymous", "moot") using the developer capcode. -->
         <SolidColorBrush x:Key="DeveloperBrush" Color="#0000F0"/>
-        <!-- Background color for field descriptions in the inline reply area on NSFW boards. -->
-        <SolidColorBrush x:Key="NSFWReplyBackBrush" Color="#EEAA88"/>
-        <!-- Text color for field descriptions of the inline reply area on NSFW boards. "Subject", "Comment", etc. -->
-        <SolidColorBrush x:Key="NSFWReplyForeBrush" Color="#880000"/>
-        <!-- Background color for field descriptions in the inline reply area on SFW boards. -->
-        <SolidColorBrush x:Key="SFWReplyBackBrush" Color="#9988EE"/>
-        <!-- Text color for field descriptions of the inline reply area on SFW boards. "Subject", "Comment", etc. -->
-        <SolidColorBrush x:Key="SFWReplyForeBrush" Color="#000000"/>
     </Application.Resources>
 
     <Application.ApplicationLifetimeObjects>

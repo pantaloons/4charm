@@ -1,4 +1,5 @@
 ﻿using System.Windows;
+using System.Windows.Input;
 
 namespace _4charm.Controls
 {
@@ -39,6 +40,14 @@ namespace _4charm.Controls
             else
             {
                 VisualStateManager.GoToState(this, "Unerrored", true);
+                if (FocusManager.GetFocusedElement() == this)
+                {
+                    VisualStateManager.GoToState(this, "Focused", true);
+                }
+                else
+                {
+                    VisualStateManager.GoToState(this, "Unfocused", true);
+                }
             }
         }
     }

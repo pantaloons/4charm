@@ -84,8 +84,8 @@
                     </Grid>
 
                     <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
-                                                   Width="{Binding ThumbWidth}"
-                                                   Height="{Binding ThumbHeight}"
+                                                   Width="{Binding ThumbWidth, FallbackValue=0}"
+                                                   Height="{Binding ThumbHeight, FallbackValue=0}"
                                                    Margin="0,6,12,6"
                                                    VerticalAlignment="Top"
                                                    Grid.Row="2"
@@ -216,6 +216,9 @@
                                                  Style="{StaticResource NoScrollbarFLLS}"
                                                  ItemsSource="{Binding Favorites}"
                                                  PlaceholderText="{Binding Path=LocalizedResources.BoardsPage_FavoritesEmpty, Source={StaticResource LocalizedStrings}}">
+                    <controls:FadingLongListSelector.Easing>
+                        <ExponentialEase EasingMode="EaseIn" Exponent="6" />
+                    </controls:FadingLongListSelector.Easing>
                     <controls:FadingLongListSelector.ItemTemplate>
                         <DataTemplate>
                             <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource BoardTemplate}" Height="213" Margin="0,0,0,12"/>
@@ -251,6 +254,9 @@
                                                  Margin="12,0,0,0"
                                                  ItemsSource="{Binding All}"
                                                  PlaceholderText="{Binding Path=LocalizedResources.BoardsPage_AllEmpty, Source={StaticResource LocalizedStrings}}">
+                    <controls:FadingLongListSelector.Easing>
+                        <ExponentialEase EasingMode="EaseIn" Exponent="6" />
+                    </controls:FadingLongListSelector.Easing>
                     <phone:LongListSelector.ItemTemplate>
                         <DataTemplate>
                             <ContentPresenter Content="{Binding}" ContentTemplate="{StaticResource BoardTemplate}" Height="130" Margin="0,0,0,12" />

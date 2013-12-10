@@ -28,17 +28,21 @@
 
         <ScrollViewer x:Name="RootScroller" Grid.Row="1" Margin="12,0">
             <StackPanel>
-                <!-- Subject box -->
-                <TextBlock Text="Subject" Style="{StaticResource PhoneTextSubtleStyle}" />
-                <controls:SelectionBindableTextBox x:Name="SubjectTextBox"
-                                                       Text="{Binding Subject, Mode=TwoWay}"
-                                                       UpdateSourceOnTextChanged="True"
-                                                       KeyDown="SubjectTextBox_KeyDown" />
+                <!-- Subject box for new threads. -->
+                <TextBlock Visibility="{Binding IsNewThread, Converter={StaticResource BoolVisibleConverter}}"
+                           Text="Subject"
+                           Style="{StaticResource PhoneTextSubtleStyle}" />
+                <controls:SelectionBindableTextBox x:Name="SubjectTextBoxNewThread"
+                                                   Visibility="{Binding IsNewThread, Converter={StaticResource BoolVisibleConverter}}"
+                                                   Padding="6,2"
+                                                   Text="{Binding Subject, Mode=TwoWay}"
+                                                   UpdateSourceOnTextChanged="True"
+                                                   KeyDown="SubjectTextBoxNewThread_KeyDown" />
 
                 <!-- Verification Captcha -->
                 <TextBlock Text="Verification" Style="{StaticResource PhoneTextSubtleStyle}" />
 
-                <controls:MultiResolutionImage Thumbnail="{Binding CaptchaUri}" Height="100" Margin="12,0">
+                <controls:MultiResolutionImage Thumbnail="{Binding CaptchaUri}" Height="100" Margin="12,0" Background="Transparent">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Tap">
                             <i:InvokeCommandAction Command="{Binding ReloadCaptcha}" />
@@ -47,6 +51,7 @@
                 </controls:MultiResolutionImage>
 
                 <controls:ErrorStateTextBox x:Name="CaptchaTextBox"
+                                            Padding="6,2"
                                             Text="{Binding CaptchaText, Mode=TwoWay}"
                                             UpdateSourceOnTextChanged="True"
                                             IsErrorState="{Binding IsCaptchaError}"
@@ -59,6 +64,8 @@
                 <!-- Comment box -->
                 <TextBlock Text="Comment" Style="{StaticResource PhoneTextSubtleStyle}" />
                 <controls:SelectionBindableTextBox x:Name="CommentBox"
+                                                   Padding="6,2"
+                                                   InputScope="Chat"
                                                    Text="{Binding Comment, Mode=TwoWay}"
                                                    TextWrapping="Wrap"
                                                    UpdateSourceOnTextChanged="True"
@@ -72,9 +79,21 @@
                 <!-- More details area -->
                 <StackPanel Visibility="{Binding HasMoreDetails, Converter={StaticResource BoolVisibleConverter}}"
                             Margin="0,0,0,12">
+                    <!-- Subject box for new replies -->
+                    <TextBlock Visibility="{Binding IsNewThread, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=not}"
+                               Text="Subject"
+                               Style="{StaticResource PhoneTextSubtleStyle}" />
+                    <controls:SelectionBindableTextBox x:Name="SubjectTextBoxReply"
+                                                       Visibility="{Binding IsNewThread, Converter={StaticResource BoolVisibleConverter}, ConverterParameter=not}"
+                                                       Padding="6,2"
+                                                       Text="{Binding Subject, Mode=TwoWay}"
+                                                       UpdateSourceOnTextChanged="True"
+                                                       KeyDown="SubjectTextBoxReply_KeyDown" />
+                    
                     <!-- Name -->
                     <TextBlock Text="Name" Style="{StaticResource PhoneTextSubtleStyle}" />
                     <controls:SelectionBindableTextBox x:Name="NameTextBox"
+                                                       Padding="6,2"
                                                        Text="{Binding Name, Mode=TwoWay}"
                                                        UpdateSourceOnTextChanged="True"
                                                        KeyDown="NameTextBox_KeyDown" />
@@ -82,9 +101,9 @@
                     <!-- E-mail -->
                     <TextBlock Text="E-mail" Style="{StaticResource PhoneTextSubtleStyle}" />
                     <controls:SelectionBindableTextBox x:Name="EmailTextBox"
+                                                       Padding="6,2"
                                                        Text="{Binding Email, Mode=TwoWay}"
-                                                       UpdateSourceOnTextChanged="True"
-                                                       KeyDown="EmailTextBox_KeyDown" />
+                                                       UpdateSourceOnTextChanged="True" />
                 </StackPanel>
             </StackPanel>
         </ScrollViewer>
