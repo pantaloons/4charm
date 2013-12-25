@@ -1,8 +1,3 @@
-try/catch new system.net
-task switch back to gif image
-gif locking
-tombstoning
-add replies indicator after post number
-single image gif black
-gifs sometimes dont start
-refactory posts page
+extra zoom
+text size option
+catalog search

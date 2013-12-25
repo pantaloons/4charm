@@ -1,6 +1,7 @@
 #pragma once
 
 #include "Direct3DBase.h"
+#include "GIFImage.h"
 #include <GIFLIB\gif_lib.h>
 #include <SpriteBatch\SpriteBatch.h>
 
@@ -19,8 +20,7 @@ public:
 	// Method for loading GIF
 internal:
 	void Reset();
-	GifFileType *CreateGIFResource(const Platform::Array<unsigned char>^ resource);
-	void SetGIFResource(GifFileType *gif);
+	void SetGIFResource(GIFSurface::GIFImage^ gif);
 	void ReleaseGIFResource();
 
 private:
@@ -33,7 +33,7 @@ private:
 	void BlitFrame(int frame);
 	void ClearBuffer();
 
-	GifFileType *m_gif;
+	GIFSurface::GIFImage^ m_gif;
 	int m_frame;
 	int m_renderedFrame;
 	int m_previousFrame;

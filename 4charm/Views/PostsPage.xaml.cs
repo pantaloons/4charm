@@ -34,24 +34,6 @@ namespace _4charm.Views
             OrientationChanged += PostsPage_OrientationChanged;
         }
 
-        private void PostsPage_OrientationChanged(object sender, OrientationChangedEventArgs e)
-        {
-            switch (e.Orientation)
-            {
-                case PageOrientation.Portrait:
-                case PageOrientation.PortraitDown:
-                case PageOrientation.PortraitUp:
-                case PageOrientation.None:
-                    SplittingPane.SplitRatio = 0.5;
-                    break;
-                case PageOrientation.Landscape:
-                case PageOrientation.LandscapeLeft:
-                case PageOrientation.LandscapeRight:
-                    SplittingPane.SplitRatio = 0.75;
-                    break;
-            }
-        }
-
         private void InitializeApplicationBar()
         {
             _refresh = new ApplicationBarIconButton(new Uri("Assets/Appbar/appbar.refresh.png", UriKind.Relative)) { Text = AppResources.ApplicationBar_Refresh };
@@ -115,6 +97,29 @@ namespace _4charm.Views
             ApplicationBar.MenuItems.Add(_orientLock);
         }
 
+        private void PostsPage_OrientationChanged(object sender, OrientationChangedEventArgs e)
+        {
+            UpdateSplitHeight(e.Orientation);
+        }
+
+        private void UpdateSplitHeight(PageOrientation orientation)
+        {
+            switch (orientation)
+            {
+                case PageOrientation.Portrait:
+                case PageOrientation.PortraitDown:
+                case PageOrientation.PortraitUp:
+                case PageOrientation.None:
+                    SplittingPane.SplitRatio = 0.5;
+                    break;
+                case PageOrientation.Landscape:
+                case PageOrientation.LandscapeLeft:
+                case PageOrientation.LandscapeRight:
+                    SplittingPane.SplitRatio = 0.75;
+                    break;
+            }
+        }
+
         private void UpdateWatchButton()
         {
             if (_viewModel.IsWatchlisted)
@@ -153,6 +158,7 @@ namespace _4charm.Views
             base.OnNavigatedTo(e);
 
             UpdateWatchButton();
+            UpdateSplitHeight(Orientation);
 
             if (e.NavigationMode == NavigationMode.Back && PostsPageViewModel.ForceReload)
             {

@@ -21,11 +21,9 @@ namespace _4charm.Models
             }
         }
 
-        private Random r;
         private HttpClient _client;
         private RequestManager()
         {
-            r = new Random();
             _client = new HttpClient();
             _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("4charm", Version));
         }
@@ -59,7 +57,6 @@ namespace _4charm.Models
         {
             return await _client.PostAsync(EnforceHTTPS(uri), new FormUrlEncodedContent(fields));
         }
-
 
         public async Task<HttpResponseMessage> PostAsync(Uri uri, Dictionary<string, string> fields, string fileName, byte[] imageData)
         {

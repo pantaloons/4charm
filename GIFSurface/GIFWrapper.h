@@ -2,6 +2,7 @@
 
 #include <wrl/module.h>
 #include <DrawingSurfaceNative.h>
+#include "GIFImage.h"
 #include "GIFRenderer.h"
 #include "BasicTimer.h"
 
@@ -17,8 +18,8 @@ namespace GIFSurface
 		GIFWrapper();
 
 		Windows::Phone::Graphics::Interop::IDrawingSurfaceContentProvider^ CreateContentProvider();
-		Windows::Foundation::IAsyncAction^ SetGIF(const Platform::Array<unsigned char>^ resource, bool shouldAnimate);
-		void SetShouldAnimate(bool shouldAnimate);
+		
+		void SetGIFSource(GIFImage^ gif);
 		void UnloadGIF();
 
 		event RequestAdditionalFrameHandler^ RequestAdditionalFrame;
@@ -31,6 +32,11 @@ namespace GIFSurface
 			Windows::Foundation::Size get(){ return m_renderResolution; }
 			void set(Windows::Foundation::Size renderResolution);
 		}
+		property bool ShouldAnimate
+		{
+			bool get(){ return m_isActive; }
+			void set(bool value);
+		}
 
 	internal:
 		HRESULT STDMETHODCALLTYPE Connect(_In_ IDrawingSurfaceRuntimeHostNative* host);
@@ -42,8 +48,11 @@ namespace GIFSurface
 	private:
 		bool m_isActive;
 		bool m_isDirty;
+
+		GIFImage^ m_gif;
 		GIFRenderer^ m_renderer;
 		std::recursive_mutex m_mutex;
+
 		BasicTimer^ m_timer;
 		Windows::Foundation::Size m_renderResolution;
     };

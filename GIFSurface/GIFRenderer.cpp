@@ -4,13 +4,7 @@
 using namespace Microsoft::WRL;
 
 static const int FRAME_MINDELAY = 60;
-
-struct GifArrayData
-{
-	int Position;
-	int Length;
-	unsigned char *Data;
-};
+static const int FRAME_DEFAULTDELAY = 100;
 
 GIFRenderer::GIFRenderer()
 {
@@ -22,52 +16,14 @@ GIFRenderer::~GIFRenderer()
 	ReleaseGIFResource();
 }
 
-static int ArraySlurp(GifFileType *gft, GifByteType *buffer, int length)
-{
-	GifArrayData *input = (GifArrayData *)gft->UserData;
-
-	if (input->Position == input->Length)
-	{
-		return 0;
-	}
-	length = min(length, input->Length - input->Position);
-	memcpy(buffer, input->Data + input->Position, length);
-	input->Position += length;
-
-	return length;
-}
-
 void GIFRenderer::Reset()
 {
+	m_renderedFrame = -1;
 	m_frame = 0;
 	m_pending = 0;
 }
 
-GifFileType *GIFRenderer::CreateGIFResource(const Platform::Array<unsigned char>^ resource)
-{
-	int error = 0;
-	GifArrayData data = { 0, resource->Length, resource->Data };
-	GifFileType *gif = DGifOpen(&data, ArraySlurp, &error);
-	if (error)
-	{
-		throw ref new Platform::FailureException(ref new Platform::String(GifErrorString(error)));
-	}
-
-	if (DGifSlurp(gif) == GIF_ERROR)
-	{
-		int error = gif->Error;
-		if (DGifCloseFile(gif) == GIF_ERROR)
-		{
-			free(gif);
-		}
-
-		throw ref new Platform::FailureException(ref new Platform::String(GifErrorString(error)));
-	}
-
-	return gif;
-}
-
-void GIFRenderer::SetGIFResource(GifFileType *gif)
+void GIFRenderer::SetGIFResource(GIFSurface::GIFImage^ gif)
 {
 	m_gif = gif;
 
@@ -75,27 +31,15 @@ void GIFRenderer::SetGIFResource(GifFileType *gif)
 	m_renderedFrame = -1;
 	m_frame = 0;
 	m_pending = 0;
-	m_buffer[0] = std::unique_ptr<uint32_t>(new uint32_t[m_gif->SWidth * m_gif->SHeight]);
+	m_buffer[0] = std::unique_ptr<uint32_t>(new uint32_t[m_gif->m_gif->SWidth * m_gif->m_gif->SHeight]);
 	m_buffer[1] = nullptr;
 }
 
 void GIFRenderer::ReleaseGIFResource()
 {
+	m_gif = nullptr;
 	m_buffer[0] = nullptr;
 	m_buffer[1] = nullptr;
-
-	if (m_gif)
-	{
-		if (DGifCloseFile(m_gif) == GIF_ERROR)
-		{
-			int error = m_gif->Error;
-			free(m_gif);
-			m_gif = nullptr;
-			throw ref new Platform::FailureException(ref new Platform::String(GifErrorString(error)));
-		}
-
-		m_gif = nullptr;
-	}
 }
 
 static bool GetGraphicsControlBlock(SavedImage image, GraphicsControlBlock *gcb)
@@ -139,15 +83,19 @@ void GIFRenderer::SelectNextFrame(float timeDelta)
 
 	while (true)
 	{
-		int nextFrame = (m_frame + 1) % m_gif->ImageCount;
+		int nextFrame = (m_frame + 1) % m_gif->m_gif->ImageCount;
 
 		int disposal = DISPOSAL_UNSPECIFIED;
 		int delay = FRAME_MINDELAY;
 
 		GraphicsControlBlock gcb;
-		if (GetGraphicsControlBlock(m_gif->SavedImages[nextFrame], &gcb))
+		if (GetGraphicsControlBlock(m_gif->m_gif->SavedImages[nextFrame], &gcb))
 		{
 			disposal = gcb.DisposalMode;
+			if (10 * gcb.DelayTime < FRAME_MINDELAY)
+			{
+				delay = FRAME_DEFAULTDELAY;
+			}
 			delay = max(FRAME_MINDELAY, 10 * gcb.DelayTime);
 		}
 
@@ -183,7 +131,7 @@ void GIFRenderer::BlitIntermediateFrames()
 		int disposal = DISPOSAL_UNSPECIFIED;
 
 		GraphicsControlBlock gcb;
-		if (GetGraphicsControlBlock(m_gif->SavedImages[i], &gcb))
+		if (GetGraphicsControlBlock(m_gif->m_gif->SavedImages[i], &gcb))
 		{
 			disposal = gcb.DisposalMode;
 		}
@@ -209,10 +157,10 @@ void GIFRenderer::SwapBuffers()
 {
 	if (!m_buffer[1])
 	{
-		m_buffer[1] = std::unique_ptr<uint32_t>(new uint32_t[m_gif->SWidth * m_gif->SHeight]);
+		m_buffer[1] = std::unique_ptr<uint32_t>(new uint32_t[m_gif->m_gif->SWidth * m_gif->m_gif->SHeight]);
 	}
 
-	memcpy(m_buffer[(m_bufferIdx + 1) % 2].get(), m_buffer[m_bufferIdx].get(), m_gif->SWidth * m_gif->SHeight * sizeof uint32_t);
+	memcpy(m_buffer[(m_bufferIdx + 1) % 2].get(), m_buffer[m_bufferIdx].get(), m_gif->m_gif->SWidth * m_gif->m_gif->SHeight * sizeof uint32_t);
 
 	// Blit next frame
 	m_bufferIdx = (m_bufferIdx + 1) % 2;
@@ -221,8 +169,8 @@ void GIFRenderer::SwapBuffers()
 
 void GIFRenderer::RenderToSurface()
 {
-	CD3D11_TEXTURE2D_DESC textureDescription(DXGI_FORMAT_B8G8R8A8_UNORM, m_gif->SWidth, m_gif->SHeight, 1, 1);
-	D3D11_SUBRESOURCE_DATA data = { m_buffer[m_bufferIdx].get(), m_gif->SWidth * sizeof (uint32_t), 0 };
+	CD3D11_TEXTURE2D_DESC textureDescription(DXGI_FORMAT_B8G8R8A8_UNORM, m_gif->m_gif->SWidth, m_gif->m_gif->SHeight, 1, 1);
+	D3D11_SUBRESOURCE_DATA data = { m_buffer[m_bufferIdx].get(), m_gif->m_gif->SWidth * sizeof (uint32_t), 0 };
 
 	ComPtr<ID3D11Texture2D> texture;
 	ThrowIfFailed(m_d3dDevice->CreateTexture2D(&textureDescription, &data, &texture));
@@ -241,20 +189,20 @@ void GIFRenderer::RenderToSurface()
 	m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	m_d3dContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
 
-	double rw = m_renderTargetSize.Width / (double)m_gif->SWidth;
-	double rh = m_renderTargetSize.Height / (double)m_gif->SHeight;
+	double rw = m_renderTargetSize.Width / (double)m_gif->m_gif->SWidth;
+	double rh = m_renderTargetSize.Height / (double)m_gif->m_gif->SHeight;
 
 	double fwidth, fheight, xoff, yoff;
 	if (rw <= rh)
 	{
 		fwidth = m_renderTargetSize.Width;
-		fheight = rw * (double)m_gif->SHeight;
+		fheight = rw * (double)m_gif->m_gif->SHeight;
 		xoff = 0;
 		yoff = (m_renderTargetSize.Height - fheight) / 2.0;
 	}
 	else
 	{
-		fwidth = rh * (double)m_gif->SWidth;
+		fwidth = rh * (double)m_gif->m_gif->SWidth;
 		fheight = m_renderTargetSize.Height;
 		xoff = (m_renderTargetSize.Width - fwidth) / 2.0;
 		yoff = 0;
@@ -271,7 +219,7 @@ void GIFRenderer::SetupNextFrame()
 	int disposal = DISPOSAL_UNSPECIFIED;
 
 	GraphicsControlBlock gcb;
-	if (GetGraphicsControlBlock(m_gif->SavedImages[m_frame], &gcb))
+	if (GetGraphicsControlBlock(m_gif->m_gif->SavedImages[m_frame], &gcb))
 	{
 		disposal = gcb.DisposalMode;
 	}
@@ -280,13 +228,13 @@ void GIFRenderer::SetupNextFrame()
 	{
 	case DISPOSAL_UNSPECIFIED:
 	case DISPOSE_DO_NOT:
-		m_previousFrame = (m_frame + 1) % m_gif->ImageCount;
+		m_previousFrame = (m_frame + 1) % m_gif->m_gif->ImageCount;
 		break;
 	case DISPOSE_BACKGROUND:
 		m_previousFrame = m_frame;
 		break;
 	case DISPOSE_PREVIOUS:
-		m_previousFrame = (m_frame + 1) % m_gif->ImageCount;
+		m_previousFrame = (m_frame + 1) % m_gif->m_gif->ImageCount;
 		m_bufferIdx = (m_bufferIdx + 1) % 2;
 		break;
 	}
@@ -295,22 +243,22 @@ void GIFRenderer::SetupNextFrame()
 void GIFRenderer::ClearBuffer()
 {
 	GifColorType color = { 255, 255, 255 };
-	if (m_gif->SColorMap != nullptr) color = m_gif->SColorMap->Colors[m_gif->SBackGroundColor];
+	if (m_gif->m_gif->SColorMap != nullptr) color = m_gif->m_gif->SColorMap->Colors[m_gif->m_gif->SBackGroundColor];
 
 	unsigned int bgColor = ((uint32_t)color.Blue << 0) | ((uint32_t)color.Green << 8) | ((uint32_t)color.Red << 16) | ((uint32_t)255 << 24);
 
-	for (int y = 0; y < m_gif->SHeight; y++)
+	for (int y = 0; y < m_gif->m_gif->SHeight; y++)
 	{
-		for (int x = 0; x < m_gif->SWidth; x++)
+		for (int x = 0; x < m_gif->m_gif->SWidth; x++)
 		{
-			m_buffer[m_bufferIdx].get()[y * m_gif->SHeight + x] = bgColor;
+			m_buffer[m_bufferIdx].get()[y * m_gif->m_gif->SHeight + x] = bgColor;
 		}
 	}
 }
 
 void GIFRenderer::BlitFrame(int frame)
 {
-	SavedImage image = m_gif->SavedImages[frame];
+	SavedImage image = m_gif->m_gif->SavedImages[frame];
 	GifByteType *bits = image.RasterBits;
 
 	ColorMapObject *colorMap = nullptr;
@@ -318,9 +266,9 @@ void GIFRenderer::BlitFrame(int frame)
 	{
 		colorMap = image.ImageDesc.ColorMap;
 	}
-	else if (m_gif->SColorMap != nullptr)
+	else if (m_gif->m_gif->SColorMap != nullptr)
 	{
-		colorMap = m_gif->SColorMap;
+		colorMap = m_gif->m_gif->SColorMap;
 	}
 
 	int i = 0;
@@ -328,11 +276,11 @@ void GIFRenderer::BlitFrame(int frame)
 	{
 		for (int x = image.ImageDesc.Left; x < image.ImageDesc.Left + image.ImageDesc.Width; x++)
 		{
-			int offset = y * m_gif->SWidth + x;
+			int offset = y * m_gif->m_gif->SWidth + x;
 			GifByteType colorIndex = bits[i++];
 
 			GraphicsControlBlock gcb;
-			if (!GetGraphicsControlBlock(m_gif->SavedImages[frame], &gcb) || gcb.TransparentColor != colorIndex)
+			if (!GetGraphicsControlBlock(m_gif->m_gif->SavedImages[frame], &gcb) || gcb.TransparentColor != colorIndex)
 			{
 				GifColorType color = colorMap->Colors[colorIndex];
 				m_buffer[m_bufferIdx].get()[offset] = ((uint32_t)color.Blue << 0) | ((uint32_t)color.Green << 8) | ((uint32_t)color.Red << 16) | ((uint32_t)255 << 24);

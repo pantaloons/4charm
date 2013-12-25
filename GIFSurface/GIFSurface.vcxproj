@@ -145,6 +145,7 @@
   <ItemGroup>
     <ClInclude Include="BasicTimer.h" />
     <ClInclude Include="Direct3DBase.h" />
+    <ClInclude Include="GIFImage.h" />
     <ClInclude Include="GIFRenderer.h" />
     <ClInclude Include="GIFWrapper.h" />
     <ClInclude Include="Direct3DContentProvider.h" />
@@ -153,6 +154,7 @@
   <ItemGroup>
     <ClCompile Include="Direct3DBase.cpp" />
     <ClCompile Include="Direct3DContentProvider.cpp" />
+    <ClCompile Include="GIFImage.cpp" />
     <ClCompile Include="GIFRenderer.cpp" />
     <ClCompile Include="GIFWrapper.cpp" />
     <ClCompile Include="pch.cpp">

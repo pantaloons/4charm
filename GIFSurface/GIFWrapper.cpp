@@ -25,71 +25,22 @@ namespace GIFSurface
 		return reinterpret_cast<IDrawingSurfaceContentProvider^>(provider.Get());
 	}
 
-	Windows::Foundation::IAsyncAction^ GIFWrapper::SetGIF(const Platform::Array<unsigned char>^ resource, bool shouldAnimate)
-	{
-		{
-			std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-			m_isActive = shouldAnimate;
-			if (!m_isActive)
-			{
-				if (m_renderer)
-				{
-					m_renderer->Render(0, false);
-				}
-				
-				m_isDirty = true;
-				m_timer->Reset();
-			}
-		}
-		return concurrency::create_async([resource, this, shouldAnimate]()
-		{
-			GifFileType *gif = nullptr;
-			if (m_renderer)
-			{
-				gif = m_renderer->CreateGIFResource(resource);
-			}
-
-			std::lock_guard<std::recursive_mutex> lock(m_mutex);
-
-			if (m_renderer && gif)
-			{
-				m_timer->Reset();
-				m_renderer->SetGIFResource(gif);
-			}
-
-			if (!m_isActive)
-			{
-				if (m_renderer)
-				{
-					m_renderer->Render(0, false);
-				}
-
-				m_isDirty = true;
-				m_timer->Reset();
-			}
-		});
-	}
-
-	void GIFWrapper::SetShouldAnimate(bool shouldAnimate)
+	void GIFWrapper::SetGIFSource(GIFImage^ gif)
 	{
 		std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-		m_isActive = shouldAnimate;
-
+		// Forcibly render the first frame of the GIF.
+		m_isDirty = true;
+		m_timer->Reset();
 		if (m_renderer)
 		{
-			m_timer->Reset();
-			m_renderer->Reset();
+			m_renderer->SetGIFResource(gif);
+			m_renderer->Render(0, true);
 
-			if (!shouldAnimate)
-			{
-				m_renderer->Render(0, false);
-				m_isDirty = true;
-			}
+			RequestAdditionalFrame();
 		}
 
-		RequestAdditionalFrame();
+		m_gif = gif;
 	}
 
 	void GIFWrapper::UnloadGIF()
@@ -98,9 +49,36 @@ namespace GIFSurface
 
 		if (m_renderer)
 		{
-			m_renderer->ReleaseGIFResource();
+			if (m_renderer)
+			{
+				m_renderer->ReleaseGIFResource();
+			}
 			m_isActive = false;
 		}
+
+		m_gif = nullptr;
+	}
+
+	void GIFWrapper::ShouldAnimate::set(bool shouldAnimate)
+	{
+		std::lock_guard<std::recursive_mutex> lock(m_mutex);
+
+		m_isActive = shouldAnimate;
+		m_isDirty = true;
+
+		if (!m_isActive)
+		{
+			// Forcibly render one frame if the GIF is now inactive.
+			m_timer->Reset();
+			
+			if (m_renderer)
+			{
+				m_renderer->Reset();
+				m_renderer->Render(0, true);
+			}
+		}
+
+		RequestAdditionalFrame();
 	}
 
 	void GIFWrapper::RenderResolution::set(Windows::Foundation::Size renderResolution)
@@ -119,10 +97,10 @@ namespace GIFSurface
 
 				if (!m_isActive)
 				{
-					// We need to force rendering, since even if we drew the previous frame
-					// it now got thrown out.
-					m_renderer->Render(0, true);
+					// We need to force render a frame if the GIF was inactive, since the previous
+					// frame got released when we recreated the texture.
 					m_isDirty = true;
+					m_renderer->Render(0, true);
 				}
 			}
 		}
@@ -140,6 +118,14 @@ namespace GIFSurface
 
 		// Restart timer after renderer has finished initializing.
 		m_timer->Reset();
+		if (m_gif != nullptr)
+		{
+			m_isDirty = true;
+			m_renderer->SetGIFResource(m_gif);
+			m_renderer->Render(0, true);
+
+			RequestAdditionalFrame();
+		}
 
 		return S_OK;
 	}
@@ -148,7 +134,6 @@ namespace GIFSurface
 	{
 		std::lock_guard<std::recursive_mutex> lock(m_mutex);
 
-		m_isActive = false;
 		m_renderer->ReleaseGIFResource();
 		m_renderer = nullptr;
 	}
@@ -168,16 +153,21 @@ namespace GIFSurface
 
 		if (!m_isActive)
 		{
+			// Even if the image is inactive, we should blit a
+			// frame if the surface is dirty.
 			if (m_isDirty)
 			{
 				m_renderer->Render(0, true);
 				m_isDirty = false;
 			}
+			
 			return S_OK;
 		}
 
 		m_timer->Update();
-		m_renderer->Render(m_timer->Delta, false);
+		m_renderer->Render(m_timer->Delta, m_isDirty);
+		m_isDirty = false;
+
 		RequestAdditionalFrame();
 
 		return S_OK;
