@@ -574,11 +574,47 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Comment.
+        /// </summary>
+        public static string PostsPage_Comment {
+            get {
+                return ResourceManager.GetString("PostsPage_Comment", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to There was an error retrieving the posts :(.
         /// </summary>
         public static string PostsPage_Error {
             get {
                 return ResourceManager.GetString("PostsPage_Error", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Success!.
+        /// </summary>
+        public static string PostsPage_PostSuccess {
+            get {
+                return ResourceManager.GetString("PostsPage_PostSuccess", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Submitting....
+        /// </summary>
+        public static string PostsPage_Submitting {
+            get {
+                return ResourceManager.GetString("PostsPage_Submitting", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Verification.
+        /// </summary>
+        public static string PostsPage_Verification {
+            get {
+                return ResourceManager.GetString("PostsPage_Verification", resourceCulture);
             }
         }
         

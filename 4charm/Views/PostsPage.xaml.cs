@@ -156,7 +156,6 @@ namespace _4charm.Views
 
             if (e.NavigationMode == NavigationMode.Back && PostsPageViewModel.ForceReload)
             {
-                System.Diagnostics.Debug.WriteLine("scroll to bot gen");
                 ScrollToBottom();
                 PostsPageViewModel.ForceReload = false;
             }
@@ -166,12 +165,9 @@ namespace _4charm.Views
         {
             _viewModel.InitialUpdateTask.ContinueWith(task =>
             {
-                System.Diagnostics.Debug.WriteLine("scroll to bot goo");
                 if (MainPivot.SelectedIndex == 0)
                 {
-                    System.Diagnostics.Debug.WriteLine("before: " + _viewModel.AllPosts.Count);
                     _viewModel.AllPosts.Flush();
-                    System.Diagnostics.Debug.WriteLine("after: " + _viewModel.AllPosts.Count + " :: " + _viewModel.AllPosts.Last().Number);
 
                     if (_viewModel.AllPosts.Count > 0)
                     {

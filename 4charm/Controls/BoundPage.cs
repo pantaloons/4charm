@@ -20,8 +20,9 @@ namespace _4charm.Controls
             {
                 _initialized = true;
                 vm.Initialize(NavigationContext.QueryString, e);
+                vm.RestoreState(State);
             }
-
+            
             vm.OnNavigatedTo(e);
         }
 
@@ -32,6 +33,7 @@ namespace _4charm.Controls
             Debug.Assert(DataContext is PageViewModelBase);
             PageViewModelBase vm = DataContext as PageViewModelBase;
 
+            vm.SaveState(State);
             vm.OnNavigatedFrom(e);
         }
 

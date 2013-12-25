@@ -6,7 +6,7 @@ namespace _4charm.Controls
 {
     interface IPreloadedImage
     {
-        Task<bool> SetStreamSource(Stream source, string fileType, CancellationToken token);
+        Task SetStreamSource(Stream source, string fileType);
         void UnloadStreamSource();
     }
 }

@@ -29,14 +29,14 @@
                                         <ScaleTransform x:Name="FlipperZoomableContentTransform" />
                                     </Grid.RenderTransform>
 
-                                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
-                                                                   FullSize="{Binding ImageSrc}"
+                                    <controls:MultiResolutionImage ThumbnailURI="{Binding ThumbnailSrc}"
+                                                                   FullSizeURI="{Binding ImageSrc}"
                                                                    AspectRatio="{Binding AspectRatio}"
                                                                    DownloadProgressCommand="{Binding UpdateProgress}">
                                         <controls:MultiResolutionImage.Template>
                                             <ControlTemplate TargetType="controls:MultiResolutionImage">
-                                                <controls:GIFImage x:Name="PreloadedImageContainer"
-                                                                   ShouldAnimate="{Binding IsSelected}" />
+                                                <controls:AnimatedImage x:Name="PreloadedImageContainer"
+                                                                        ShouldAnimate="{Binding IsSelected}" />
                                             </ControlTemplate>
                                         </controls:MultiResolutionImage.Template>
                                     </controls:MultiResolutionImage>

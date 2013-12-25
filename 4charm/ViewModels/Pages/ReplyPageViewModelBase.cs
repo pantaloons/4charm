@@ -137,6 +137,7 @@ namespace _4charm.ViewModels
         {
             base.Initialize(arguments, e);
 
+            _token = "";
             Comment = "";
             CaptchaText = "";
             Subject = "";
@@ -146,6 +147,34 @@ namespace _4charm.ViewModels
             Board = arguments["board"];
 
             FileName = AppResources.NewThreadPage_ChooseFile;
+        }
+
+        public override void SaveState(IDictionary<string, object> state)
+        {
+            state["Comment"] = Comment;
+            state["Subject"] = Subject;
+            state["Name"] = Name;
+            state["Email"] = Email;
+        }
+
+        public override void RestoreState(IDictionary<string, object> state)
+        {
+            if (state.ContainsKey("Comment"))
+            {
+                Comment = (string)state["Comment"];
+            }
+            if (state.ContainsKey("Subject"))
+            {
+                Subject = (string)state["Subject"];
+            }
+            if (state.ContainsKey("Name"))
+            {
+                Name = (string)state["Name"];
+            }
+            if (state.ContainsKey("Email"))
+            {
+                Email = (string)state["Email"];
+            }
         }
 
         public override void OnBackKeyPress(CancelEventArgs e)

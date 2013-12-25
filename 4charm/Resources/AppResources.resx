@@ -348,4 +348,16 @@
   <data name="ThreadsPage_Watchlist" xml:space="preserve">
     <value>watchlist</value>
   </data>
+  <data name="PostsPage_Comment" xml:space="preserve">
+    <value>Comment</value>
+  </data>
+  <data name="PostsPage_PostSuccess" xml:space="preserve">
+    <value>Success!</value>
+  </data>
+  <data name="PostsPage_Submitting" xml:space="preserve">
+    <value>Submitting...</value>
+  </data>
+  <data name="PostsPage_Verification" xml:space="preserve">
+    <value>Verification</value>
+  </data>
 </root>

@@ -50,6 +50,7 @@ namespace _4charm
 
             IsPostTapAllowed = true;
 
+#if DEBUG
             if (Debugger.IsAttached)
             {
                 Application.Current.Host.Settings.EnableFrameRateCounter = true;
@@ -58,6 +59,7 @@ namespace _4charm
 
                 PhoneApplicationService.Current.UserIdleDetectionMode = IdleDetectionMode.Disabled;
             }
+#endif
         }
 
 #if DEBUG
@@ -80,8 +82,12 @@ namespace _4charm
 
         private void CompositionTarget_Rendering(object sender, EventArgs e)
         {
-            _initialFrameTCS.SetResult(true);
             CompositionTarget.Rendering -= CompositionTarget_Rendering;
+
+            Deployment.Current.Dispatcher.BeginInvoke(() =>
+            {
+                _initialFrameTCS.SetResult(true);
+            });
         }
 
         // Code to execute when the application is activated (brought to foreground)
@@ -119,7 +125,7 @@ namespace _4charm
         // Code to execute on Unhandled Exceptions
         private void Application_UnhandledException(object sender, ApplicationUnhandledExceptionEventArgs e)
         {
-//#if DEBUG
+#if DEBUG
             if (Debugger.IsAttached)
             {
                 // An unhandled exception has occurred; break into the debugger
@@ -128,7 +134,7 @@ namespace _4charm
             MessageBox.Show(((long)Microsoft.Phone.Info.DeviceExtendedProperties.GetValue("ApplicationCurrentMemoryUsage") / (1024.0 * 1024)) + " MB");
             MessageBox.Show(e.ExceptionObject.Message);
             MessageBox.Show(e.ExceptionObject.StackTrace);
-//#endif
+#endif
         }
 
         #region Phone application initialization

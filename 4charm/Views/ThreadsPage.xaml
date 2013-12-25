@@ -85,20 +85,20 @@
                          have their content area resize after the image loads. The margin binding is
                          because threads with no image should not add extra padding between the thread
                          border and the text area, where if an image is there will require another 12px -->
-                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
-                                                   Width="{Binding ThumbWidth}"
-                                                   Height="{Binding ThumbHeight}"
-                                                   Margin="0,6,12,6"
-                                                   VerticalAlignment="Top"
-                                                   Grid.Row="2"
-                                                   Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
+                    <controls:SingleResolutionImage ImageURI="{Binding ThumbnailSrc}"
+                                                    Width="{Binding ThumbWidth}"
+                                                    Height="{Binding ThumbHeight}"
+                                                    Margin="0,6,12,6"
+                                                    VerticalAlignment="Top"
+                                                    Grid.Row="2"
+                                                    Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
                          <!-- Tapping the image goes directly to the image viewer.--> 
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Tap">
                                 <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </controls:MultiResolutionImage>
+                    </controls:SingleResolutionImage>
 
                     <!-- Post comment. RichTextBox has its "Blocks" property set through
                          the attached FormattedText DependencyProperty. -->
@@ -144,19 +144,13 @@
                     <RowDefinition Height="90" />
                 </Grid.RowDefinitions>
 
-                <controls:MultiResolutionImage Thumbnail="{Binding InitialPost.ThumbnailSrc}" Grid.RowSpan="2">
-                    <controls:MultiResolutionImage.Template>
-                        <ControlTemplate TargetType="controls:MultiResolutionImage">
-                            <controls:StaticImage x:Name="PreloadedImageContainer">
-                                <controls:StaticImage.Template>
-                                    <ControlTemplate TargetType="controls:StaticImage">
-                                        <Image x:Name="ImageContainer" Stretch="UniformToFill" />
-                                    </ControlTemplate>
-                                </controls:StaticImage.Template>
-                            </controls:StaticImage>
+                <controls:SingleResolutionImage ImageURI="{Binding InitialPost.ThumbnailSrc}" Grid.RowSpan="2">
+                    <controls:SingleResolutionImage.Template>
+                        <ControlTemplate TargetType="controls:SingleResolutionImage">
+                            <Image x:Name="ImageContainer" Stretch="UniformToFill" />
                         </ControlTemplate>
-                    </controls:MultiResolutionImage.Template>
-                </controls:MultiResolutionImage>
+                    </controls:SingleResolutionImage.Template>
+                </controls:SingleResolutionImage>
 
                 <Rectangle Grid.Row="1" Fill="Black" Opacity="0.7" />
                 <TextBlock Grid.Row="1"
@@ -200,9 +194,7 @@
                 <controls:FadingLongListSelector
                     FadeLimit="10"
                     ItemsSource="{Binding Watchlist}"
-                    ItemTemplate="{StaticResource ThreadItemTemplate}"
-                    PlaceholderVisibility="{Binding IsError, Converter={StaticResource BoolVisibleConverter}}"
-                    PlaceholderText="{Binding Path=LocalizedResources.ThreadsPage_Error, Source={StaticResource LocalizedStrings}}" />
+                    ItemTemplate="{StaticResource ThreadItemTemplate}" />
             </phone:PivotItem>
             <phone:PivotItem Header="{Binding Path=LocalizedResources.ThreadsPage_Catalog, Source={StaticResource LocalizedStrings}}">
                 <controls:FadingLongListSelector

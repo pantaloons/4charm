@@ -75,19 +75,13 @@
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
 
-                    <controls:MultiResolutionImage Thumbnail="{Binding Board.WideURI}">
-                        <controls:MultiResolutionImage.Template>
-                            <ControlTemplate TargetType="controls:MultiResolutionImage">
-                                <controls:StaticImage x:Name="PreloadedImageContainer">
-                                    <controls:StaticImage.Template>
-                                        <ControlTemplate TargetType="controls:StaticImage">
-                                            <Image x:Name="ImageContainer" Width="440" Stretch="UniformToFill" />
-                                        </ControlTemplate>
-                                    </controls:StaticImage.Template>
-                                </controls:StaticImage>
+                    <controls:SingleResolutionImage ImageURI="{Binding Board.WideURI}">
+                        <controls:SingleResolutionImage.Template>
+                            <ControlTemplate TargetType="controls:SingleResolutionImage">
+                                <Image x:Name="ImageContainer" Width="440" Stretch="UniformToFill" />
                             </ControlTemplate>
-                        </controls:MultiResolutionImage.Template>
-                    </controls:MultiResolutionImage>
+                        </controls:SingleResolutionImage.Template>
+                    </controls:SingleResolutionImage>
 
                     <Grid Height="60" VerticalAlignment="Bottom">
                         <Grid Background="Black" Opacity="0.3"/>

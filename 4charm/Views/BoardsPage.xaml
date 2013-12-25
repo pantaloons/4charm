@@ -83,20 +83,20 @@
                                    Text="{Binding LongNumber}" />
                     </Grid>
 
-                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
-                                                   Width="{Binding ThumbWidth, FallbackValue=0}"
-                                                   Height="{Binding ThumbHeight, FallbackValue=0}"
-                                                   Margin="0,6,12,6"
-                                                   VerticalAlignment="Top"
-                                                   Grid.Row="2"
-                                                   Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
-                        <!-- Tapping the image goes directly to the image viewer.-->
+                    <controls:SingleResolutionImage ImageURI="{Binding ThumbnailSrc}"
+                                                    Width="{Binding ThumbWidth, FallbackValue=0}"
+                                                    Height="{Binding ThumbHeight, FallbackValue=0}"
+                                                    Margin="0,6,12,6"
+                                                    VerticalAlignment="Top"
+                                                    Grid.Row="2"
+                                                    Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
+                        <!-- Tapping the image goes directly to the image viewer. -->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Tap">
                                 <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </controls:MultiResolutionImage>
+                    </controls:SingleResolutionImage>
 
                     <RichTextBox VerticalAlignment="Top" Grid.Column="1" Grid.Row="2"
                                  models:BindableTextBlock.FormattedText="{Binding HtmlComment}"
@@ -147,19 +147,13 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <controls:MultiResolutionImage Thumbnail="{Binding WideURI}">
-                    <controls:MultiResolutionImage.Template>
-                        <ControlTemplate TargetType="controls:MultiResolutionImage">
-                            <controls:StaticImage x:Name="PreloadedImageContainer">
-                                <controls:StaticImage.Template>
-                                    <ControlTemplate TargetType="controls:StaticImage">
-                                        <Image x:Name="ImageContainer" Width="440" Stretch="UniformToFill" />
-                                    </ControlTemplate>
-                                </controls:StaticImage.Template>
-                            </controls:StaticImage>
+                <controls:SingleResolutionImage ImageURI="{Binding WideURI}">
+                    <controls:SingleResolutionImage.Template>
+                        <ControlTemplate TargetType="controls:SingleResolutionImage">
+                            <Image x:Name="ImageContainer" Width="440" Stretch="UniformToFill" />
                         </ControlTemplate>
-                    </controls:MultiResolutionImage.Template>
-                </controls:MultiResolutionImage>
+                    </controls:SingleResolutionImage.Template>
+                </controls:SingleResolutionImage>
 
                 <Grid Height="60" VerticalAlignment="Bottom">
                     <Grid Background="Black" Opacity="0.3"/>

@@ -63,14 +63,7 @@ namespace _4charm.ViewModels
             }
             ImagePosts = new ObservableCollection<object>(_posts.Select(x => new ImageViewerPostViewModel(x)));
 
-            for (int i = 0; i < ImagePosts.Count; i++)
-            {
-                if ((ImagePosts[i] as ImageViewerPostViewModel).Number == _postID)
-                {
-                    SelectedIndex = i;
-                    break;
-                }
-            }
+            ScrollToTargetPost();
 
             Update().ContinueWith(result =>
             {
@@ -83,6 +76,35 @@ namespace _4charm.ViewModels
                 TransitorySettingsManager.Current.History.Remove(thread);
             }
             TransitorySettingsManager.Current.History.Insert(0, _thread);
+        }
+
+        private void ScrollToTargetPost()
+        {
+            for (int i = 0; i < ImagePosts.Count; i++)
+            {
+                if ((ImagePosts[i] as ImageViewerPostViewModel).Number == _postID)
+                {
+                    SelectedIndex = i;
+                    break;
+                }
+            }
+        }
+
+        public override void SaveState(IDictionary<string, object> state)
+        {
+            if (SelectedIndex >= 0 && SelectedIndex < ImagePosts.Count)
+            {
+                state["PostID"] = ((ImageViewerPostViewModel)ImagePosts[SelectedIndex]).Number;
+            }
+        }
+
+        public override void RestoreState(IDictionary<string, object> state)
+        {
+            if (state.ContainsKey("PostID"))
+            {
+                _postID = (ulong)state["PostID"];
+                ScrollToTargetPost();
+            }
         }
 
         public async Task Update()
@@ -116,7 +138,7 @@ namespace _4charm.ViewModels
                     ImagePosts.Add(new ImageViewerPostViewModel(post));
                     if (post.Number == _postID)
                     {
-                        SelectedIndex = i;
+                        SelectedIndex = ImagePosts.Count - 1;
                     }
                 }
             }

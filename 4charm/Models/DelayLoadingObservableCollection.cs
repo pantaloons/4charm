@@ -4,14 +4,15 @@ using System.Collections.Specialized;
 using System.Diagnostics;
 using System.Threading.Tasks;
 using System.Linq;
+using _4charm.ViewModels;
 
 namespace _4charm.Models
 {
-    class DelayLoadingObservableCollection<T> : ObservableCollection<T>
+    class DelayLoadingObservableCollection<T> : ObservableCollection<T> where T : class
     {
         private bool _isResolving;
         private int _delay;
-        private LinkedList<NotifyCollectionChangedEventArgs> _actions;
+        private List<NotifyCollectionChangedEventArgs> _actions;
 
         private int _flushCount;
         private int _flushLimit;
@@ -32,7 +33,7 @@ namespace _4charm.Models
         public DelayLoadingObservableCollection(int delay, bool isPaused, int bulkAfter, int bulkDelay, int bulkCount)
         {
             _delay = delay;
-            _actions = new LinkedList<NotifyCollectionChangedEventArgs>();
+            _actions = new List<NotifyCollectionChangedEventArgs>();
             _isPaused = isPaused;
 
             _flushCount = 0;
@@ -41,26 +42,36 @@ namespace _4charm.Models
             _flushGroupCount = bulkCount;
         }
 
-        public void AddRange(IEnumerable<T> items)
+        public void AddRange(IEnumerable<T> items, int delay = 0)
         {
             foreach (T item in items)
             {
-                _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+                _actions.Add(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
             }
 
-            ResolveChanges();
+            if (delay != 0)
+            {
+                Task.Delay(delay).ContinueWith(task =>
+                {
+                    ResolveChanges();
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            else
+            {
+                ResolveChanges();
+            }
         }
 
         public new void Add(T item)
         {
-            _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
+            _actions.Add(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item));
 
             ResolveChanges();
         }
 
         public new void Insert(int index, T item)
         {
-            _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
+            _actions.Add(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Add, item, index));
 
             ResolveChanges();
         }
@@ -70,23 +81,30 @@ namespace _4charm.Models
             return Items.Union(_actions.Where(x => x.Action == NotifyCollectionChangedAction.Add).Select(x => (T)x.NewItems[0]));
         }
 
+        public void RemoveAndPending(T item)
+        {
+            Items.Remove(item);
+
+            _actions = _actions.Where(x => x.Action != NotifyCollectionChangedAction.Add && (T)x.NewItems[0] != item).ToList();
+        }
+
         public new void Move(int oldIndex, int newIndex)
         {
-            _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, new object(), newIndex, oldIndex));
+            _actions.Add(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Move, new object(), newIndex, oldIndex));
 
             ResolveChanges();
         }
 
         protected new void RemoveItem(int index)
         {
-            _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new object(), index));
+            _actions.Add(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new object(), index));
 
             ResolveChanges();
         }
 
         public new void RemoveAt(int index)
         {
-            _actions.AddLast(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new object(), index));
+            _actions.Add(new NotifyCollectionChangedEventArgs(NotifyCollectionChangedAction.Remove, new object(), index));
 
             ResolveChanges();
         }
@@ -107,8 +125,8 @@ namespace _4charm.Models
         {
             while (_actions.Count > 0)
             {
-                NotifyCollectionChangedEventArgs args = _actions.First.Value;
-                _actions.RemoveFirst();
+                NotifyCollectionChangedEventArgs args = _actions[0];
+                _actions.RemoveAt(0);
                 ResolveChange(args);
             }
         }
@@ -117,8 +135,8 @@ namespace _4charm.Models
         {
             for (int i = 0; i < count && _actions.Count > 0; i++)
             {
-                NotifyCollectionChangedEventArgs args = _actions.First.Value;
-                _actions.RemoveFirst();
+                NotifyCollectionChangedEventArgs args = _actions[0];
+                _actions.RemoveAt(0);
                 ResolveChange(args);
             }
         }
@@ -146,8 +164,8 @@ namespace _4charm.Models
                     break;
                 }
 
-                NotifyCollectionChangedEventArgs args = _actions.First.Value;
-                _actions.RemoveFirst();
+                NotifyCollectionChangedEventArgs args = _actions[0];
+                _actions.RemoveAt(0);
 
                 ResolveChange(args);
 

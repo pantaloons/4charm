@@ -1,4 +1,5 @@
 ﻿using _4charm.Models;
+using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
 using System.Diagnostics;
@@ -63,20 +64,17 @@ namespace _4charm.ViewModels
 
             App.InitialFrameRenderedTask.ContinueWith(task =>
             {
-                Deployment.Current.Dispatcher.BeginInvoke(() =>
+                if (_removedFromJournal)
                 {
-                    if (_removedFromJournal)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    Watchlist.AddRange(TransitorySettingsManager.Current.Watchlist.Select(x => new ThreadViewModel(x)));
-                    History.AddRange(TransitorySettingsManager.Current.History.Select(x => new ThreadViewModel(x)));
+                Watchlist.AddRange(TransitorySettingsManager.Current.Watchlist.Select(x => new ThreadViewModel(x)));
+                History.AddRange(TransitorySettingsManager.Current.History.Select(x => new ThreadViewModel(x)));
 
-                    TransitorySettingsManager.Current.Watchlist.CollectionChanged += WatchlistChanged;
-                    TransitorySettingsManager.Current.History.CollectionChanged += HistoryChanged;
-                });
-            }, TaskScheduler.FromCurrentSynchronizationContext());
+                TransitorySettingsManager.Current.Watchlist.CollectionChanged += WatchlistChanged;
+                TransitorySettingsManager.Current.History.CollectionChanged += HistoryChanged;
+            }, TaskContinuationOptions.ExecuteSynchronously);
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
@@ -106,6 +104,19 @@ namespace _4charm.ViewModels
             CriticalSettingsManager.Current.Boards.CollectionChanged -= AllChanged;
             TransitorySettingsManager.Current.Watchlist.CollectionChanged -= WatchlistChanged;
             TransitorySettingsManager.Current.History.CollectionChanged -= HistoryChanged;
+        }
+
+        public override void SaveState(IDictionary<string, object> state)
+        {
+            state["SelectedIndex"] = SelectedIndex;
+        }
+
+        public override void RestoreState(IDictionary<string, object> state)
+        {
+            if (state.ContainsKey("SelectedIndex"))
+            {
+                SelectedIndex = (int)state["SelectedIndex"];
+            }
         }
 
         private void FavoritesChanged(object sender, NotifyCollectionChangedEventArgs e)
@@ -148,7 +159,7 @@ namespace _4charm.ViewModels
             ListCollectionChanged<ThreadViewModel>(Watchlist, e);
         }
 
-        private void ListCollectionChanged<T>(DelayLoadingObservableCollection<T> target, NotifyCollectionChangedEventArgs e)
+        private void ListCollectionChanged<T>(DelayLoadingObservableCollection<T> target, NotifyCollectionChangedEventArgs e) where T : class
         {
             switch (e.Action)
             {

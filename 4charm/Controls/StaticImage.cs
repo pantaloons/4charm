@@ -1,52 +1,42 @@
-﻿using System;
+﻿using _4charm.Models;
 using System.Diagnostics;
 using System.IO;
+using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
-using _4charm.Models;
-using System.ComponentModel;
-using System.Threading;
 
 namespace _4charm.Controls
 {
     public class StaticImage : Control, IPreloadedImage
     {
-        private Image _container;
-        private BitmapImage _loading;
-        private BitmapImage _image;
         private Size? _size;
-
         private Stream _streamSource;
+
+        private Image _container;
+        private BitmapImage _image;
+
+        private bool _isLoading;
+        private CancellationTokenSource _cancel;
 
         public StaticImage()
         {
             DefaultStyleKey = typeof(StaticImage);
 
             SizeChanged += StaticImage_SizeChanged;
+            Loaded += StaticImage_Loaded;
+            Unloaded += StaticImage_Unloaded;
         }
 
-        public Task<bool> SetStreamSource(Stream source, string fileType, CancellationToken token)
+        private void StaticImage_Loaded(object sender, RoutedEventArgs e)
         {
-            return LoadNew(source, token);
+            ReloadStreamSource();
         }
 
-        public void SetUriSource(Uri uri)
+        private void StaticImage_Unloaded(object sender, RoutedEventArgs e)
         {
-            Debug.Assert(DesignerProperties.GetIsInDesignMode(this));
-
-            _image = new BitmapImage() { UriSource = uri, CreateOptions = BitmapCreateOptions.None };
-        }
-
-        public void UnloadStreamSource()
-        {
-            Unload();
-            if (_decodeTask != null)
-            {
-                UnloadLoading();
-            }
-            _streamSource = null;
+            UnloadStreamSource(false);
         }
 
         public override void OnApplyTemplate()
@@ -55,148 +45,189 @@ namespace _4charm.Controls
 
             _container = (Image)GetTemplateChild("ImageContainer");
 
-            if (DesignerProperties.GetIsInDesignMode(this))
-            {
-                _container.Source = _image;
-                return;
-            }
-        }
-
-        protected override Size ArrangeOverride(Size finalSize)
-        {
-            _size = finalSize;
-
-            return base.ArrangeOverride(finalSize);
+            UpdateSource();
         }
 
         private void StaticImage_SizeChanged(object sender, SizeChangedEventArgs e)
         {
+            _size = e.NewSize;
+
             if (e.NewSize != e.PreviousSize)
             {
-                LoadIfNeeded();
-            }
-        }
-
-        private async Task<bool> LoadNew(Stream source, CancellationToken token)
-        {
-            BitmapImage bi = new BitmapImage()
-            {
-                CreateOptions = BitmapCreateOptions.BackgroundCreation,
-                DecodePixelType = DecodePixelType.Logical,
-                DecodePixelWidth = (int)_size.Value.Width
-            };
-
-            bool? success = await DecodeImage(bi, source);
-
-            if (token.IsCancellationRequested)
-            {
-                return false;
-            }
-
-            if (success.Value)
-            {
-                Unload();
-                _image = bi;
-                _streamSource = source;
-
-                if (_container != null)
+                if (_isLoading)
                 {
-                    _container.Source = _image;
-
-                    // Note: There is a SL bug when we set the _container.Source = null multiple times,
-                    // and then assign it back to a valid BitmapImage on the same UI tick, it will not
-                    // repaint. This has to stay here to force that action.
-                    _container.InvalidateArrange();
-                    InvalidateArrange();
+                    _isLoading = false;
+                    _cancel.Cancel();
+                    _cancel = null;
                 }
+
+                ForceLoad().ContinueWith(task =>
+                {
+                    throw task.Exception;
+                }, TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.OnlyOnFaulted);
             }
-            else
+        }
+
+        public Task SetStreamSource(Stream source, string fileType)
+        {
+            Debug.Assert(source != _streamSource);
+
+            _streamSource = source;
+            if (_isLoading)
             {
-                bi.UriSource = null;
-                bi = null;
+                _isLoading = false;
+                _cancel.Cancel();
+                _cancel = null;
             }
 
-            return success.Value;
+            return ForceLoad();
         }
 
-        private TaskCompletionSource<bool?> _decodeTask;
-        private async Task<bool?> DecodeImage(BitmapImage bi, Stream source)
+        private void ReloadStreamSource()
         {
-            if (_decodeTask != null)
-            {
-                UnloadLoading();
-            }
-
-            _decodeTask = new TaskCompletionSource<bool?>();
-            bi.ImageOpened += ImageOpened;
-            bi.ImageFailed += ImageFailed;
-
-            bi.SetSource(source);
-            _loading = bi;
-
-            bool? success = await _decodeTask.Task;
-
-            if (success == null)
-            {
-                // Someone already replaced the decode task, so don't remove it
-                return false;
-            }
-
-            _loading = null;
-
-            return success;
-        }
-
-        private void ImageOpened(object sender, RoutedEventArgs e)
-        {
-            _decodeTask.SetResult(true);
-            _decodeTask = null;
-        }
-
-        private void ImageFailed(object sender, ExceptionRoutedEventArgs e)
-        {
-            _decodeTask.SetResult(false);
-            _decodeTask = null;
-        }
-
-        private void LoadIfNeeded()
-        {
-            if (_container == null || _size == null || _streamSource == null || _container.Source != null)
+            if (_streamSource == null || _isLoading || _image != null)
             {
                 return;
             }
 
-            if (_image != null)
+            ForceLoad().ContinueWith(task =>
             {
-                _container.Source = _image;
-            }
-            else
-            {
-                LoadNew(_streamSource, CancellationToken.None).ContinueWith(task =>
-                {
-                    throw task.Exception;
-                }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
-            }
+                throw task.Exception;
+            }, TaskContinuationOptions.ExecuteSynchronously | TaskContinuationOptions.OnlyOnFaulted);
         }
 
-        private void Unload()
+        public void UnloadStreamSource()
         {
+            UnloadStreamSource(true);
+        }
+
+        private void UnloadStreamSource(bool removeStream)
+        {
+            if (_isLoading)
+            {
+                _isLoading = false;
+                _cancel.Cancel();
+                _cancel = null;
+            }
+
             if (_image != null)
             {
                 _image.UriSource = null;
+                _image = null;                
+            }
+
+            if (removeStream)
+            {
+                _streamSource = null;
+            }
+
+            //if (_container != null)
+            //{
+            //    _container.Source = null;
+            //}
+        }
+
+        private async Task ForceLoad()
+        {
+            if (_streamSource == null || _size == null)
+            {
+                return;
+            }
+
+            Debug.Assert(!_isLoading);
+            Debug.Assert(_cancel == null);
+
+            _cancel = new CancellationTokenSource();
+            CancellationToken token = _cancel.Token;
+
+            if (_image == null)
+            {
+                _isLoading = true;
+
+                BitmapImage bi;
+                try
+                {
+                    bi = await ImageUtils.DecodeImageAsync(_streamSource, (int)_size.Value.Width);
+                }
+                catch
+                {
+                    return;
+                }
+                finally
+                {
+                    if (!token.IsCancellationRequested)
+                    {
+                        Debug.Assert(_cancel.Token == token);
+                        _cancel = null;
+                        _isLoading = false;
+                    }
+                }
+
+                if (token.IsCancellationRequested)
+                {
+                    // The source got changed again, after this was called.
+                    bi.UriSource = null;
+                    return;
+                }
+
+                Debug.Assert(_image == null);
+
+                _image = bi;
+                UpdateSource();
+            }
+            else
+            {
+                // Replace the existing image in-place, to save some memory.
+                _isLoading = true;
+
+                BitmapImage bi;
+                try
+                {
+                    bi = await ImageUtils.DecodeImageAsync(_streamSource, (int)_size.Value.Width);
+                }
+                catch
+                {
+                    return;
+                }
+                finally
+                {
+                    if (!token.IsCancellationRequested)
+                    {
+                        Debug.Assert(_cancel.Token == token);
+                        _cancel = null;
+                        _isLoading = false;
+                    }
+                }
+
+                if (token.IsCancellationRequested)
+                {
+                    // The source got changed again, after this was called.
+                    bi.UriSource = null;
+                    return;
+                }
+
+                Debug.Assert(_image != null);
+                _image.UriSource = null;
                 _image = null;
-                _container.Source = null;
+
+                if (_container != null)
+                {
+                    _container.Source = null;
+                }
+
+                _image = bi;
+                UpdateSource();
             }
         }
 
-        private void UnloadLoading()
+        private void UpdateSource()
         {
-            _decodeTask.SetResult(null);
-            _decodeTask = null;
-            _loading.ImageOpened -= ImageOpened;
-            _loading.ImageFailed -= ImageFailed;
-            _loading.UriSource = null;
-            _loading = null;
+            if (_container != null && _image != null)
+            {
+                //Debug.Assert(_container.Source == null);
+
+                _container.Source = _image;
+            }
         }
     }
 }

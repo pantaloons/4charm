@@ -92,17 +92,27 @@ namespace _4charm.ViewModels
 
             App.InitialFrameRenderedTask.ContinueWith(task =>
             {
-                Deployment.Current.Dispatcher.BeginInvoke(() =>
+                if (_removedFromJournal)
                 {
-                    if (_removedFromJournal)
-                    {
-                        return;
-                    }
+                    return;
+                }
 
-                    Watchlist.AddRange(TransitorySettingsManager.Current.Watchlist.Where(x => x.Board.Name == _board.Name).Select(x => new ThreadViewModel(x)));
-                    TransitorySettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
-                });
-            }, TaskScheduler.Current);
+                Watchlist.AddRange(TransitorySettingsManager.Current.Watchlist.Where(x => x.Board.Name == _board.Name).Select(x => new ThreadViewModel(x)));
+                TransitorySettingsManager.Current.Watchlist.CollectionChanged += Watchlist_CollectionChanged;
+            }, TaskContinuationOptions.ExecuteSynchronously);
+        }
+
+        public override void SaveState(IDictionary<string, object> state)
+        {
+            state["SelectedIndex"] = SelectedIndex;
+        }
+
+        public override void RestoreState(IDictionary<string, object> state)
+        {
+            if (state.ContainsKey("SelectedIndex"))
+            {
+                SelectedIndex = (int)state["SelectedIndex"];
+            }
         }
 
         public override void OnNavigatedTo(NavigationEventArgs e)
@@ -145,6 +155,7 @@ namespace _4charm.ViewModels
 
             Threads.Clear();
             ImageThreads.Clear();
+            IsError = false;
             IsLoading = true;
 
             Task<List<Models.Thread>> download = _board.GetThreadsAsync();
@@ -213,10 +224,12 @@ namespace _4charm.ViewModels
                 case NotifyCollectionChangedAction.Remove:
                     if (((Models.Thread)e.OldItems[0]).Board.Name == _board.Name)
                     {
-                        ThreadViewModel tvm = Watchlist.FirstOrDefault(x => x.Number == ((Models.Thread)e.OldItems[0]).Number);
+                        // We have to get items out of the pending queue, since they
+                        // might not of been inserted yet.
+                        ThreadViewModel tvm = Watchlist.All().FirstOrDefault(x => x.Number == ((Models.Thread)e.OldItems[0]).Number);
                         if (tvm != null)
                         {
-                            Watchlist.Remove(tvm);
+                            Watchlist.RemoveAndPending(tvm);
                         }
                     }
                     

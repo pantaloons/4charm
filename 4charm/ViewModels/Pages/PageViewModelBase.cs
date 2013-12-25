@@ -18,6 +18,14 @@ namespace _4charm.ViewModels
         {
         }
 
+        public virtual void SaveState(IDictionary<string, object> state)
+        {
+        }
+
+        public virtual void RestoreState(IDictionary<string, object> state)
+        {
+        }
+
         public virtual void OnRemovedFromJournal(JournalEntryRemovedEventArgs e)
         {
         }

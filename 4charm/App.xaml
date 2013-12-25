@@ -14,6 +14,8 @@
         <!-- Converts true to visible, and false to collapsed. If parameter is "flip"
              this is inverted. -->
         <converters:BoolVisibleConverter x:Key="BoolVisibleConverter" />
+        <!-- Inverts a boolean. -->
+        <converters:BoolInvertConverter x:Key="BoolInvertConverter" />
         <!-- Converts null values to visible, and non-null to collapsed. If parameter is "flip"
              this is inverted. -->
         <converters:NullVisibleConverter x:Key="NullVisibleConverter" />
@@ -34,7 +36,7 @@
         <!-- Color of the "(USER WAS BANNED FOR THIS POST)" text. -->
         <SolidColorBrush x:Key="BannedBrush" Color="#FF0000"/>
         <!-- Highlight color for spoiler text. -->
-        <SolidColorBrush x:Key="SpoilerBrush" Color="#FFA500"/>
+        <SolidColorBrush x:Key="SpoilerBrush" Color="#734F96"/>
         <!-- Text color for names ("Anonymous", "moot") using no capcode. -->
         <SolidColorBrush x:Key="NormalBrush" Color="#117743"/>
         <!-- Text color for names ("Anonymous", "moot") using the admin capcode. -->

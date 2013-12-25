@@ -49,10 +49,10 @@
         </Setter>
     </Style>
     
-    <Style TargetType="controls:GIFImage">
+    <Style TargetType="controls:AnimatedImage">
         <Setter Property="Template">
             <Setter.Value>
-                <ControlTemplate TargetType="controls:GIFImage">
+                <ControlTemplate TargetType="controls:AnimatedImage">
                     <Grid>
                         <DrawingSurface x:Name="SurfaceContainer" />
                         <controls:StaticImage x:Name="ImageContainer" />
@@ -176,10 +176,10 @@
                                            Foreground="White" />
                             </Grid>
 
-                            <controls:MultiResolutionImage x:Name="TileImage"
-                                                           Grid.Column="1" Grid.Row="1"
-                                                           Width="180" Height="180"
-                                                           toolkit:TiltEffect.IsTiltEnabled="True" />
+                            <controls:SingleResolutionImage x:Name="TileImage"
+                                                            Grid.Column="1" Grid.Row="1"
+                                                            Width="180" Height="180"
+                                                            toolkit:TiltEffect.IsTiltEnabled="True" />
                         </Grid>
                     </Grid>
                 </ControlTemplate>
@@ -199,7 +199,6 @@
         <Setter Property="BorderThickness" Value="{StaticResource PhoneBorderThickness}"/>
         <Setter Property="Padding" Value="2"/>
         <Setter Property="Template">
-            
             <Setter.Value>
                 <ControlTemplate TargetType="TextBox">
                     <Grid Background="Transparent">

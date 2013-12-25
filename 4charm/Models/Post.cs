@@ -26,7 +26,6 @@ namespace _4charm.Models
     public class Post
     {
         private static readonly DateTime UnixEpoch = new DateTime(1970, 1, 1, 0, 0, 0, DateTimeKind.Utc);
-        private ulong Number1;
 
         /// <summary>
         /// Parent thread in the ThreadCache.

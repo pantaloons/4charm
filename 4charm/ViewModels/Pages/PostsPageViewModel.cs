@@ -1,4 +1,7 @@
 ﻿using _4charm.Models;
+using _4charm.Resources;
+using Microsoft.Phone.Controls;
+using Microsoft.Phone.Shell;
 using System;
 using System.Collections.Generic;
 using System.ComponentModel;
@@ -183,7 +186,6 @@ namespace _4charm.ViewModels
 
             InsertPostList(_thread.Posts.Values);
             InitialUpdateTask = Update();
-            System.Diagnostics.Debug.WriteLine("iupdate");
 
             if (!CriticalSettingsManager.Current.EnableManualRefresh)
             {
@@ -199,6 +201,42 @@ namespace _4charm.ViewModels
             }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
         }
 
+        public override void SaveState(IDictionary<string, object> state)
+        {
+            base.SaveState(state);
+
+            state["SelectedIndex"] = SelectedIndex;
+            state["ViewState"] = ViewState;
+            state["QuotedPost"] = _quotedPost;
+        }
+
+        public override void RestoreState(IDictionary<string, object> state)
+        {
+            base.RestoreState(state);
+
+            if (state.ContainsKey("SelectedIndex"))
+            {
+                SelectedIndex = (int)state["SelectedIndex"];
+            }
+            if (state.ContainsKey("ViewState"))
+            {
+                switch ((PostsPageViewState)state["ViewState"])
+                {
+                    case PostsPageViewState.Quotes:
+                        if (state.ContainsKey("QuotedPost"))
+                        {
+                            OpenQuoteRegion((ulong)state["QuotedPost"]);
+                        }
+                        break;
+                    case PostsPageViewState.Reply:
+                        OpenReplyRegion();
+                        break;
+                    default:
+                        break;
+                }
+            }
+        }
+
         public override void OnNavigatedTo(NavigationEventArgs e)
         {
             base.OnNavigatedTo(e);
@@ -208,7 +246,6 @@ namespace _4charm.ViewModels
             if (e.NavigationMode == NavigationMode.Back && ForceReload)
             {
                 OnSubmitSuccess("");
-                System.Diagnostics.Debug.WriteLine("vm nav too");
             }
         }
 
@@ -297,7 +334,6 @@ namespace _4charm.ViewModels
             Task<List<Post>> download = _thread.GetPostsAsync();
             _updateTask = download.ContinueWith(task =>
             {
-                System.Diagnostics.Debug.WriteLine("download done!");
                 if (!task.IsFaulted)
                 {
                     IsError = false;
@@ -322,9 +358,9 @@ namespace _4charm.ViewModels
                 .Where(x => !_seenPosts.Contains(x.Number))
                 .Select(x => new PostViewModel(x)
                 {
-                    Tapped = new ModelCommand(() => PostTapped(x.Number)),
-                    NumberTapped = new ModelCommand(() => OpenQuoteRegion(x.Number)),
-                    ViewQuotes = new ModelCommand(() => OpenQuoteRegion(x.Number)),
+                    Tapped = new ModelCommand(() => { if (App.IsPostTapAllowed) PostTapped(x.Number); }),
+                    NumberTapped = new ModelCommand(() => { if (App.IsPostTapAllowed) OpenQuoteRegion(x.Number); }),
+                    ViewQuotes = new ModelCommand(() => { if (App.IsPostTapAllowed) OpenQuoteRegion(x.Number); }),
                     QuoteTapped = new ModelCommand<ulong>(postID => OpenQuoteRegion(postID))
                 }).ToList();
 
@@ -391,7 +427,7 @@ namespace _4charm.ViewModels
 
             SelectedPosts.Clear();
             SelectedPosts.IsPaused = false;
-            SelectedPosts.AddRange(posts);
+            SelectedPosts.AddRange(posts, 20);
 
             QuotedTitle = ">>" + postID;
 
@@ -417,8 +453,16 @@ namespace _4charm.ViewModels
 
             ViewState = target;
 
-            ReplyAreaVisibility = ViewState == PostsPageViewState.Reply ? Visibility.Visible : Visibility.Collapsed;
-            QuoteAreaVisibility = ViewState == PostsPageViewState.Quotes ? Visibility.Visible : Visibility.Collapsed;
+            if (ViewState == PostsPageViewState.Reply)
+            {
+                QuoteAreaVisibility = Visibility.Collapsed;
+                ReplyAreaVisibility = Visibility.Visible;
+            }
+            else if (ViewState == PostsPageViewState.Quotes)
+            {
+                QuoteAreaVisibility = Visibility.Visible;
+                ReplyAreaVisibility = Visibility.Collapsed;
+            }
 
             ViewStateChanged(this, null);
 
@@ -433,7 +477,37 @@ namespace _4charm.ViewModels
 
         public async Task<SubmitResultType> Submit()
         {
-            return await SubmitInternal(_thread.Number);
+            ProgressIndicator progress = new ProgressIndicator
+            {
+                IsVisible = true,
+                IsIndeterminate = true,
+                Text = AppResources.PostsPage_Submitting
+            };
+
+            PhoneApplicationPage page = (App.Current.RootVisual as PhoneApplicationFrame).Content as PhoneApplicationPage;
+
+            SystemTray.SetOpacity(page, 1);
+            SystemTray.SetIsVisible(page, true);
+            SystemTray.SetProgressIndicator(page, progress);
+
+            SubmitResultType result = await SubmitInternal(_thread.Number);
+
+            if (result == SubmitResultType.Success)
+            {
+                progress.Text = AppResources.PostsPage_PostSuccess;
+
+                Task ignore = Task.Delay(1000).ContinueWith(task =>
+                {
+                    SystemTray.SetProgressIndicator(page, null);
+                    SystemTray.SetIsVisible(page, false);
+                }, TaskScheduler.FromCurrentSynchronizationContext());
+            }
+            else
+            {
+                SystemTray.SetProgressIndicator(page, null);
+                SystemTray.SetIsVisible(page, false);
+            }
+            return result;
         }
 
         protected override void OnSubmitSuccess(string result)

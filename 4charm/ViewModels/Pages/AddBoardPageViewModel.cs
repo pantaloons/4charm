@@ -2,6 +2,7 @@
 using _4charm.Resources;
 using _4charm.Views;
 using System;
+using System.Collections.Generic;
 using System.Linq;
 using System.Text.RegularExpressions;
 using System.Windows.Input;
@@ -53,6 +54,19 @@ namespace _4charm.ViewModels
         public AddBoardPageViewModel()
         {
             AddBoard = new ModelCommand(DoAddBoard);
+        }
+
+        public override void SaveState(IDictionary<string, object> state)
+        {
+            state["Name"] = Name;
+        }
+
+        public override void RestoreState(IDictionary<string, object> state)
+        {
+            if (state.ContainsKey("Name"))
+            {
+                Name = (string)state["Name"];
+            }
         }
 
         private void NameChanged()

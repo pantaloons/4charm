@@ -21,9 +21,11 @@ namespace _4charm.Models
             }
         }
 
+        private Random r;
         private HttpClient _client;
         private RequestManager()
         {
+            r = new Random();
             _client = new HttpClient();
             _client.DefaultRequestHeaders.UserAgent.Add(new ProductInfoHeaderValue("4charm", Version));
         }
@@ -31,6 +33,11 @@ namespace _4charm.Models
         public async Task<HttpResponseMessage> GetAsync(Uri uri)
         {
             return await _client.GetAsync(EnforceHTTPS(uri));
+        }
+
+        public async Task<byte[]> GetByteArrayAsync(Uri uri)
+        {
+            return await _client.GetByteArrayAsync(EnforceHTTPS(uri));
         }
 
         public async Task<Stream> GetStreamAsync(Uri uri)
@@ -43,9 +50,9 @@ namespace _4charm.Models
             return await _client.GetStringAsync(EnforceHTTPS(uri));
         }
 
-        public async Task<byte[]> GetByteArrayWithProgressAsync(Uri uri, Action<int> progress, CancellationToken token)
+        public async Task<byte[]> GetByteArrayWithProgressAsync(Uri uri, Action<int> progress)
         {
-            return await _client.GetAsyncWithProgress(EnforceHTTPS(uri), progress, token);
+            return await _client.GetAsyncWithProgress(EnforceHTTPS(uri), progress);
         }
 
         public async Task<HttpResponseMessage> PostAsync(Uri uri, Dictionary<string, string> fields)

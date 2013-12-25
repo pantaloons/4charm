@@ -26,7 +26,7 @@ namespace _4charm.Controls
         private Grid _container;
 
         private TextBlock _tileText;
-        private MultiResolutionImage _tileImage;
+        private SingleResolutionImage _tileImage;
         private VisualState _fadeOutState;
 
         private bool _hasApplicationBar;
@@ -44,7 +44,7 @@ namespace _4charm.Controls
             base.OnApplyTemplate();
 
             _tileText = (TextBlock)GetTemplateChild("TileText");
-            _tileImage = (MultiResolutionImage)GetTemplateChild("TileImage");
+            _tileImage = (SingleResolutionImage)GetTemplateChild("TileImage");
             _fadeOutState = (VisualState)GetTemplateChild("Faded");
             _fadeOutState.Storyboard.Completed += FadeOutStoryboard_Completed;
 
@@ -110,7 +110,7 @@ namespace _4charm.Controls
             }
             if (_tileImage != null && _board != null)
             {
-                _tileImage.Thumbnail = ThreadCache.Current.EnforceBoard(_board).IconURI;
+                _tileImage.ImageURI = ThreadCache.Current.EnforceBoard(_board).IconURI;
             }
 
             if (_tileText != null && _tileImage != null)

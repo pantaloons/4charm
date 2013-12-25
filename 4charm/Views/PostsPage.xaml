@@ -90,19 +90,21 @@
                                    Text="{Binding Number}" />
                     </Grid>
 
-                    <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}"
-                                                   Width="{Binding ThumbWidth}"
-                                                   Height="{Binding ThumbHeight}"
-                                                   Margin="0,6,12,6"
-                                                   VerticalAlignment="Top"
-                                                   Grid.Row="2"
-                                                   Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
+                    <Border Width="{Binding ThumbWidth}"
+                            Height="{Binding ThumbHeight}"
+                            Margin="0,6,12,6"
+                            VerticalAlignment="Top"
+                            Grid.Row="2"
+                            Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}"
+                            Background="Transparent">
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Tap">
                                 <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </controls:MultiResolutionImage>
+
+                        <controls:SingleResolutionImage ImageURI="{Binding ThumbnailSrc}" />
+                    </Border>
 
                     <RichTextBox VerticalAlignment="Top" Grid.Column="1" Grid.Row="2"
                                  models:BindableTextBlock.FormattedText="{Binding HtmlComment}"
@@ -124,25 +126,19 @@
         </DataTemplate>
 
         <DataTemplate x:Key="ImageItemTemplate">
-            <controls:MultiResolutionImage Thumbnail="{Binding ThumbnailSrc}" Width="98" Height="98" Margin="12,0,0,12">
+            <controls:SingleResolutionImage ImageURI="{Binding ThumbnailSrc}" Width="98" Height="98" Margin="12,0,0,12">
                 <i:Interaction.Triggers>
                     <i:EventTrigger EventName="Tap">
                         <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
-                
-                <controls:MultiResolutionImage.Template>
-                    <ControlTemplate TargetType="controls:MultiResolutionImage">
-                        <controls:StaticImage x:Name="PreloadedImageContainer">
-                            <controls:StaticImage.Template>
-                                <ControlTemplate TargetType="controls:StaticImage">
-                                    <Image x:Name="ImageContainer" Stretch="UniformToFill" />
-                                </ControlTemplate>
-                            </controls:StaticImage.Template>
-                        </controls:StaticImage>
+
+                <controls:SingleResolutionImage.Template>
+                    <ControlTemplate TargetType="controls:SingleResolutionImage">
+                        <Image x:Name="ImageContainer" Stretch="UniformToFill" />
                     </ControlTemplate>
-                </controls:MultiResolutionImage.Template>
-            </controls:MultiResolutionImage>
+                </controls:SingleResolutionImage.Template>
+            </controls:SingleResolutionImage>
         </DataTemplate>
     </phone:PhoneApplicationPage.Resources>
 
@@ -180,15 +176,18 @@
 
                     <StackPanel>
                         <!-- Verification CAPTCHA. -->
-                        <TextBlock Text="Verification" Style="{StaticResource PhoneTextSubtleStyle}" />
+                        <TextBlock Text="{Binding Path=LocalizedResources.PostsPage_Verification, Source={StaticResource LocalizedStrings}}" Style="{StaticResource PhoneTextSubtleStyle}" />
 
-                        <controls:MultiResolutionImage Thumbnail="{Binding CaptchaUri}" Height="100" Margin="12,0" Background="Transparent">
+                        <controls:SingleResolutionImage ImageURI="{Binding CaptchaUri}"
+                                                        Height="100"
+                                                        Margin="12,0"
+                                                        Background="Transparent">
                             <i:Interaction.Triggers>
                                 <i:EventTrigger EventName="Tap">
                                     <i:InvokeCommandAction Command="{Binding ReloadCaptcha}" />
                                 </i:EventTrigger>
                             </i:Interaction.Triggers>
-                        </controls:MultiResolutionImage>
+                        </controls:SingleResolutionImage>
 
                         <controls:ErrorStateTextBox x:Name="CaptchaTextBox"
                                                     CacheMode="BitmapCache"
@@ -197,12 +196,14 @@
                                                     UpdateSourceOnTextChanged="True"
                                                     KeyDown="CaptchaTextBox_KeyDown"
                                                     GotFocus="CaptchaTextBox_GotFocus"
+                                                    IsEnabled="{Binding IsPosting, Converter={StaticResource BoolInvertConverter}, ConverterParameter=flip}"
                                                     IsErrorState="{Binding IsCaptchaError}" />
 
-                        <!-- Comment. -->
-                        <TextBlock Text="Comment" Style="{StaticResource PhoneTextSubtleStyle}" />
+                        <!-- Comment header. -->
+                        <TextBlock Text="{Binding Path=LocalizedResources.PostsPage_Comment, Source={StaticResource LocalizedStrings}}" Style="{StaticResource PhoneTextSubtleStyle}" />
                     </StackPanel>
 
+                    <!-- Comment area. -->
                     <controls:SelectionBindableTextBox x:Name="CommentBox"
                                                        CacheMode="BitmapCache"
                                                        Grid.Row="1"
@@ -210,6 +211,7 @@
                                                        InputScope="Chat"
                                                        Text="{Binding Comment, Mode=TwoWay}"
                                                        TextWrapping="Wrap"
+                                                       IsEnabled="{Binding IsPosting, Converter={StaticResource BoolInvertConverter}, ConverterParameter=flip}"
                                                        UpdateSourceOnTextChanged="True"
                                                        AcceptsReturn="True" />
                 </Grid>

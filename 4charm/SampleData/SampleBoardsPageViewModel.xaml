@@ -30,8 +30,7 @@
                     LongNumber="111111"
                     Subject="Hello"
                     PrettyTime="just now"
-                    Image="../Assets/Boards/Icons/fit.jpg"
-                    ThumbMargin2="0,6,12,6"
+                    ThumbnailSrc="../Assets/Boards/Icons/fit.jpg"
                     ThumbHeight="100"
                     ThumbWidth="100"
                     CounterText="32 posts and 5 images.">
@@ -47,8 +46,7 @@
                     LongNumber="111111"
                     Subject="Hello"
                     PrettyTime="just now"
-                    Image="../Assets/Boards/Icons/a.jpg"
-                    ThumbMargin2="0,6,12,6"
+                    ThumbnailSrc="../Assets/Boards/Icons/a.jpg"
                     ThumbHeight="100"
                     ThumbWidth="100"
                     CounterText="32 posts and 5 images.">
@@ -64,8 +62,7 @@
                     LongNumber="111111"
                     Subject="Hello"
                     PrettyTime="just now"
-                    Image="../Assets/Boards/Icons/q.jpg"
-                    ThumbMargin2="0,6,12,6"
+                    ThumbnailSrc="../Assets/Boards/Icons/q.jpg"
                     ThumbHeight="100"
                     ThumbWidth="100"
                     CounterText="32 posts and 5 images.">
@@ -89,8 +86,7 @@
                     LongNumber="111111"
                     Subject="Hello"
                     PrettyTime="just now"
-                    Image="../Assets/Boards/Icons/o.jpg"
-                    ThumbMargin2="0,6,12,6"
+                    ThumbnailSrc="../Assets/Boards/Icons/o.jpg"
                     ThumbHeight="100"
                     ThumbWidth="100"
                     CounterText="32 posts and 5 images.">
@@ -106,8 +102,7 @@
                     LongNumber="111111"
                     Subject="Hello"
                     PrettyTime="just now"
-                    Image="../Assets/Boards/Icons/s.jpg"
-                    ThumbMargin2="0,6,12,6"
+                    ThumbnailSrc="../Assets/Boards/Icons/s.jpg"
                     ThumbHeight="100"
                     ThumbWidth="100"
                     CounterText="32 posts and 5 images.">
@@ -123,8 +118,7 @@
                     LongNumber="111111"
                     Subject="Hello"
                     PrettyTime="just now"
-                    Image="../Assets/Boards/Icons/ck.jpg"
-                    ThumbMargin2="0,6,12,6"
+                    ThumbnailSrc="../Assets/Boards/Icons/ck.jpg"
                     ThumbHeight="100"
                     ThumbWidth="100"
                     CounterText="32 posts and 5 images.">
