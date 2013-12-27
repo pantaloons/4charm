@@ -200,12 +200,12 @@ namespace _4charm.ViewModels
             }
 
             CaptchaText = "";
-            CaptchaUri = RequestManager.Current.EnforceHTTPS(new Uri("http://www.google.com/recaptcha/api/image?c=" + _token));
+            CaptchaUri = new Uri("http://www.google.com/recaptcha/api/image?c=" + _token);
         }
 
         public async Task<string> GetCaptcha()
         {
-            Uri uri = RequestManager.Current.EnforceHTTPS(new Uri("http://www.google.com/recaptcha/api/challenge?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc"));
+            Uri uri = new Uri("http://www.google.com/recaptcha/api/challenge?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc");
             string page = await RequestManager.Current.GetStringAsync(uri);
 
             int start = page.IndexOf("{");

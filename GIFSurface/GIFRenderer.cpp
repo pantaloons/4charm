@@ -3,12 +3,8 @@
 
 using namespace Microsoft::WRL;
 
-static const int FRAME_MINDELAY = 60;
-static const int FRAME_DEFAULTDELAY = 100;
-
-GIFRenderer::GIFRenderer()
+GIFRenderer::GIFRenderer() : m_gif(nullptr)
 {
-	m_gif = nullptr;
 }
 
 GIFRenderer::~GIFRenderer()
@@ -42,37 +38,38 @@ void GIFRenderer::ReleaseGIFResource()
 	m_buffer[1] = nullptr;
 }
 
-static bool GetGraphicsControlBlock(SavedImage image, GraphicsControlBlock *gcb)
-{
-	for (int i = image.ExtensionBlockCount - 1; i >= 0; i--)
-	{
-		ExtensionBlock eb = image.ExtensionBlocks[i];
-		if (eb.Function == GRAPHICS_EXT_FUNC_CODE)
-		{
-			if (DGifExtensionToGCB(eb.ByteCount, eb.Bytes, gcb) == GIF_ERROR)
-			{
-				throw ref new Platform::Exception(E_FAIL, "Couldn't decode frame GCB.");
-			}
-
-			return true;
-		}
-	}
-	
-	return false;
-}
-
 void GIFRenderer::Render(float timeDelta, bool forceUpdate)
 {
 	if (!m_gif) return;
 
+	// Figure out what the next frame is on, based on the frame
+	// delay timers and the elapsed time delta.
 	SelectNextFrame(timeDelta);
 
+	// Typically if the target frame is the same as the previously
+	// rendered frame, we don't need to do anything, except sometimes
+	// if the buffer got cleared (Disconnected surface, orientation
+	// changed, etc), we have to render again anyway. Callers will
+	// specify forceupdate in those cases.
 	if (!forceUpdate && m_frame == m_renderedFrame) return;
 	m_renderedFrame = m_frame;
 
+	// First, blit all the required frames inbetween m_previousFrame
+	// and m_frame. Note these will all have disposal mode DISPOSE_DO_NOT
+	// or DISPOSE_PREVIOUS since otherwise we would have skipped forward.
 	BlitIntermediateFrames();
+
+	// Now copy the last intermediate frame into the swap buffer, and write
+	// the final frame overtop of it. This way, if the final frames disposal
+	// is DM_PREVIOUS, we still have the previous frame in the other buffer
+	// to recover.
 	SwapBuffers();
+
+	// Render the target buffer to the DX device.
 	RenderToSurface();
+
+	// Update the buffer index and previously rendered frame based on the
+	// disposal mode.
 	SetupNextFrame();
 }
 
@@ -85,19 +82,8 @@ void GIFRenderer::SelectNextFrame(float timeDelta)
 	{
 		int nextFrame = (m_frame + 1) % m_gif->m_gif->ImageCount;
 
-		int disposal = DISPOSAL_UNSPECIFIED;
-		int delay = FRAME_MINDELAY;
-
-		GraphicsControlBlock gcb;
-		if (GetGraphicsControlBlock(m_gif->m_gif->SavedImages[nextFrame], &gcb))
-		{
-			disposal = gcb.DisposalMode;
-			if (10 * gcb.DelayTime < FRAME_MINDELAY)
-			{
-				delay = FRAME_DEFAULTDELAY;
-			}
-			delay = max(FRAME_MINDELAY, 10 * gcb.DelayTime);
-		}
+		int disposal = m_gif->m_disposals[nextFrame];
+		int delay = m_gif->m_delays[nextFrame];
 
 		if (delay > m_pending)
 		{
@@ -116,6 +102,12 @@ void GIFRenderer::SelectNextFrame(float timeDelta)
 
 		m_pending -= delay;
 		m_frame = nextFrame;
+
+		// Force us to not render more than one frame at once,
+		// since this traps the UI thread on low cost devices.
+		// This means the GIF is not following the specified
+		// speed, but that's probably OK.
+		break;
 	}
 
 	if (m_frame < m_previousFrame)
@@ -128,13 +120,7 @@ void GIFRenderer::BlitIntermediateFrames()
 {
 	for (int i = m_previousFrame; i < m_frame; i++)
 	{
-		int disposal = DISPOSAL_UNSPECIFIED;
-
-		GraphicsControlBlock gcb;
-		if (GetGraphicsControlBlock(m_gif->m_gif->SavedImages[i], &gcb))
-		{
-			disposal = gcb.DisposalMode;
-		}
+		int disposal = m_gif->m_disposals[i];
 
 		switch (disposal)
 		{
@@ -216,13 +202,7 @@ void GIFRenderer::RenderToSurface()
 
 void GIFRenderer::SetupNextFrame()
 {
-	int disposal = DISPOSAL_UNSPECIFIED;
-
-	GraphicsControlBlock gcb;
-	if (GetGraphicsControlBlock(m_gif->m_gif->SavedImages[m_frame], &gcb))
-	{
-		disposal = gcb.DisposalMode;
-	}
+	int disposal = m_gif->m_disposals[m_frame];
 
 	switch (disposal)
 	{
@@ -271,6 +251,8 @@ void GIFRenderer::BlitFrame(int frame)
 		colorMap = m_gif->m_gif->SColorMap;
 	}
 
+	int transparent = m_gif->m_transparencies[frame];
+
 	int i = 0;
 	for (int y = image.ImageDesc.Top; y < image.ImageDesc.Top + image.ImageDesc.Height; y++)
 	{
@@ -279,8 +261,7 @@ void GIFRenderer::BlitFrame(int frame)
 			int offset = y * m_gif->m_gif->SWidth + x;
 			GifByteType colorIndex = bits[i++];
 
-			GraphicsControlBlock gcb;
-			if (!GetGraphicsControlBlock(m_gif->m_gif->SavedImages[frame], &gcb) || gcb.TransparentColor != colorIndex)
+			if (transparent != colorIndex)
 			{
 				GifColorType color = colorMap->Colors[colorIndex];
 				m_buffer[m_bufferIdx].get()[offset] = ((uint32_t)color.Blue << 0) | ((uint32_t)color.Green << 8) | ((uint32_t)color.Red << 16) | ((uint32_t)255 << 24);

@@ -132,7 +132,7 @@ namespace _4charm.Models
             // The downside is that we only get one post for each thread, not three, and so the fade in animations
             // can sometimes stall while data load occurs on each individual thread, but I think this is a good
             // tradeoff.
-            using (Stream s = await RequestManager.Current.GetStreamAsync(new Uri("http://api.4chan.org/" + Name + "/catalog.json")))
+            using (Stream s = await RequestManager.Current.GetStreamAsync(new Uri("http://a.4cdn.org/" + Name + "/catalog.json")))
             {
                 DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(List<APIPage>));
 

@@ -168,20 +168,13 @@ namespace _4charm.Models
         public double ThumbHeight { get { return ImageWidth != 0 ? ImageHeight * (100 / (double)ImageWidth) : 0; } }
 
         /// <summary>
-        /// URI location of the image thumbnail. This will be HTTPS if the HTTPS setting is turned on.
+        /// URI location of the image thumbnail.
         /// </summary>
         public Uri ThumbnailSrc
         {
             get
             {
-                if (CriticalSettingsManager.Current.EnableHTTPS)
-                {
-                    return new Uri("https://thumbs.4chan.org/" + Thread.Board.Name + "/thumb/" + RenamedFileName + "s.jpg");
-                }
-                else
-                {
-                    return new Uri("http://thumbs.4chan.org/" + Thread.Board.Name + "/thumb/" + RenamedFileName + "s.jpg");
-                }
+                return new Uri("http://t.4cdn.org/" + Thread.Board.Name + "/thumb/" + RenamedFileName + "s.jpg");
             }
         }
 
@@ -192,14 +185,7 @@ namespace _4charm.Models
         {
             get
             {
-                if (CriticalSettingsManager.Current.EnableHTTPS)
-                {
-                    return new Uri("https://images.4chan.org/" + Thread.Board.Name + "/src/" + RenamedFileName + "." + FileType);
-                }
-                else
-                {
-                    return new Uri("http://images.4chan.org/" + Thread.Board.Name + "/src/" + RenamedFileName + "." + FileType);
-                }
+                return new Uri("http://i.4cdn.org/" + Thread.Board.Name + "/src/" + RenamedFileName + "." + FileType);
             }
         }
 

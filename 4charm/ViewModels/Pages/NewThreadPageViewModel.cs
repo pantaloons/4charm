@@ -76,7 +76,7 @@ namespace _4charm.ViewModels
 
                 if (!string.IsNullOrEmpty(_token))
                 {
-                    CaptchaUri = RequestManager.Current.EnforceHTTPS(new Uri("http://www.google.com/recaptcha/api/image?c=" + _token));
+                    CaptchaUri = new Uri("http://www.google.com/recaptcha/api/image?c=" + _token);
                 }
                 else
                 {

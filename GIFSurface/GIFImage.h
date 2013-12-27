@@ -1,7 +1,7 @@
 #pragma once
 
 #include <GIFLIB\gif_lib.h>
-#include <memory>
+#include <vector>
 
 using namespace Windows::Storage::Streams;
 
@@ -15,6 +15,9 @@ namespace GIFSurface
 		virtual ~GIFImage();
 
 	internal:
+		std::vector<int> m_delays;
+		std::vector<int> m_disposals;
+		std::vector<int> m_transparencies;
 		GifFileType *m_gif;
 	};
 }

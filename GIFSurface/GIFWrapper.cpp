@@ -49,10 +49,7 @@ namespace GIFSurface
 
 		if (m_renderer)
 		{
-			if (m_renderer)
-			{
-				m_renderer->ReleaseGIFResource();
-			}
+			m_renderer->ReleaseGIFResource();
 			m_isActive = false;
 		}
 
