@@ -83,7 +83,7 @@ namespace _4charm.Models
 
         public void RemoveAndPending(T item)
         {
-            Items.Remove(item);
+            base.Remove(item);
 
             _actions = _actions.Where(x => x.Action != NotifyCollectionChangedAction.Add && (T)x.NewItems[0] != item).ToList();
         }
