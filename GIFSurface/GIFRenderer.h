@@ -32,7 +32,7 @@ private:
 
 	void BlitFrame(int frame);
 	void ClearBuffer();
-
+	
 	GIFSurface::GIFImage^ m_gif;
 	int m_frame;
 	int m_renderedFrame;

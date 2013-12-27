@@ -242,7 +242,7 @@ void GIFRenderer::ClearBuffer()
 	{
 		for (int x = 0; x < m_gif->m_gif->SWidth; x++)
 		{
-			m_buffer[m_bufferIdx].get()[y * m_gif->m_gif->SHeight + x] = bgColor;
+			m_buffer[m_bufferIdx].get()[y * m_gif->m_gif->SWidth + x] = bgColor;
 		}
 	}
 }
