@@ -90,7 +90,7 @@
                                    VerticalAlignment="Center"
                                    Style="{StaticResource PhoneTextLargeStyle}"
                                    FontWeight="Bold"
-                                   FontSize="32"/>
+                                   FontSize="32" />
                     </Grid>
                 </Grid>
             </Border>

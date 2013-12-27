@@ -69,6 +69,24 @@ namespace GIFSurface
 			throw ref new Platform::FailureException(ref new Platform::String(GifErrorString(error)));
 		}
 
+		if (gif->ImageCount <= 0 || gif->SWidth <= 0 || gif->SHeight <= 0)
+		{
+			if (DGifCloseFile(m_gif) == GIF_ERROR)
+			{
+				// We didn't modify the GIF, so this technically should never happen.
+				// Just refree after getting the error, and ignore for now.
+				int error = m_gif->Error;
+				free(m_gif);
+				m_gif = nullptr;
+
+				throw ref new Platform::FailureException(ref new Platform::String(GifErrorString(error)));
+			}
+
+			m_gif = nullptr;
+
+			throw ref new Platform::FailureException(ref new Platform::String(L"Invalid GIF data."));
+		}
+
 		m_delays = std::vector<int>(gif->ImageCount, FRAME_DEFAULTDELAY);
 		m_disposals = std::vector<int>(gif->ImageCount, DISPOSAL_UNSPECIFIED);
 		m_transparencies = std::vector<int>(gif->ImageCount, -1);
@@ -107,7 +125,7 @@ namespace GIFSurface
 				free(m_gif);
 				m_gif = nullptr;
 
-				 throw ref new Platform::FailureException(ref new Platform::String(GifErrorString(error)));
+				// throw ref new Platform::FailureException(ref new Platform::String(GifErrorString(error)));
 			}
 
 			m_gif = nullptr;

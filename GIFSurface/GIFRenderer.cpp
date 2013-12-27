@@ -96,6 +96,8 @@ void GIFRenderer::SelectNextFrame(float timeDelta)
 		case DISPOSE_BACKGROUND:
 			m_previousFrame = m_frame;
 			break;
+		case DISPOSE_DO_NOT:
+		case DISPOSE_PREVIOUS:
 		default:
 			break;
 		}
@@ -132,6 +134,7 @@ void GIFRenderer::BlitIntermediateFrames()
 			break;
 		case DISPOSAL_UNSPECIFIED:
 		case DISPOSE_PREVIOUS:
+		default:
 			// We don't need to render the intermediate frame if it's not
 			// going to update the intermediate buffer anyway.
 			break;
@@ -217,13 +220,21 @@ void GIFRenderer::SetupNextFrame()
 		m_previousFrame = (m_frame + 1) % m_gif->m_gif->ImageCount;
 		m_bufferIdx = (m_bufferIdx + 1) % 2;
 		break;
+	default:
+		// Corrupt disposal.
+		m_previousFrame = m_frame;
 	}
 }
 
 void GIFRenderer::ClearBuffer()
 {
 	GifColorType color = { 255, 255, 255 };
-	if (m_gif->m_gif->SColorMap != nullptr) color = m_gif->m_gif->SColorMap->Colors[m_gif->m_gif->SBackGroundColor];
+	if (m_gif->m_gif->SColorMap != nullptr
+		&& m_gif->m_gif->SBackGroundColor >= 0
+		&& m_gif->m_gif->SBackGroundColor < m_gif->m_gif->SColorMap->ColorCount)
+	{
+		color = m_gif->m_gif->SColorMap->Colors[m_gif->m_gif->SBackGroundColor];
+	}
 
 	unsigned int bgColor = ((uint32_t)color.Blue << 0) | ((uint32_t)color.Green << 8) | ((uint32_t)color.Red << 16) | ((uint32_t)255 << 24);
 
@@ -253,15 +264,21 @@ void GIFRenderer::BlitFrame(int frame)
 
 	int transparent = m_gif->m_transparencies[frame];
 
+	// Sometimes GIFs have invalid inner bounds specified.
+	int minx = max(0, min(image.ImageDesc.Left, m_gif->m_gif->SWidth));
+	int miny = max(0, min(image.ImageDesc.Top, m_gif->m_gif->SHeight));
+	int maxy = max(0, min(image.ImageDesc.Top + image.ImageDesc.Height, m_gif->m_gif->SHeight));
+	int maxx = max(0, min(image.ImageDesc.Left + image.ImageDesc.Width, m_gif->m_gif->SWidth));
+
 	int i = 0;
-	for (int y = image.ImageDesc.Top; y < image.ImageDesc.Top + image.ImageDesc.Height; y++)
+	for (int y = miny; y < maxy; y++)
 	{
-		for (int x = image.ImageDesc.Left; x < image.ImageDesc.Left + image.ImageDesc.Width; x++)
+		for (int x = minx; x < maxx; x++)
 		{
 			int offset = y * m_gif->m_gif->SWidth + x;
 			GifByteType colorIndex = bits[i++];
 
-			if (transparent != colorIndex)
+			if (transparent != colorIndex && colorIndex >= 0 && colorIndex < colorMap->ColorCount)
 			{
 				GifColorType color = colorMap->Colors[colorIndex];
 				m_buffer[m_bufferIdx].get()[offset] = ((uint32_t)color.Blue << 0) | ((uint32_t)color.Green << 8) | ((uint32_t)color.Red << 16) | ((uint32_t)255 << 24);
