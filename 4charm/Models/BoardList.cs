@@ -54,7 +54,7 @@ namespace _4charm.Models
             {"adv", new BoardID("adv", "Advice", false)},
             {"an", new BoardID("an", "Animals & Nature", false)},
             {"asp", new BoardID("asp", "Alternative Sports", false)},
-            {"biz", new BoardID("biz", "Business & Finanace", false)},
+            {"biz", new BoardID("biz", "Business & Finance", false)},
             {"cgl", new BoardID("cgl", "Cosplay & EGL", false)},
             {"ck", new BoardID("ck", "Food & Cooking", false)},
             {"co", new BoardID("co", "Comics & Cartoons", false)},
