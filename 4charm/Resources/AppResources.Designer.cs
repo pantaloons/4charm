@@ -286,6 +286,15 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to search.
+        /// </summary>
+        public static string ApplicationBar_Search {
+            get {
+                return ResourceManager.GetString("ApplicationBar_Search", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to send.
         /// </summary>
         public static string ApplicationBar_Send {
@@ -745,6 +754,33 @@ namespace _4charm.Resources {
         }
         
         /// <summary>
+        ///   Looks up a localized string similar to Changes the text size in the thread, catalog, and post views..
+        /// </summary>
+        public static string TextSizeSlider_Description {
+            get {
+                return ResourceManager.GetString("TextSizeSlider_Description", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Sample.
+        /// </summary>
+        public static string TextSizeSlider_SampleText {
+            get {
+                return ResourceManager.GetString("TextSizeSlider_SampleText", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to Text size.
+        /// </summary>
+        public static string TextSizeSlider_TextSize {
+            get {
+                return ResourceManager.GetString("TextSizeSlider_TextSize", resourceCulture);
+            }
+        }
+        
+        /// <summary>
         ///   Looks up a localized string similar to catalog.
         /// </summary>
         public static string ThreadsPage_Catalog {
@@ -777,6 +813,15 @@ namespace _4charm.Resources {
         public static string ThreadsPage_Watchlist {
             get {
                 return ResourceManager.GetString("ThreadsPage_Watchlist", resourceCulture);
+            }
+        }
+        
+        /// <summary>
+        ///   Looks up a localized string similar to choose tile.
+        /// </summary>
+        public static string TilePicker_ChooseTile {
+            get {
+                return ResourceManager.GetString("TilePicker_ChooseTile", resourceCulture);
             }
         }
     }

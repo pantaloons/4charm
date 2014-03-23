@@ -10,7 +10,6 @@ using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Media;
 using System.Windows.Navigation;
-using System.Windows.Threading;
 
 namespace _4charm.ViewModels
 {
@@ -184,7 +183,7 @@ namespace _4charm.ViewModels
             }
             TransitorySettingsManager.Current.History.Insert(0, _thread);
 
-            InsertPostList(_thread.Posts.Values);
+            InsertPostList(_thread.Posts.Values, 20);
             InitialUpdateTask = Update();
 
             if (!CriticalSettingsManager.Current.EnableManualRefresh)
@@ -352,7 +351,7 @@ namespace _4charm.ViewModels
             return _updateTask;
         }
 
-        private void InsertPostList(IEnumerable<Post> posts)
+        private void InsertPostList(IEnumerable<Post> posts, int delay = 0)
         {
             IEnumerable<PostViewModel> newPosts = posts
                 .Where(x => !_seenPosts.Contains(x.Number))
@@ -376,9 +375,9 @@ namespace _4charm.ViewModels
                 }
             }
 
-            AllPosts.AddRange(newPosts);
-            ImagePosts.AddRange(newPosts.Where(x => x.HasImage));
-            SelectedPosts.AddRange(newPosts.Where(x => x.Number == _quotedPost || x.QuotesPost(_quotedPost)));
+            AllPosts.AddRange(newPosts, delay);
+            ImagePosts.AddRange(newPosts.Where(x => x.HasImage), delay);
+            SelectedPosts.AddRange(newPosts.Where(x => x.Number == _quotedPost || x.QuotesPost(_quotedPost)), delay);
             
             if (hasScrollTarget)
             {

@@ -1,8 +1,7 @@
 ﻿using System.IO;
-using System.Threading;
 using System.Threading.Tasks;
 
-namespace _4charm.Controls
+namespace _4charm.Controls.Image
 {
     interface IPreloadedImage
     {

@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:toolkit="clr-namespace:Microsoft.Phone.Controls;assembly=Microsoft.Phone.Controls.Toolkit"
     xmlns:controls="clr-namespace:_4charm.Controls"
+    xmlns:image="clr-namespace:_4charm.Controls.Image"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:models="clr-namespace:_4charm.Models"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
@@ -44,7 +45,7 @@
                                Margin="0"
                                Grid.ColumnSpan="2"
                                Visibility="{Binding Subject, Converter={StaticResource NullVisibleConverter}}"
-                               FontSize="17"
+                               FontSize="{Binding Path=Value, Source={StaticResource PostFontSize}}"
                                Foreground="#0F0C5D"
                                TextWrapping="Wrap"
                                Text="{Binding Subject}" />
@@ -53,7 +54,7 @@
                         <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                    Margin="0"
                                    Foreground="{Binding CapCode, Converter={StaticResource CapCodeColorConverter}}"
-                                   FontSize="17"
+                                   FontSize="{Binding Path=Value, Source={StaticResource PostFontSize}}"
                                    Text="{Binding AuthorName}" />
                         <Image Source="\Assets\Icons\sticky.gif"
                                Visibility="{Binding IsSticky, Converter={StaticResource BoolVisibleConverter}}"/>
@@ -78,49 +79,57 @@
 
                         <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
                                    Margin="12"
-                                   FontSize="17"
+                                   FontSize="{Binding Path=Value, Source={StaticResource PostFontSize}}"
                                    Foreground="Black"
                                    Text="{Binding LongNumber}" />
                     </Grid>
 
-                    <controls:SingleResolutionImage ImageURI="{Binding ThumbnailSrc}"
-                                                    Width="{Binding ThumbWidth, FallbackValue=0}"
-                                                    Height="{Binding ThumbHeight, FallbackValue=0}"
-                                                    Margin="0,6,12,6"
-                                                    VerticalAlignment="Top"
-                                                    Grid.Row="2"
-                                                    Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
+                    <image:SingleResolutionImage ImageURI="{Binding ThumbnailSrc}"
+                                                 Width="{Binding ThumbWidth}"
+                                                 Height="{Binding ThumbHeight}"
+                                                 Margin="0,6,12,6"
+                                                 VerticalAlignment="Top"
+                                                 Grid.Row="2"
+                                                 Visibility="{Binding HasImage, Converter={StaticResource BoolVisibleConverter}}">
                         <!-- Tapping the image goes directly to the image viewer. -->
                         <i:Interaction.Triggers>
                             <i:EventTrigger EventName="Tap">
                                 <i:InvokeCommandAction Command="{Binding ImageNavigated}" />
                             </i:EventTrigger>
                         </i:Interaction.Triggers>
-                    </controls:SingleResolutionImage>
+                    </image:SingleResolutionImage>
 
                     <RichTextBox VerticalAlignment="Top" Grid.Column="1" Grid.Row="2"
                                  models:BindableTextBlock.FormattedText="{Binding HtmlComment}"
                                  Margin="-12,0,-12,0"
                                  TextWrapping="Wrap"
-                                 FontSize="17"
+                                 FontSize="{Binding Path=Value, Source={StaticResource PostFontSize}}"
                                  FontFamily="{StaticResource PhoneFontFamilyNormal}"
                                  Foreground="Black"/>
 
-                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
-                               Grid.Row="3" Grid.ColumnSpan="2"
-                               Margin="0"
-                               FontSize="17"
-                               HorizontalAlignment="Left"
-                               Foreground="#707070"
-                               Text="{Binding PrettyTime}" />
+                    <Grid Grid.Row="3" Grid.ColumnSpan="2">
+                        <Grid.ColumnDefinitions>
+                            <ColumnDefinition Width="auto" MaxWidth="380" />
+                            <ColumnDefinition Width="12" />
+                            <ColumnDefinition Width="*" />
+                        </Grid.ColumnDefinitions>
 
-                    <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
-                               Grid.Row="3" Grid.ColumnSpan="2"
-                               Margin="0"
-                               FontSize="17"
-                               HorizontalAlignment="Right"
-                               Foreground="#707070"
-                               Text="{Binding CounterText}"/>
+                        <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                                   Grid.Column="0"
+                                   Margin="0"
+                                   FontSize="{Binding Path=Value, Source={StaticResource PostFontSize}}"
+                                   HorizontalAlignment="Left"
+                                   Foreground="#707070"
+                                   Text="{Binding PrettyTime}" />
+
+                        <TextBlock Style="{StaticResource PhoneTextNormalStyle}"
+                                   Grid.Column="2"
+                                   Margin="0"
+                                   FontSize="{Binding Path=Value, Source={StaticResource PostFontSize}}"
+                                   HorizontalAlignment="Right"
+                                   Foreground="#707070"
+                                   Text="{Binding CounterText}"/>
+                    </Grid>
                 </Grid>
             </Grid>
         </DataTemplate>
@@ -147,13 +156,13 @@
                     </i:EventTrigger>
                 </i:Interaction.Triggers>
 
-                <controls:SingleResolutionImage ImageURI="{Binding WideURI}">
-                    <controls:SingleResolutionImage.Template>
-                        <ControlTemplate TargetType="controls:SingleResolutionImage">
+                <image:SingleResolutionImage ImageURI="{Binding WideURI}">
+                    <image:SingleResolutionImage.Template>
+                        <ControlTemplate TargetType="image:SingleResolutionImage">
                             <Image x:Name="ImageContainer" Width="440" Stretch="UniformToFill" />
                         </ControlTemplate>
-                    </controls:SingleResolutionImage.Template>
-                </controls:SingleResolutionImage>
+                    </image:SingleResolutionImage.Template>
+                </image:SingleResolutionImage>
 
                 <Grid Height="60" VerticalAlignment="Bottom">
                     <Grid Background="Black" Opacity="0.3"/>

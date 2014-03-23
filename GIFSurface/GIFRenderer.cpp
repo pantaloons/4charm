@@ -42,7 +42,7 @@ void GIFRenderer::Render(float timeDelta, bool forceUpdate)
 {
 	if (!m_gif) return;
 
-	// Figure out what the next frame is on, based on the frame
+	// Figure out which frame to display next, based on the frame
 	// delay timers and the elapsed time delta.
 	SelectNextFrame(timeDelta);
 

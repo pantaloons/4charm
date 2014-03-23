@@ -100,15 +100,17 @@
     <Compile Include="Controls\ErrorStateTextBox.cs" />
     <Compile Include="Controls\FadingLongListSelector.cs" />
     <Compile Include="Controls\FlipView.cs" />
-    <Compile Include="Controls\AnimatedImage.cs" />
-    <Compile Include="Controls\IPreloadedImage.cs" />
-    <Compile Include="Controls\MultiResolutionImage.cs" />
+    <Compile Include="Controls\Image\AnimatedImage.cs" />
+    <Compile Include="Controls\Image\IPreloadedImage.cs" />
+    <Compile Include="Controls\Image\MultiResolutionImage.cs" />
     <Compile Include="Controls\OrientLockablePage.cs" />
     <Compile Include="Controls\PlaceHolderLongListSelector.cs" />
+    <Compile Include="Controls\SearchBox.cs" />
     <Compile Include="Controls\SelectionBindableTextBox.cs" />
-    <Compile Include="Controls\SingleResolutionImage.cs" />
+    <Compile Include="Controls\Image\SingleResolutionImage.cs" />
     <Compile Include="Controls\SplittingPanel.cs" />
-    <Compile Include="Controls\StaticImage.cs" />
+    <Compile Include="Controls\Image\StaticImage.cs" />
+    <Compile Include="Controls\TextSizeSlider.cs" />
     <Compile Include="Controls\TilePicker.cs" />
     <Compile Include="Converters\BoolInvertConverter.cs" />
     <Compile Include="Converters\BoolVisibleConverter.cs" />
@@ -126,11 +128,10 @@
     <Compile Include="Models\BoardList.cs" />
     <Compile Include="Models\CriticalSettingsManager.cs" />
     <Compile Include="Models\DataContractJsonSerializerExtensions.cs" />
+    <Compile Include="Models\DelayLoadingFilteredObservableCollection.cs" />
     <Compile Include="Models\DelayLoadingObservableCollection.cs" />
     <Compile Include="Models\HttpClientExtensions.cs" />
     <Compile Include="Models\ImageUtils.cs" />
-    <Compile Include="Models\Migration\SettingsManager1_1.cs" />
-    <Compile Include="Models\Migration\VersionMigrator.cs" />
     <Compile Include="Models\ModelCommand.cs" />
     <Compile Include="Models\PNG\ToolStackCRCLib.cs" />
     <Compile Include="Models\PNG\ToolStackPNGWriterLib.cs" />
@@ -144,6 +145,7 @@
     <Compile Include="Models\ThreadID.cs" />
     <Compile Include="Models\TransitorySettingsManager.cs" />
     <Compile Include="Models\UriMapper.cs" />
+    <Compile Include="Models\WrappedDouble.cs" />
     <Compile Include="Properties\AssemblyInfo.cs" />
     <Compile Include="Resources\AppResources.Designer.cs">
       <AutoGen>True</AutoGen>
@@ -204,6 +206,7 @@
     <Content Include="Assets\Appbar\appbar.eye.png" />
     <Content Include="Assets\Appbar\appbar.refresh.png" />
     <Content Include="Assets\Appbar\appbar.reply.png" />
+    <Content Include="Assets\Appbar\appbar.search.png" />
     <Content Include="Assets\Appbar\appbar.send.png" />
     <DesignData Include="SampleData\SampleAddBoardPageViewModel.xaml">
       <SubType>Designer</SubType>
@@ -242,6 +245,7 @@
     <Content Include="Assets\Boards\Fanart\an.jpg" />
     <Content Include="Assets\Boards\Fanart\asp.jpg" />
     <Content Include="Assets\Boards\Fanart\b.jpg" />
+    <Content Include="Assets\Boards\Fanart\biz.jpg" />
     <Content Include="Assets\Boards\Fanart\c.jpg" />
     <Content Include="Assets\Boards\Fanart\cgl.jpg" />
     <Content Include="Assets\Boards\Fanart\ck.jpg" />
@@ -303,6 +307,7 @@
     <Content Include="Assets\Boards\Icons\an.jpg" />
     <Content Include="Assets\Boards\Icons\asp.jpg" />
     <Content Include="Assets\Boards\Icons\b.jpg" />
+    <Content Include="Assets\Boards\Icons\biz.jpg" />
     <Content Include="Assets\Boards\Icons\c.jpg" />
     <Content Include="Assets\Boards\Icons\cgl.jpg" />
     <Content Include="Assets\Boards\Icons\ck.jpg" />

@@ -213,7 +213,7 @@ namespace _4charm.Models
                     {
                         Foreground = App.Current.Resources["SpoilerBrush"] as SolidColorBrush,
                         Text = new String('\u2588', len),
-                        FontSize = 17
+                        FontSize = CriticalSettingsManager.Current.TextSize
                     };
                     bool isClicked = false;
                     h.Click += (hsender, he) =>
@@ -223,7 +223,7 @@ namespace _4charm.Models
                         isClicked = true;
                         App.IsPostTapAllowed = false;
                         r.Text = WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ",");
-                        r.FontSize = 17;
+                        r.FontSize = CriticalSettingsManager.Current.TextSize;
                         h.TextDecorations = null;
                         Deployment.Current.Dispatcher.BeginInvoke(() => App.IsPostTapAllowed = true);
                     };
@@ -263,7 +263,11 @@ namespace _4charm.Models
                 }
                 else if (_node.Name == "small")
                 {
-                    para.Inlines.Add(new Run() { Text = WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ","), FontSize = 14 });
+                    para.Inlines.Add(new Run()
+                    {
+                        Text = WebUtility.HtmlDecode(_node.InnerText).Replace("&#039;", "'").Replace("&#44;", ","),
+                        FontSize = CriticalSettingsManager.Current.TextSize - 3
+                    });
                 }
                 // Regular text
                 else if (_node.Name == "#text")

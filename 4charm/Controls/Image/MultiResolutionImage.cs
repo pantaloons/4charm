@@ -1,18 +1,15 @@
-﻿using System;
-using System.ComponentModel;
+﻿using _4charm.Models;
+using System;
 using System.Diagnostics;
 using System.IO;
-using System.Net.Http;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Input;
-using _4charm.Models;
-using System.Windows.Media.Imaging;
 using Windows.Storage;
 
-namespace _4charm.Controls
+namespace _4charm.Controls.Image
 {
     public class MultiResolutionImage : Control
     {

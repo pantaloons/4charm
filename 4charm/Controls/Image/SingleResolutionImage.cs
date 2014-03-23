@@ -1,19 +1,15 @@
 ﻿using _4charm.Models;
 using System;
-using System.Collections.Generic;
 using System.ComponentModel;
 using System.Diagnostics;
 using System.IO;
-using System.Linq;
-using System.Text;
 using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
-using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 using Windows.Storage;
 
-namespace _4charm.Controls
+namespace _4charm.Controls.Image
 {
     public class SingleResolutionImage : StaticImage
     {
@@ -46,7 +42,7 @@ namespace _4charm.Controls
             if (DesignerProperties.GetIsInDesignMode(this))
             {
                 // In design mode, we must set the UriSource directly.
-                Image container = GetTemplateChild("ImageContainer") as Image;
+                System.Windows.Controls.Image container = GetTemplateChild("ImageContainer") as System.Windows.Controls.Image;
                 if (container != null)
                 {
                     // Remove the name so the child StaticImage doesn't find it.

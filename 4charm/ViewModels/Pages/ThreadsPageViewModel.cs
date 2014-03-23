@@ -3,6 +3,7 @@ using System;
 using System.Collections.Generic;
 using System.Collections.ObjectModel;
 using System.Collections.Specialized;
+using System.ComponentModel;
 using System.Diagnostics;
 using System.Linq;
 using System.Threading;
@@ -20,6 +21,22 @@ namespace _4charm.ViewModels
         // but if the user hits back we want to show their thread
         // at the top of the list.
         internal static bool ForceReload = false;
+
+        public bool IsSearching
+        {
+            get { return GetProperty<bool>(); }
+            set { SetProperty(value); }
+        }
+
+        public string SearchText
+        {
+            get { return GetProperty<string>(); }
+            set
+            {
+                SetProperty(value);
+                SearchTextChanged();
+            }
+        }
 
         public string PivotTitle
         {
@@ -55,23 +72,25 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
-        public DelayLoadingObservableCollection<ThreadViewModel> Threads
+        public DelayLoadingFilteredObservableCollection<ThreadViewModel> Threads
         {
-            get { return GetProperty<DelayLoadingObservableCollection<ThreadViewModel>>(); }
+            get { return GetProperty<DelayLoadingFilteredObservableCollection<ThreadViewModel>>(); }
             set { SetProperty(value); }
         }
 
-        public DelayLoadingObservableCollection<ThreadViewModel> ImageThreads
+        public DelayLoadingFilteredObservableCollection<ThreadViewModel> ImageThreads
         {
-            get { return GetProperty<DelayLoadingObservableCollection<ThreadViewModel>>(); }
+            get { return GetProperty<DelayLoadingFilteredObservableCollection<ThreadViewModel>>(); }
             set { SetProperty(value); }
         }
 
-        public DelayLoadingObservableCollection<ThreadViewModel> Watchlist
+        public DelayLoadingFilteredObservableCollection<ThreadViewModel> Watchlist
         {
-            get { return GetProperty<DelayLoadingObservableCollection<ThreadViewModel>>(); }
+            get { return GetProperty<DelayLoadingFilteredObservableCollection<ThreadViewModel>>(); }
             set { SetProperty(value); }
         }
+
+        public event EventHandler SearchStateChanged;
 
         private bool _removedFromJournal;
         private Board _board;
@@ -84,9 +103,9 @@ namespace _4charm.ViewModels
             PivotTitle = _board.DisplayName;
             Name = _board.Name;
             IsLoading = false;
-            Threads = new DelayLoadingObservableCollection<ThreadViewModel>(100, false, 15, 100, 10);
-            Watchlist = new DelayLoadingObservableCollection<ThreadViewModel>(100, true, 15, 100, 10);
-            ImageThreads = new DelayLoadingObservableCollection<ThreadViewModel>(40, true, 15, 100, 10);
+            Threads = new DelayLoadingFilteredObservableCollection<ThreadViewModel>(100, false, 15, 100, 10);
+            Watchlist = new DelayLoadingFilteredObservableCollection<ThreadViewModel>(100, true, 15, 100, 10);
+            ImageThreads = new DelayLoadingFilteredObservableCollection<ThreadViewModel>(40, true, 15, 100, 10);
 
             ReloadThreads();
 
@@ -137,6 +156,19 @@ namespace _4charm.ViewModels
             Watchlist.IsPaused = true;
         }
 
+        public override void OnBackKeyPress(CancelEventArgs e)
+        {
+            base.OnBackKeyPress(e);
+
+            if (IsSearching)
+            {
+                IsSearching = false;
+                SearchText = "";
+                e.Cancel = true;
+                SearchStateChanged(null, null);
+            }
+        }
+
         public override void OnRemovedFromJournal(JournalEntryRemovedEventArgs e)
         {
             base.OnRemovedFromJournal(e);
@@ -144,6 +176,13 @@ namespace _4charm.ViewModels
             _removedFromJournal = true;
 
             TransitorySettingsManager.Current.Watchlist.CollectionChanged -= Watchlist_CollectionChanged;
+        }
+
+        public void ShowSearchBox()
+        {
+            SearchText = "";
+            IsSearching = true;
+            SearchStateChanged(null, null);
         }
 
         public void ReloadThreads()
@@ -198,6 +237,21 @@ namespace _4charm.ViewModels
                     i--;
                 }
             }
+        }
+
+        private void SearchTextChanged()
+        {
+            Predicate<ThreadViewModel> filter = (ThreadViewModel tvm) =>
+            {
+                if (tvm.InitialPost == null) return false;
+                return tvm.InitialPost.SimpleComment.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0
+                    || (tvm.InitialPost.Subject != null
+                        && tvm.InitialPost.Subject.IndexOf(SearchText, StringComparison.OrdinalIgnoreCase) >= 0);
+            };
+
+            Threads.ApplyFilter(filter);
+            ImageThreads.ApplyFilter(filter);
+            Watchlist.ApplyFilter(filter);
         }
 
         private void SelectedIndexChanged()

@@ -360,4 +360,19 @@
   <data name="PostsPage_Verification" xml:space="preserve">
     <value>Verification</value>
   </data>
+  <data name="ApplicationBar_Search" xml:space="preserve">
+    <value>search</value>
+  </data>
+  <data name="TextSizeSlider_Description" xml:space="preserve">
+    <value>Changes the text size in the thread, catalog, and post views.</value>
+  </data>
+  <data name="TextSizeSlider_SampleText" xml:space="preserve">
+    <value>Sample</value>
+  </data>
+  <data name="TextSizeSlider_TextSize" xml:space="preserve">
+    <value>Text size</value>
+  </data>
+  <data name="TilePicker_ChooseTile" xml:space="preserve">
+    <value>choose tile</value>
+  </data>
 </root>

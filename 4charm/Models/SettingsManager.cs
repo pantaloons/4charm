@@ -1,5 +1,4 @@
-﻿using _4charm.Models.Migration;
-using System;
+﻿using System;
 using System.Collections.Generic;
 using System.IO;
 using System.Runtime.Serialization;
@@ -184,11 +183,6 @@ namespace _4charm.Models
                 // and we may need to migrate their old settings.
                 if (_fileName == CriticalSettingsManager.Current._fileName)
                 {
-                    // Version migration must happen synchronously, to avoid concurrent
-                    // access to the settings object while migrating. This perf hit is
-                    // acceptable, since it is one time only.
-                    VersionMigrator.Migrate1_1to1_2(_settings);
-
                     // We just wrote directly into the settings object, so we need to manually
                     // queue a save operation. That can happen later though, it does not need
                     // to be synchronous.

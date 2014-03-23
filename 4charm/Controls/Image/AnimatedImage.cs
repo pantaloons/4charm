@@ -1,5 +1,4 @@
 ﻿using GIFSurface;
-using Microsoft.Phone.Controls;
 using System;
 using System.Diagnostics;
 using System.IO;
@@ -7,9 +6,8 @@ using System.Threading;
 using System.Threading.Tasks;
 using System.Windows;
 using System.Windows.Controls;
-using System.Windows.Navigation;
 
-namespace _4charm.Controls
+namespace _4charm.Controls.Image
 {
     public class AnimatedImage : Control, IPreloadedImage
     {

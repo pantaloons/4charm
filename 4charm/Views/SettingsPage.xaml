@@ -28,28 +28,34 @@
                        Margin="9,-7,0,0" Style="{StaticResource PhoneTextTitle1Style}"/>
         </StackPanel>
 
-        <Grid Grid.Row="1" Margin="12,0">
+        <ScrollViewer Grid.Row="1" Margin="12,0">
             <StackPanel>
-                <!-- Setting switches -->
-                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ManualRefresh, Source={StaticResource LocalizedStrings}}"
-                                      IsChecked="{Binding EnableManualRefresh, Mode=TwoWay}"/>
-                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ShowTripcodes, Source={StaticResource LocalizedStrings}}"
-                                      IsChecked="{Binding ShowTripcodes, Mode=TwoWay}"/>
-                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ShowStickies, Source={StaticResource LocalizedStrings}}"
-                                      IsChecked="{Binding ShowStickies, Mode=TwoWay}"/>
-                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_UseHTTPS, Source={StaticResource LocalizedStrings}}"
-                                      IsChecked="{Binding EnableHTTPS, Mode=TwoWay}"/>
-                
+                <controls:TextSizeSlider Margin="12,0,12,48" TextSize="{Binding TextSize, Mode=TwoWay}" />
+
                 <!-- Orientation lock. -->
-                <toolkit:ListPicker Margin="12,0"
+                <toolkit:ListPicker Margin="12,0,12,24"
                                     Header="{Binding Path=LocalizedResources.SettingsPage_OrientationLock, Source={StaticResource LocalizedStrings}}"
                                     SelectedIndex="{Binding LockOrientation, Mode=TwoWay, Converter={StaticResource IndexOrientationConverter}}">
                     <toolkit:ListPickerItem Content="{Binding Path=LocalizedResources.SettingsPage_OrientationUnlocked, Source={StaticResource LocalizedStrings}}" />
                     <toolkit:ListPickerItem Content="{Binding Path=LocalizedResources.SettingsPage_OrientationPortrait, Source={StaticResource LocalizedStrings}}" />
                     <toolkit:ListPickerItem Content="{Binding Path=LocalizedResources.SettingsPage_OrientationLandscape, Source={StaticResource LocalizedStrings}}" />
                 </toolkit:ListPicker>
+
+                <!-- Setting switches -->
+                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ManualRefresh, Source={StaticResource LocalizedStrings}}"
+                                      CacheMode="BitmapCache"
+                                      IsChecked="{Binding EnableManualRefresh, Mode=TwoWay}"/>
+                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ShowTripcodes, Source={StaticResource LocalizedStrings}}"
+                                      CacheMode="BitmapCache"
+                                      IsChecked="{Binding ShowTripcodes, Mode=TwoWay}"/>
+                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_ShowStickies, Source={StaticResource LocalizedStrings}}"
+                                      CacheMode="BitmapCache"
+                                      IsChecked="{Binding ShowStickies, Mode=TwoWay}"/>
+                <toolkit:ToggleSwitch Header="{Binding Path=LocalizedResources.SettingsPage_UseHTTPS, Source={StaticResource LocalizedStrings}}"
+                                      CacheMode="BitmapCache"
+                                      IsChecked="{Binding EnableHTTPS, Mode=TwoWay}"/>
             </StackPanel>
-        </Grid>
+        </ScrollViewer>
     </Grid>
 
 </controls:BoundPage>

@@ -7,14 +7,14 @@ using System.Windows;
 using System.Windows.Controls;
 using System.Windows.Media.Imaging;
 
-namespace _4charm.Controls
+namespace _4charm.Controls.Image
 {
     public class StaticImage : Control, IPreloadedImage
     {
         private Size? _size;
         private Stream _streamSource;
 
-        private Image _container;
+        private System.Windows.Controls.Image _container;
         private BitmapImage _image;
 
         private bool _isLoading;
@@ -43,7 +43,7 @@ namespace _4charm.Controls
         {
             base.OnApplyTemplate();
 
-            _container = (Image)GetTemplateChild("ImageContainer");
+            _container = (System.Windows.Controls.Image)GetTemplateChild("ImageContainer");
 
             UpdateSource();
         }

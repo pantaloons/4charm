@@ -39,6 +39,16 @@ namespace _4charm.Models
             }
         }
 
+        public int TextSize
+        {
+            get { return GetSetting<int>(MethodBase.GetCurrentMethod().Name.Substring(4), 17); }
+            set
+            {
+                SetSetting<int>(MethodBase.GetCurrentMethod().Name.Substring(4), value);
+                ((WrappedDouble)App.Current.Resources["PostFontSize"]).Value = value;
+            }
+        }
+
         public bool EnableManualRefresh
         {
             get { return GetSetting<bool>(MethodBase.GetCurrentMethod().Name.Substring(4), false); }

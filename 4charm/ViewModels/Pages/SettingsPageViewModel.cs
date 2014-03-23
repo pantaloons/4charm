@@ -5,6 +5,12 @@ namespace _4charm.ViewModels
 {
     class SettingsPageViewModel : PageViewModelBase
     {
+        public int TextSize
+        {
+            get { return CriticalSettingsManager.Current.TextSize; }
+            set { CriticalSettingsManager.Current.TextSize = value; }
+        }
+
         public bool EnableManualRefresh
         {
             get { return CriticalSettingsManager.Current.EnableManualRefresh; }

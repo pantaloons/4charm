@@ -8,6 +8,7 @@
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:i="clr-namespace:System.Windows.Interactivity;assembly=System.Windows.Interactivity"
     xmlns:controls="clr-namespace:_4charm.Controls"
+    xmlns:image="clr-namespace:_4charm.Controls.Image"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -43,16 +44,16 @@
                 <!-- Verification Captcha -->
                 <TextBlock Text="Verification" Style="{StaticResource PhoneTextSubtleStyle}" />
 
-                <controls:SingleResolutionImage ImageURI="{Binding CaptchaUri}"
-                                                Height="100"
-                                                Margin="12,0"
-                                                Background="Transparent">
+                <image:SingleResolutionImage ImageURI="{Binding CaptchaUri}"
+                                             Height="100"
+                                             Margin="12,0"
+                                             Background="Transparent">
                     <i:Interaction.Triggers>
                         <i:EventTrigger EventName="Tap">
                             <i:InvokeCommandAction Command="{Binding ReloadCaptcha}" />
                         </i:EventTrigger>
                     </i:Interaction.Triggers>
-                </controls:SingleResolutionImage>
+                </image:SingleResolutionImage>
 
                 <controls:ErrorStateTextBox x:Name="CaptchaTextBox"
                                             Padding="6,2"

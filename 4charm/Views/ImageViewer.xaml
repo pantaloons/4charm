@@ -7,6 +7,7 @@
     xmlns:d="http://schemas.microsoft.com/expression/blend/2008"
     xmlns:mc="http://schemas.openxmlformats.org/markup-compatibility/2006"
     xmlns:controls="clr-namespace:_4charm.Controls"
+    xmlns:image="clr-namespace:_4charm.Controls.Image"
     FontFamily="{StaticResource PhoneFontFamilyNormal}"
     FontSize="{StaticResource PhoneFontSizeNormal}"
     Foreground="{StaticResource PhoneForegroundBrush}"
@@ -29,17 +30,17 @@
                                         <ScaleTransform x:Name="FlipperZoomableContentTransform" />
                                     </Grid.RenderTransform>
 
-                                    <controls:MultiResolutionImage ThumbnailURI="{Binding ThumbnailSrc}"
+                                    <image:MultiResolutionImage ThumbnailURI="{Binding ThumbnailSrc}"
                                                                    FullSizeURI="{Binding ImageSrc}"
                                                                    AspectRatio="{Binding AspectRatio}"
                                                                    DownloadProgressCommand="{Binding UpdateProgress}">
-                                        <controls:MultiResolutionImage.Template>
-                                            <ControlTemplate TargetType="controls:MultiResolutionImage">
-                                                <controls:AnimatedImage x:Name="PreloadedImageContainer"
-                                                                        ShouldAnimate="{Binding IsSelected}" />
+                                        <image:MultiResolutionImage.Template>
+                                            <ControlTemplate TargetType="image:MultiResolutionImage">
+                                                <image:AnimatedImage x:Name="PreloadedImageContainer"
+                                                                     ShouldAnimate="{Binding IsSelected}" />
                                             </ControlTemplate>
-                                        </controls:MultiResolutionImage.Template>
-                                    </controls:MultiResolutionImage>
+                                        </image:MultiResolutionImage.Template>
+                                    </image:MultiResolutionImage>
                                 </Grid>
                             </Canvas>
                         </ViewportControl>

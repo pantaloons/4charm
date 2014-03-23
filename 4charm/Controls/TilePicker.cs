@@ -1,4 +1,5 @@
-﻿using _4charm.Models;
+﻿using _4charm.Controls.Image;
+using _4charm.Models;
 using Microsoft.Phone.Controls;
 using System;
 using System.ComponentModel;
