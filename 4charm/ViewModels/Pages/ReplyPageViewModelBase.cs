@@ -206,7 +206,7 @@ namespace _4charm.ViewModels
         public async Task<string> GetCaptcha()
         {
             Uri uri = new Uri("http://www.google.com/recaptcha/api/challenge?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc");
-            string page = await RequestManager.Current.GetStringAsync(uri);
+            string page = (await RequestManager.Current.GetStringAsync(uri)).Replace("\\075", "");
 
             int start = page.IndexOf("{");
             int end = page.LastIndexOf("}");
