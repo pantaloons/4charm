@@ -7,18 +7,18 @@
  *  in the file PATENTS.  All contributing project authors may
  *  be found in the AUTHORS file in the root of the source tree.
  */
-#ifndef VP8CX_H
-#define VP8CX_H
+#ifndef VPX_VP8CX_H_
+#define VPX_VP8CX_H_
 
-/*!\defgroup vp8_encoder WebM VP8 Encoder
+/*!\defgroup vp8_encoder WebM VP8/VP9 Encoder
  * \ingroup vp8
  *
  * @{
  */
-#include "vp8.h"
+#include "./vp8.h"
 
 /*!\file
- * \brief Provides definitions for using the VP8 encoder algorithm within the
+ * \brief Provides definitions for using VP8 or VP9 encoder algorithm within the
  *        vpx Codec Interface.
  */
 
@@ -28,19 +28,20 @@ extern "C" {
 
 /*!\name Algorithm interface for VP8
  *
- * This interface provides the capability to encode raw VP8 streams, as would
- * be found in AVI files.
+ * This interface provides the capability to encode raw VP8 streams.
  * @{
  */
 extern vpx_codec_iface_t  vpx_codec_vp8_cx_algo;
 extern vpx_codec_iface_t *vpx_codec_vp8_cx(void);
+/*!@} - end algorithm interface member group*/
 
-/* TODO(jkoleszar): These move to VP9 in a later patch set. */
+/*!\name Algorithm interface for VP9
+ *
+ * This interface provides the capability to encode raw VP9 streams.
+ * @{
+ */
 extern vpx_codec_iface_t  vpx_codec_vp9_cx_algo;
 extern vpx_codec_iface_t *vpx_codec_vp9_cx(void);
-extern vpx_codec_iface_t  vpx_codec_vp9x_cx_algo;
-extern vpx_codec_iface_t *vpx_codec_vp9x_cx(void);
-
 /*!@} - end algorithm interface member group*/
 
 
@@ -150,7 +151,12 @@ enum vp8e_enc_control_id {
    */
   VP8E_SET_CPUUSED           = 13,
   VP8E_SET_ENABLEAUTOALTREF,       /**< control function to enable vp8 to automatic set and use altref frame */
-  VP8E_SET_NOISE_SENSITIVITY,      /**< control function to set noise sensitivity */
+  /*!\brief control function to set noise sensitivity
+   *
+   * 0: off, 1: OnYOnly, 2: OnYUV,
+   * 3: OnYUVAggressive, 4: Adaptive
+   */
+  VP8E_SET_NOISE_SENSITIVITY,
   VP8E_SET_SHARPNESS,              /**< control function to set sharpness */
   VP8E_SET_STATIC_THRESHOLD,       /**< control function to set the threshold for macroblocks treated static */
   VP8E_SET_TOKEN_PARTITIONS,       /**< control function to set the number of token partitions  */
@@ -162,8 +168,12 @@ enum vp8e_enc_control_id {
                                           scale as used by the rc_*_quantizer config
                                           parameters */
   VP8E_SET_ARNR_MAXFRAMES,         /**< control function to set the max number of frames blurred creating arf*/
-  VP8E_SET_ARNR_STRENGTH,         /**< control function to set the filter strength for the arf */
-  VP8E_SET_ARNR_TYPE,         /**< control function to set the type of filter to use for the arf*/
+  VP8E_SET_ARNR_STRENGTH,          //!< control function to set the filter
+                                   //!< strength for the arf
+
+  /*!\deprecated control function to set the filter type to use for the arf */
+  VP8E_SET_ARNR_TYPE,
+
   VP8E_SET_TUNING,                 /**< control function to set visual tuning */
   /*!\brief control function to set constrained quality level
    *
@@ -186,17 +196,192 @@ enum vp8e_enc_control_id {
    *
    */
   VP8E_SET_MAX_INTRA_BITRATE_PCT,
+  VP8E_SET_FRAME_FLAGS,           /**< control function to set reference and update frame flags */
 
+  /*!\brief Max data rate for Inter frames
+   *
+   * This value controls additional clamping on the maximum size of an
+   * inter frame. It is expressed as a percentage of the average
+   * per-frame bitrate, with the special (and default) value 0 meaning
+   * unlimited, or no additional clamping beyond the codec's built-in
+   * algorithm.
+   *
+   * For example, to allow no more than 4.5 frames worth of bitrate
+   * to an inter frame, set this to 450.
+   *
+   */
+  VP8E_SET_MAX_INTER_BITRATE_PCT,
 
-  /* TODO(jkoleszar): Move to vp9cx.h */
+  /*!\brief Boost percentage for Golden Frame in CBR mode
+   *
+   * This value controls the amount of boost given to Golden Frame in
+   * CBR mode. It is expressed as a percentage of the average
+   * per-frame bitrate, with the special (and default) value 0 meaning
+   * the feature is off, i.e., no golden frame boost in CBR mode and
+   * average bitrate target is used.
+   *
+   * For example, to allow 100% more bits, i.e, 2X, in a golden frame
+   * than average frame, set this to 100.
+   *
+   */
+  VP8E_SET_GF_CBR_BOOST_PCT,
+
+  /*!\brief Codec control function to set the temporal layer id
+   *
+   * For temporal scalability: this control allows the application to set the
+   * layer id for each frame to be encoded. Note that this control must be set
+   * for every frame prior to encoding. The usage of this control function
+   * supersedes the internal temporal pattern counter, which is now deprecated.
+   */
+  VP8E_SET_TEMPORAL_LAYER_ID,
+
+  VP8E_SET_SCREEN_CONTENT_MODE,  /**<control function to set encoder screen content mode */
+
+  /*!\brief Codec control function to set lossless encoding mode
+   *
+   * VP9 can operate in lossless encoding mode, in which the bitstream
+   * produced will be able to decode and reconstruct a perfect copy of
+   * input source. This control function provides a mean to switch encoder
+   * into lossless coding mode(1) or normal coding mode(0) that may be lossy.
+   *                          0 = lossy coding mode
+   *                          1 = lossless coding mode
+   *
+   *  By default, encoder operates in normal coding mode (maybe lossy).
+   */
   VP9E_SET_LOSSLESS,
+
+  /*!\brief Codec control function to set number of tile columns
+   *
+   * In encoding and decoding, VP9 allows an input image frame be partitioned
+   * into separated vertical tile columns, which can be encoded or decoded
+   * independently. This enables easy implementation of parallel encoding and
+   * decoding. This control requests the encoder to use column tiles in
+   * encoding an input frame, with number of tile columns (in Log2 unit) as
+   * the parameter:
+   *             0 = 1 tile column
+   *             1 = 2 tile columns
+   *             2 = 4 tile columns
+   *             .....
+   *             n = 2**n tile columns
+   * The requested tile columns will be capped by encoder based on image size
+   * limitation (The minimum width of a tile column is 256 pixel, the maximum
+   * is 4096).
+   *
+   * By default, the value is 0, i.e. one single column tile for entire image.
+   */
   VP9E_SET_TILE_COLUMNS,
+
+  /*!\brief Codec control function to set number of tile rows
+   *
+   * In encoding and decoding, VP9 allows an input image frame be partitioned
+   * into separated horizontal tile rows. Tile rows are encoded or decoded
+   * sequentially. Even though encoding/decoding of later tile rows depends on
+   * earlier ones, this allows the encoder to output data packets for tile rows
+   * prior to completely processing all tile rows in a frame, thereby reducing
+   * the latency in processing between input and output. The parameter
+   * for this control describes the number of tile rows, which has a valid
+   * range [0, 2]:
+   *            0 = 1 tile row
+   *            1 = 2 tile rows
+   *            2 = 4 tile rows
+   *
+   * By default, the value is 0, i.e. one single row tile for entire image.
+   */
   VP9E_SET_TILE_ROWS,
+
+  /*!\brief Codec control function to enable frame parallel decoding feature
+   *
+   * VP9 has a bitstream feature to reduce decoding dependency between frames
+   * by turning off backward update of probability context used in encoding
+   * and decoding. This allows staged parallel processing of more than one
+   * video frames in the decoder. This control function provides a mean to
+   * turn this feature on or off for bitstreams produced by encoder.
+   *
+   * By default, this feature is off.
+   */
   VP9E_SET_FRAME_PARALLEL_DECODING,
+
+  /*!\brief Codec control function to set adaptive quantization mode
+   *
+   * VP9 has a segment based feature that allows encoder to adaptively change
+   * quantization parameter for each segment within a frame to improve the
+   * subjective quality. This control makes encoder operate in one of the
+   * several AQ_modes supported.
+   *
+   * By default, encoder operates with AQ_Mode 0(adaptive quantization off).
+   */
   VP9E_SET_AQ_MODE,
 
+  /*!\brief Codec control function to enable/disable periodic Q boost
+   *
+   * One VP9 encoder speed feature is to enable quality boost by lowering
+   * frame level Q periodically. This control function provides a mean to
+   * turn on/off this feature.
+   *               0 = off
+   *               1 = on
+   *
+   * By default, the encoder is allowed to use this feature for appropriate
+   * encoding modes.
+   */
+  VP9E_SET_FRAME_PERIODIC_BOOST,
+
+  /*!\brief control function to set noise sensitivity
+   *
+   *  0: off, 1: OnYOnly
+   */
+  VP9E_SET_NOISE_SENSITIVITY,
+
+  /*!\brief control function to turn on/off SVC in encoder.
+   * \note Return value is VPX_CODEC_INVALID_PARAM if the encoder does not
+   *       support SVC in its current encoding mode
+   *  0: off, 1: on
+   */
   VP9E_SET_SVC,
-  VP9E_SET_SVC_PARAMETERS
+
+  /*!\brief control function to set parameters for SVC.
+   * \note Parameters contain min_q, max_q, scaling factor for each of the
+   *       SVC layers.
+   */
+  VP9E_SET_SVC_PARAMETERS,
+
+  /*!\brief control function to set svc layer for spatial and temporal.
+   * \note Valid ranges: 0..#vpx_codec_enc_cfg::ss_number_layers for spatial
+   *                     layer and 0..#vpx_codec_enc_cfg::ts_number_layers for
+   *                     temporal layer.
+   */
+  VP9E_SET_SVC_LAYER_ID,
+
+  /*!\brief control function to set content type.
+   * \note Valid parameter range:
+   *              VP9E_CONTENT_DEFAULT = Regular video content (Default)
+   *              VP9E_CONTENT_SCREEN  = Screen capture content
+   */
+  VP9E_SET_TUNE_CONTENT,
+
+  /*!\brief control function to get svc layer ID.
+   * \note The layer ID returned is for the data packet from the registered
+   *       callback function.
+   */
+  VP9E_GET_SVC_LAYER_ID,
+
+  /*!\brief control function to register callback for getting per layer packet.
+   * \note Parameter for this control function is a structure with a callback
+   *       function and a pointer to private data used by the callback.
+   */
+  VP9E_REGISTER_CX_CALLBACK,
+
+  /*!\brief control function to set color space info.
+   * \note Valid ranges: 0..7, default is "UNKNOWN".
+   *                     0 = UNKNOWN,
+   *                     1 = BT_601
+   *                     2 = BT_709
+   *                     3 = SMPTE_170
+   *                     4 = SMPTE_240
+   *                     5 = BT_2020
+   *                     6 = RESERVED
+   *                     7 = SRGB
+   */
+  VP9E_SET_COLOR_SPACE,
 };
 
 /*!\brief vpx 1-D scaling mode
@@ -257,7 +442,7 @@ typedef struct vpx_scaling_mode {
 /*!\brief VP8 token partition mode
  *
  * This defines VP8 partitioning mode for compressed data, i.e., the number of
- * sub-streams in the bitstream. Used for parallelized decoding.
+ * sub-streams in the bitstream. Used for parallelized decoding.
  *
  */
 
@@ -268,6 +453,12 @@ typedef enum {
   VP8_EIGHT_TOKENPARTITION = 3
 } vp8e_token_partitions;
 
+/*!brief VP9 encoder content type */
+typedef enum {
+  VP9E_CONTENT_DEFAULT,
+  VP9E_CONTENT_SCREEN,
+  VP9E_CONTENT_INVALID
+} vp9e_tune_content;
 
 /*!\brief VP8 model tuning parameters
  *
@@ -279,23 +470,17 @@ typedef enum {
   VP8_TUNE_SSIM
 } vp8e_tuning;
 
-/*!\brief  vp9 svc parameters
+/*!\brief  vp9 svc layer parameters
  *
- * This defines parameters for svc encoding.
+ * This defines the spatial and temporal layer id numbers for svc encoding.
+ * This is used with the #VP9E_SET_SVC_LAYER_ID control to set the spatial and
+ * temporal layer id for the current frame.
  *
  */
-typedef struct vpx_svc_parameters {
-  unsigned int width;         /**< width of current spatial layer */
-  unsigned int height;        /**< height of current spatial layer */
-  int layer;                  /**< current layer number - 0 = base */
-  int flags;                  /**< encode frame flags */
-  int max_quantizer;          /**< max quantizer for current layer */
-  int min_quantizer;          /**< min quantizer for current layer */
-  int distance_from_i_frame;  /**< frame number within current gop */
-  int lst_fb_idx;             /**< last frame frame buffer index */
-  int gld_fb_idx;             /**< golden frame frame buffer index */
-  int alt_fb_idx;             /**< alt reference frame frame buffer index */
-} vpx_svc_parameters_t;
+typedef struct vpx_svc_layer_id {
+  int spatial_layer_id;       /**< Spatial layer id number. */
+  int temporal_layer_id;      /**< Temporal layer id number. */
+} vpx_svc_layer_id_t;
 
 /*!\brief VP8 encoder control function parameter type
  *
@@ -312,12 +497,16 @@ VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_UPD_ENTROPY,            int)
 VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_UPD_REFERENCE,          int)
 VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_USE_REFERENCE,          int)
 
+VPX_CTRL_USE_TYPE(VP8E_SET_FRAME_FLAGS,        int)
+VPX_CTRL_USE_TYPE(VP8E_SET_TEMPORAL_LAYER_ID,  int)
 VPX_CTRL_USE_TYPE(VP8E_SET_ROI_MAP,            vpx_roi_map_t *)
 VPX_CTRL_USE_TYPE(VP8E_SET_ACTIVEMAP,          vpx_active_map_t *)
 VPX_CTRL_USE_TYPE(VP8E_SET_SCALEMODE,          vpx_scaling_mode_t *)
 
 VPX_CTRL_USE_TYPE(VP9E_SET_SVC,                int)
-VPX_CTRL_USE_TYPE(VP9E_SET_SVC_PARAMETERS,     vpx_svc_parameters_t *)
+VPX_CTRL_USE_TYPE(VP9E_SET_SVC_PARAMETERS,     void *)
+VPX_CTRL_USE_TYPE(VP9E_REGISTER_CX_CALLBACK,   void *)
+VPX_CTRL_USE_TYPE(VP9E_SET_SVC_LAYER_ID,       vpx_svc_layer_id_t *)
 
 VPX_CTRL_USE_TYPE(VP8E_SET_CPUUSED,            int)
 VPX_CTRL_USE_TYPE(VP8E_SET_ENABLEAUTOALTREF,   unsigned int)
@@ -328,7 +517,7 @@ VPX_CTRL_USE_TYPE(VP8E_SET_TOKEN_PARTITIONS,   int) /* vp8e_token_partitions */
 
 VPX_CTRL_USE_TYPE(VP8E_SET_ARNR_MAXFRAMES,     unsigned int)
 VPX_CTRL_USE_TYPE(VP8E_SET_ARNR_STRENGTH,     unsigned int)
-VPX_CTRL_USE_TYPE(VP8E_SET_ARNR_TYPE,     unsigned int)
+VPX_CTRL_USE_TYPE_DEPRECATED(VP8E_SET_ARNR_TYPE,     unsigned int)
 VPX_CTRL_USE_TYPE(VP8E_SET_TUNING,             int) /* vp8e_tuning */
 VPX_CTRL_USE_TYPE(VP8E_SET_CQ_LEVEL,      unsigned int)
 
@@ -337,8 +526,14 @@ VPX_CTRL_USE_TYPE(VP9E_SET_TILE_ROWS,  int)
 
 VPX_CTRL_USE_TYPE(VP8E_GET_LAST_QUANTIZER,     int *)
 VPX_CTRL_USE_TYPE(VP8E_GET_LAST_QUANTIZER_64,  int *)
+VPX_CTRL_USE_TYPE(VP9E_GET_SVC_LAYER_ID,  vpx_svc_layer_id_t *)
 
 VPX_CTRL_USE_TYPE(VP8E_SET_MAX_INTRA_BITRATE_PCT, unsigned int)
+VPX_CTRL_USE_TYPE(VP8E_SET_MAX_INTER_BITRATE_PCT, unsigned int)
+
+VPX_CTRL_USE_TYPE(VP8E_SET_GF_CBR_BOOST_PCT, unsigned int)
+
+VPX_CTRL_USE_TYPE(VP8E_SET_SCREEN_CONTENT_MODE, unsigned int)
 
 VPX_CTRL_USE_TYPE(VP9E_SET_LOSSLESS, unsigned int)
 
@@ -346,9 +541,16 @@ VPX_CTRL_USE_TYPE(VP9E_SET_FRAME_PARALLEL_DECODING, unsigned int)
 
 VPX_CTRL_USE_TYPE(VP9E_SET_AQ_MODE, unsigned int)
 
+VPX_CTRL_USE_TYPE(VP9E_SET_FRAME_PERIODIC_BOOST, unsigned int)
+
+VPX_CTRL_USE_TYPE(VP9E_SET_NOISE_SENSITIVITY,  unsigned int)
+
+VPX_CTRL_USE_TYPE(VP9E_SET_TUNE_CONTENT, int) /* vp9e_tune_content */
+
+VPX_CTRL_USE_TYPE(VP9E_SET_COLOR_SPACE, int)
 /*! @} - end defgroup vp8_encoder */
 #ifdef __cplusplus
 }  // extern "C"
 #endif
 
-#endif
+#endif  // VPX_VP8CX_H_

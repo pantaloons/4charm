@@ -44,21 +44,22 @@ static int get_cpu_count()
 #endif
 #elif defined(_WIN32)
     {
-        PGNSI pGNSI;
+        //PGNSI pGNSI;
         SYSTEM_INFO sysinfo;
 
         /* Call GetNativeSystemInfo if supported or
          * GetSystemInfo otherwise. */
 
-       /* pGNSI = (PGNSI) GetProcAddress(
-                GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
-        if (pGNSI != NULL)
-            pGNSI(&sysinfo);
-        else*/
-            //GetSystemInfo(&sysinfo);
+        //pGNSI = (PGNSI) GetProcAddress(
+        //        GetModuleHandle(TEXT("kernel32.dll")), "GetNativeSystemInfo");
+        //if (pGNSI != NULL)
+        //    pGNSI(&sysinfo);
+        //else
+        //    GetSystemInfo(&sysinfo);
 
-        //core_count = sysinfo.dwNumberOfProcessors;
-		core_count = 2;
+		GetNativeSystemInfo(&sysinfo);
+
+        core_count = sysinfo.dwNumberOfProcessors;
     }
 #elif defined(__OS2__)
     {

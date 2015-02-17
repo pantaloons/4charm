@@ -132,13 +132,7 @@ void GIFRenderer::RenderWebM(float timeDelta, bool forceUpdate)
 {
 	uint64_t cacheTimestamp = m_timestamp;
 
-	//long long start = GetTime();
-
 	ScanToNextFrame(timeDelta);
-
-	//WCHAR x[500];
-	//swprintf_s(x, 500, L"#1 Took: %lld  ms.\r\n", GetDuration(start));
-	//OutputDebugString(x);
 
 	if (!forceUpdate && cacheTimestamp == m_timestamp)
 	{
@@ -171,20 +165,7 @@ void GIFRenderer::RenderWebMToSurface(vpx_image_t *image)
 
 	assert(m_yuvw == image->d_w && m_yuvh == image->d_h);
 
-	//auto begina = GetTime();
-
-
 	uint8_t *rgb = m_yuv.get(), *py = image->planes[0], *pu = image->planes[1], *pv = image->planes[2];
-
-	//for (int j = 0; j < image->d_h; ++j){
-	//	for (int i = 0; i < image->d_w; ++i){
-	//		rgb[0] = py[j * image->stride[0] + i];
-	//		rgb[1] = py[j * image->stride[0] + i];
-	//		rgb[2] = py[j * image->stride[0] + i];
-	//		rgb[3] = 255;
-	//		rgb += 4;
-	//	}
-	//}
 
 	int dw = image->d_w;
 	int dh = image->d_h;
@@ -221,17 +202,11 @@ void GIFRenderer::RenderWebMToSurface(vpx_image_t *image)
 		x++;
 	}
 
-	//auto dura = GetDuration(begina);
-	//auto begin = GetTime();
-
 	CD3D11_TEXTURE2D_DESC textureDescription(DXGI_FORMAT_B8G8R8A8_UNORM, dw, dh, 1, 1);
 	D3D11_SUBRESOURCE_DATA data = { m_yuv.get(), dw * sizeof(uint32_t), 0 };
 
 	ComPtr<ID3D11Texture2D> texture;
 	ThrowIfFailed(m_d3dDevice->CreateTexture2D(&textureDescription, &data, &texture));
-
-	//auto dur1 = GetDuration(begin);
-	//auto begin2 = GetTime();
 
 	D3D11_SHADER_RESOURCE_VIEW_DESC shaderViewDescription;
 	memset(&shaderViewDescription, 0, sizeof(shaderViewDescription));
@@ -246,9 +221,6 @@ void GIFRenderer::RenderWebMToSurface(vpx_image_t *image)
 	m_d3dContext->ClearRenderTargetView(m_renderTargetView.Get(), black);
 	m_d3dContext->ClearDepthStencilView(m_depthStencilView.Get(), D3D11_CLEAR_DEPTH, 1.0f, 0);
 	m_d3dContext->OMSetRenderTargets(1, m_renderTargetView.GetAddressOf(), m_depthStencilView.Get());
-
-	//auto dur2 = GetDuration(begin2);
-	//auto begin3 = GetTime();
 
 	double rw = m_renderTargetSize.Width / (double)dw;
 	double rh = m_renderTargetSize.Height / (double)dh;
@@ -273,12 +245,6 @@ void GIFRenderer::RenderWebMToSurface(vpx_image_t *image)
 	m_sprite->Begin();
 	m_sprite->Draw(resource.Get(), rect);
 	m_sprite->End();
-
-	//auto dur3 = GetDuration(begin3);
-
-	//WCHAR x[500];
-	//swprintf_s(x, 500, L"#2 Took: %lld %lld %lld %lld ms.\r\n", dura, dur1, dur2, dur3);
-	//OutputDebugString(x);
 }
 
 void GIFRenderer::ScanToNextFrame(float timeDelta)

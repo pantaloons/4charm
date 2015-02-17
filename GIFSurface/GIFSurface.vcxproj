@@ -58,19 +58,27 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
     <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)$(IntDir)\GIFLib\;$(SolutionDir)$(IntDir)\nestegg\;$(SolutionDir)$(IntDir)\BeginThreadEx\;$(SolutionDir)$(IntDir)\vpx_arm\;$(SolutionDir)$(IntDir)\SpriteBatch\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(SolutionDir)\Build\bin.$(Platform).$(Configuration)</LibraryPath>
+    <OutDir>$(SolutionDir)\Build\bin.$(Platform).$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
     <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)$(IntDir)\GIFLib\;$(SolutionDir)$(IntDir)\nestegg\;$(SolutionDir)$(IntDir)\BeginThreadEx\;$(SolutionDir)$(IntDir)\vpx_arm\;$(SolutionDir)$(IntDir)\SpriteBatch\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(SolutionDir)\Build\bin.$(Platform).$(Configuration)</LibraryPath>
+    <OutDir>$(SolutionDir)\Build\bin.$(Platform).$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)$(IntDir)\GIFLib\;$(SolutionDir)$(IntDir)\nestegg\;$(SolutionDir)$(IntDir)\BeginThreadEx\;$(SolutionDir)$(IntDir)\vpx\;$(SolutionDir)$(IntDir)\SpriteBatch\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(SolutionDir)\Build\bin.$(Platform).$(Configuration)</LibraryPath>
+    <OutDir>$(SolutionDir)\Build\bin.$(Platform).$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
     <IncludePath>$(SolutionDir);$(IncludePath)</IncludePath>
-    <LibraryPath>$(SolutionDir)$(IntDir)\GIFLib\;$(SolutionDir)$(IntDir)\nestegg\;$(SolutionDir)$(IntDir)\BeginThreadEx\;$(SolutionDir)$(IntDir)\vpx\;$(SolutionDir)$(IntDir)\SpriteBatch\;$(LibraryPath)</LibraryPath>
+    <LibraryPath>$(LibraryPath);$(SolutionDir)\Build\bin.$(Platform).$(Configuration)</LibraryPath>
+    <OutDir>$(SolutionDir)\Build\bin.$(Platform).$(Configuration)\</OutDir>
+    <IntDir>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</IntDir>
   </PropertyGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|Win32'">
     <ClCompile>
@@ -85,7 +93,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>ole32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
-      <AdditionalDependencies>vpxmdd.lib;nestegg.lib;BeginThreadEx.lib;GIFLib.lib;D3D11.lib;SpriteBatch.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vpx_$(Platform).lib;nestegg.lib;GIFLib.lib;SpriteBatch.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|Win32'">
@@ -101,6 +109,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>ole32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
+      <AdditionalDependencies>vpx_$(Platform).lib;nestegg.lib;GIFLib.lib;SpriteBatch.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">
@@ -116,7 +125,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>ole32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
-      <AdditionalDependencies>vpxmdd.lib;BeginThreadEx.lib;GIFLib.lib;nestegg.lib;D3D11.lib;SpriteBatch.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vpx_$(Platform).lib;nestegg.lib;GIFLib.lib;SpriteBatch.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">
@@ -132,7 +141,7 @@
       <IgnoreAllDefaultLibraries>false</IgnoreAllDefaultLibraries>
       <IgnoreSpecificDefaultLibraries>ole32.lib;%(IgnoreSpecificDefaultLibraries)</IgnoreSpecificDefaultLibraries>
       <GenerateWindowsMetadata>true</GenerateWindowsMetadata>
-      <AdditionalDependencies>vpxmd.lib;nestegg.lib;GIFLib.lib;SpriteBatch.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalDependencies>vpx_$(Platform).lib;nestegg.lib;GIFLib.lib;SpriteBatch.lib;d3d11.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemGroup>

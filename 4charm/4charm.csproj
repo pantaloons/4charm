@@ -31,32 +31,13 @@
     <TargetFrameworkProfile />
     <DefaultLanguage>en-US</DefaultLanguage>
   </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|AnyCPU' ">
-    <DebugSymbols>true</DebugSymbols>
-    <DebugType>full</DebugType>
-    <Optimize>false</Optimize>
-    <OutputPath>Bin\Debug</OutputPath>
-    <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
-    <NoStdLib>true</NoStdLib>
-    <NoConfig>true</NoConfig>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
-  <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|AnyCPU' ">
-    <DebugType>pdbonly</DebugType>
-    <Optimize>true</Optimize>
-    <OutputPath>Bin\Release</OutputPath>
-    <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
-    <NoStdLib>true</NoStdLib>
-    <NoConfig>true</NoConfig>
-    <ErrorReport>prompt</ErrorReport>
-    <WarningLevel>4</WarningLevel>
-  </PropertyGroup>
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Debug|x86' ">
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Bin\x86\Debug</OutputPath>
+    <OutputPath>$(SolutionDir)\Build\bin.$(Platform).$(Configuration)\</OutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -67,7 +48,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|x86' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>Bin\x86\Release</OutputPath>
+    <OutputPath>$(SolutionDir)\Build\bin.$(Platform).$(Configuration)\</OutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</IntermediateOutputPath>
     <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -79,7 +62,9 @@
     <DebugSymbols>true</DebugSymbols>
     <DebugType>full</DebugType>
     <Optimize>false</Optimize>
-    <OutputPath>Bin\ARM\Debug</OutputPath>
+    <OutputPath>$(SolutionDir)\Build\bin.$(Platform).$(Configuration)\</OutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</IntermediateOutputPath>
     <DefineConstants>DEBUG;TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -90,7 +75,9 @@
   <PropertyGroup Condition=" '$(Configuration)|$(Platform)' == 'Release|ARM' ">
     <DebugType>pdbonly</DebugType>
     <Optimize>true</Optimize>
-    <OutputPath>Bin\ARM\Release</OutputPath>
+    <OutputPath>$(SolutionDir)\Build\bin.$(Platform).$(Configuration)\</OutputPath>
+    <BaseIntermediateOutputPath>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</BaseIntermediateOutputPath>
+    <IntermediateOutputPath>$(SolutionDir)\Build\obj.$(Platform).$(Configuration)\$(ProjectName)\</IntermediateOutputPath>
     <DefineConstants>TRACE;SILVERLIGHT;WINDOWS_PHONE</DefineConstants>
     <NoStdLib>true</NoStdLib>
     <NoConfig>true</NoConfig>
@@ -447,7 +434,7 @@
     </Reference>
     <Reference Include="System.Windows.Interactivity, Version=3.9.5.0, Culture=neutral, PublicKeyToken=31bf3856ad364e35, processorArchitecture=MSIL" />
     <Reference Include="System.Xml.XPath">
-      <HintPath>..\..\..\..\..\Program Files (x86)\Microsoft SDKs\Silverlight\v4.0\Libraries\Client\System.Xml.XPath.dll</HintPath>
+      <HintPath>..\..\..\..\..\..\Program Files (x86)\Microsoft SDKs\Silverlight\v4.0\Libraries\Client\System.Xml.XPath.dll</HintPath>
     </Reference>
   </ItemGroup>
   <ItemGroup>

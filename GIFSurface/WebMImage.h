@@ -2,7 +2,7 @@
 
 #include <libvpx\vpx\vpx_decoder.h>
 #include <vector>
-#include <libvpx\nestegg\include\nestegg\nestegg.h>
+#include <nestegg\nestegg.h>
 
 #include <memory>
 

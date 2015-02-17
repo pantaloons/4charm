@@ -9,29 +9,40 @@
  */
 
 
-#ifndef _PTHREAD_EMULATION
-#define _PTHREAD_EMULATION
+#ifndef VP8_COMMON_THREADING_H_
+#define VP8_COMMON_THREADING_H_
+
+#ifdef __cplusplus
+extern "C" {
+#endif
 
 #if CONFIG_OS_SUPPORT && CONFIG_MULTITHREAD
 
 /* Thread management macros */
 #ifdef _WIN32
-
 /* Win32 */
 #include <process.h>
 #include <windows.h>
-
-#include <BeginThreadEx\pch.h>
-
 #define THREAD_FUNCTION DWORD WINAPI
 #define THREAD_FUNCTION_RETURN DWORD
 #define THREAD_SPECIFIC_INDEX DWORD
 #define pthread_t HANDLE
 #define pthread_attr_t DWORD
-#define pthread_create(thhandle,attr,thfunc,tharg) (int)((*thhandle=(HANDLE)_beginthreadex2(NULL,0,(unsigned int (__stdcall *)(void *))thfunc,tharg,0,NULL))==NULL)
+
+extern uintptr_t _beginthreadex(
+	void *security,
+	unsigned stack_size,
+	unsigned(__stdcall *start_address)(void *),
+	void *arglist,
+	unsigned initflag,
+	unsigned *thrdaddr
+	);
+
+#define pthread_create(thhandle,attr,thfunc,tharg) (int)((*thhandle=(HANDLE)_beginthreadex(NULL,0,(unsigned int (__stdcall *)(void *))thfunc,tharg,0,NULL))==NULL)
 #define pthread_join(thread, result) ((WaitForSingleObjectEx((thread),INFINITE,FALSE)!=WAIT_OBJECT_0) || !CloseHandle(thread))
 #define pthread_detach(thread) if(thread!=NULL)CloseHandle(thread)
-#define thread_sleep(nms) Sleep(nms)
+//#define thread_sleep(nms) SleepEx(nms,FALSE)
+#define thread_sleep(nms)
 #define pthread_cancel(thread) terminate_thread(thread,0)
 #define ts_key_create(ts_key, destructor) {ts_key = TlsAlloc();};
 #define pthread_getspecific(ts_key) TlsGetValue(ts_key)
@@ -85,11 +96,12 @@
 #ifdef _WIN32
 #define sem_t HANDLE
 #define pause(voidpara) __asm PAUSE
-#define sem_init(sem, sem_attr1, sem_init_value) (int)((*sem = CreateSemaphoreEx(NULL,0,32768,NULL,0,SEMAPHORE_MODIFY_STATE))==NULL)
+#define sem_init(sem, sem_attr1, sem_init_value) (int)((*sem = CreateSemaphoreEx(NULL,0,32768,NULL,0,SEMAPHORE_ALL_ACCESS))==NULL)
 #define sem_wait(sem) (int)(WAIT_OBJECT_0 != WaitForSingleObjectEx(*sem,INFINITE,FALSE))
 #define sem_post(sem) ReleaseSemaphore(*sem,1,NULL)
 #define sem_destroy(sem) if(*sem)((int)(CloseHandle(*sem))==TRUE)
 //#define thread_sleep(nms) SleepEx(nms,FALSE)
+#define thread_sleep(nms)
 
 #elif defined(__OS2__)
 typedef struct
@@ -187,4 +199,8 @@ static inline int sem_destroy(sem_t * sem)
 
 #endif /* CONFIG_OS_SUPPORT && CONFIG_MULTITHREAD */
 
+#ifdef __cplusplus
+}  // extern "C"
 #endif
+
+#endif  // VP8_COMMON_THREADING_H_

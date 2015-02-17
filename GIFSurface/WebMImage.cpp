@@ -70,7 +70,7 @@ namespace GIFSurface
 		m_data.Data = m_resource.get();
 		io.userdata = &m_data;
 
-		if (nestegg_init(&m_demux_ctx, io, NULL))
+		if (nestegg_init(&m_demux_ctx, io, NULL, -1))
 		{
 			throw ref new Platform::FailureException(L"Failed to initialize nestegg.");
 		}
