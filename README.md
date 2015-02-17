@@ -22,7 +22,7 @@ Third party library for decoding VP8/VP9 streams, with a couple of changes to li
 Wrapper Visual Studio project around libvpx. These projects are automatically generated from the libvpx sources. Statically linked into GIFSurface.dll
 
 #### nestegg
-Third party library to read WebM files. Chunks are read from the file by nestegg, and then passed to libvpx to be sequentially decoded.
+Third party library to read WebM files. Chunks are read from the file by nestegg, and then passed to libvpx to be sequentially decoded. Statically linked by GIFSurface.dll
 
 #### SpriteBatch
-Helper library for rendering bitmaps decoded by GIFLib/libvpx to the screen.
+Helper library for rendering bitmaps decoded by GIFLib/libvpx to the screen. Statically linked by GIFSurface.dll
