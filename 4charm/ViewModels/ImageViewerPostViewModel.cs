@@ -64,6 +64,12 @@ namespace _4charm.ViewModels
             set { SetProperty(value); }
         }
 
+        public Models.API.APIPost.FileTypes FileType
+        {
+            get { return GetProperty<Models.API.APIPost.FileTypes>(); }
+            set { SetProperty(value); }
+        }
+
         public ImageViewerPostViewModel(Post p)
         {
             Number = p.Number;
@@ -71,6 +77,7 @@ namespace _4charm.ViewModels
             ThumbnailSrc = p.ThumbnailSrc;
             ImageSrc = p.ImageSrc;
             AspectRatio = p.ImageWidth / (double)p.ImageHeight;
+            FileType = p.FileType;
 
             UpdateProgress = new ModelCommand<int>(DoUpdateProgress);
             IsDownloading = true;

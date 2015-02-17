@@ -1,7 +1,7 @@
 ﻿<?xml version="1.0" encoding="utf-8"?>
 <Deployment xmlns="http://schemas.microsoft.com/windowsphone/2012/deployment" AppPlatformVersion="8.0">
   <DefaultLanguage xmlns="" code="en-US" />
-  <App xmlns="" ProductID="{c5d3d938-e3b6-4a48-a9e0-f08f0cf9f567}" Title="4charm" RuntimeType="Silverlight" Version="1.0.0.7" Genre="apps.normal" Author="Michael McGee" Description="A beautiful modern, WP8 app for viewing the 4chan imageboard." Publisher="Michael McGee" PublisherID="{72de5835-e236-4581-a0a8-f1dda4a91fc3}">
+  <App xmlns="" ProductID="{c5d3d938-e3b6-4a48-a9e0-f08f0cf9f567}" Title="4charm" RuntimeType="Silverlight" Version="1.0.0.10" Genre="apps.normal" Author="Michael McGee" Description="A beautiful modern, WP8 app for viewing the 4chan imageboard." Publisher="Michael McGee" PublisherID="{72de5835-e236-4581-a0a8-f1dda4a91fc3}">
     <IconPath IsRelative="true" IsResource="false">Assets\ApplicationIcon.png</IconPath>
     <Capabilities>
       <Capability Name="ID_CAP_NETWORKING" />

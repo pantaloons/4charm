@@ -2,8 +2,10 @@
 
 #include "Direct3DBase.h"
 #include "GIFImage.h"
+#include "WebMImage.h"
 #include <GIFLIB\gif_lib.h>
 #include <SpriteBatch\SpriteBatch.h>
+#include <libvpx\vpx\vpx_decoder.h>
 
 #include <memory>
 #include <mutex>
@@ -20,10 +22,13 @@ public:
 	// Method for loading GIF
 internal:
 	void Reset();
-	void SetGIFResource(GIFSurface::GIFImage^ gif);
-	void ReleaseGIFResource();
+	void SetResource(GIFSurface::GIFImage^ gif);
+	void SetResource(GIFSurface::WebMImage^ webm);
+	void ReleaseResource();
 
 private:
+	// GIF stuff
+	void RenderGIF(float timeDelta, bool forceUpdate);
 	void SelectNextFrame(float timeDelta);
 	void BlitIntermediateFrames();
 	void SwapBuffers();
@@ -39,9 +44,22 @@ private:
 	int m_previousFrame;
 	float m_pending;
 
-	Microsoft::WRL::ComPtr<ID3D11Texture2D> m_texture;
-	Microsoft::WRL::ComPtr<ID3D11ShaderResourceView> m_resource;
-
 	int m_bufferIdx;
 	std::unique_ptr<uint32_t> m_buffer[2];
+
+	// WebM stuff
+	void RenderWebM(float timeDelta, bool forceUpdate);
+	void ScanToNextFrame(float timeDelta);
+	void RenderWebMToSurface(vpx_image_t *image);
+
+	bool m_hasFrame;
+	nestegg_packet *m_packet;
+	uint64_t m_timestamp;
+	float m_total;
+	unsigned int m_yuvw, m_yuvh;
+
+	std::unique_ptr<unsigned char> m_yuv;
+
+	vpx_image_t *m_image;
+	GIFSurface::WebMImage^ m_webm;
 };

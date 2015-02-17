@@ -31,6 +31,7 @@ namespace _4charm.ViewModels
             UnknownError
         };
 
+        private static readonly Regex CaptchaSuccessRegex = new Regex("<textarea dir=\"ltr\" readonly onclick=\"this.select\\(\\)\">([^<]+)</textarea>");
         private static readonly Regex ErrorRegex = new Regex("<span id=\"errmsg\" style=\"color: red;\">(Error: [^<]+)<");
         private static readonly Regex SuccessRegex = new Regex("<title>Post successful!</title>");
 
@@ -205,20 +206,11 @@ namespace _4charm.ViewModels
 
         public async Task<string> GetCaptcha()
         {
-            Uri uri = new Uri("http://www.google.com/recaptcha/api/challenge?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc");
-            string page = (await RequestManager.Current.GetStringAsync(uri)).Replace("\\75", "").Replace("\\075", "");
+            Uri uri = new Uri("http://www.google.com/recaptcha/api/fallback?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc");
 
-            int start = page.IndexOf("{");
-            int end = page.LastIndexOf("}");
+            Match m = Regex.Match(await RequestManager.Current.GetStringAsync(uri), "name=\"c\"\\s+value=\"([^\"]+)\"");
 
-            using (MemoryStream ms = new MemoryStream(Encoding.UTF8.GetBytes(page.Substring(start, end - start + 1))))
-            {
-                DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(APICaptcha));
-
-                APICaptcha captcha = await dcjs.ReadObjectAsync<APICaptcha>(ms);
-
-                return captcha.Challenge;
-            }
+            return m.Groups[1].Value;
         }
 
         private void DoSelectImage()
@@ -293,6 +285,45 @@ namespace _4charm.ViewModels
                 return SubmitResultType.EmptyCommentError;
             }
 
+            Uri captchaUri = new Uri("http://www.google.com/recaptcha/api/fallback?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc");
+            Dictionary<string, string> formData = new Dictionary<string, string>()
+            {
+                {"c", _token},
+                {"response", CaptchaText}
+            };
+
+            string captchaPage;
+
+            try
+            {
+                HttpResponseMessage capResponse = await RequestManager.Current.PostAsync(captchaUri, formData);
+                captchaPage = await capResponse.Content.ReadAsStringAsync();
+            }
+            catch
+            {
+                MessageBox.Show(AppResources.NewThreadPage_UnknownError);
+                return SubmitResultType.UnknownError;
+            }
+
+            string privateToken;
+
+            Match m;
+            if ((m = CaptchaSuccessRegex.Match(captchaPage)).Success)
+            {
+                privateToken = m.Groups[1].Value;
+            }
+            else
+            {
+                Task ignore = DoLoadCaptcha().ContinueWith(eresult =>
+                {
+                    throw eresult.Exception;
+                }, TaskContinuationOptions.OnlyOnFaulted | TaskContinuationOptions.ExecuteSynchronously);
+
+                CaptchaText = "";
+                IsCaptchaError = true;
+                return SubmitResultType.WrongCatpchaError;
+            }
+
             Uri uri = new Uri("https://sys.4chan.org/" + Board + "/post");
             Dictionary<string, string> formFields = new Dictionary<string, string>()
             {
@@ -302,8 +333,7 @@ namespace _4charm.ViewModels
                 {"email", Email},
                 {"sub", Subject},
                 {"com", Comment},
-                {"recaptcha_challenge_field", _token},
-                {"recaptcha_response_field", CaptchaText}
+                {"g-recaptcha-response", privateToken}
             };
 
             if (threadID != 0)
@@ -332,7 +362,6 @@ namespace _4charm.ViewModels
                 return SubmitResultType.UnknownError;
             }
 
-            Match m;
             if (SuccessRegex.IsMatch(result))
             {
                 OnSubmitSuccess(result);

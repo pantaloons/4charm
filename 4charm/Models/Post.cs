@@ -126,6 +126,11 @@ namespace _4charm.Models
         public bool IsGIF { get { return FileType == APIPost.FileTypes.gif; } }
 
         /// <summary>
+        /// If the uploaded image is a WebM.
+        /// </summary>
+        public bool IsWebM { get { return FileType == APIPost.FileTypes.webm; } }
+
+        /// <summary>
         /// Post comment.
         /// </summary>
         [DataMember]
@@ -174,7 +179,7 @@ namespace _4charm.Models
         {
             get
             {
-                return new Uri("http://t.4cdn.org/" + Thread.Board.Name + "/thumb/" + RenamedFileName + "s.jpg");
+                return new Uri("http://t.4cdn.org/" + Thread.Board.Name + "/" + RenamedFileName + "s.jpg");
             }
         }
 
@@ -185,7 +190,7 @@ namespace _4charm.Models
         {
             get
             {
-                return new Uri("http://i.4cdn.org/" + Thread.Board.Name + "/src/" + RenamedFileName + "." + FileType);
+                return new Uri("http://i.4cdn.org/" + Thread.Board.Name + "/" + RenamedFileName + "." + FileType);
             }
         }
 

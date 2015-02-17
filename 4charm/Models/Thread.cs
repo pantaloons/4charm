@@ -137,7 +137,7 @@ namespace _4charm.Models
         /// <returns>A list of the posts in the thread.</returns>
         public async Task<List<Post>> GetPostsAsync()
         {
-            using (Stream s = await RequestManager.Current.GetStreamAsync(new Uri("http://a.4cdn.org/" + Board.Name + "/res/" + Number + ".json")))
+            using (Stream s = await RequestManager.Current.GetStreamAsync(new Uri("http://a.4cdn.org/" + Board.Name + "/thread/" + Number + ".json")))
             {
                 DataContractJsonSerializer dcjs = new DataContractJsonSerializer(typeof(APIThread));
 

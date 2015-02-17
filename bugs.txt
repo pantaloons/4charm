@@ -1,3 +1,4 @@
 extra zoom
 text size option
-catalog search
+file names
+fix email field (it's gone)

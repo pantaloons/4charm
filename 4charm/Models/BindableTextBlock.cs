@@ -41,7 +41,7 @@ namespace _4charm.Models
         /// <summary>
         /// This matches quote links within the current thread.
         /// </summary>
-        private static Regex r = new Regex("^(/([^/]+)/res/)?(\\d+)#p(\\d+)$");
+        private static Regex r = new Regex("^(/([^/]+)/thread/(\\d+))?#p(\\d+)$");
 
         /// <summary>
         /// Quote linking to a text board. Currently this just removes the link information since
@@ -106,7 +106,7 @@ namespace _4charm.Models
                                 // the invocation.
                                 App.IsPostTapAllowed = false;
                                 PostViewModel pvm = (PostViewModel)textBlock.DataContext;
-                                pvm.QuoteLinkTapped(m.Groups[2].Value, ulong.Parse(m.Groups[3].Value), ulong.Parse(m.Groups[4].Value));
+                                pvm.QuoteLinkTapped(m.Groups[2].Value, m.Groups[3].Value, ulong.Parse(m.Groups[4].Value));
 
                                 // We clear this sentinel property on the dispatcher, since the routed tap events actually get queued on
                                 // the dispatcher and don't happen until this current function returns.

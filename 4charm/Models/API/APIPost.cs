@@ -101,7 +101,8 @@ namespace _4charm.Models.API
             png,
             gif,
             pdf,
-            swf
+            swf,
+            webm
         };
         public FileTypes FileType { get; set; }
 

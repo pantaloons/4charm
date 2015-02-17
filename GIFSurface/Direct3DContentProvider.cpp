@@ -3,7 +3,7 @@
 
 using namespace GIFSurface;
 
-Direct3DContentProvider::Direct3DContentProvider(GIFWrapper^ controller) :
+Direct3DContentProvider::Direct3DContentProvider(AnimatedWrapper^ controller) :
 	m_controller(controller)
 {
 	m_controller->RequestAdditionalFrame += ref new RequestAdditionalFrameHandler([=] ()

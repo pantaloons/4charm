@@ -7,18 +7,24 @@
     </Filter>
   </ItemGroup>
   <ItemGroup>
-    <ClCompile Include="pch.cpp" />
-    <ClCompile Include="GIFWrapper.cpp" />
-    <ClCompile Include="Direct3DContentProvider.cpp" />
+    <ClCompile Include="AnimatedWrapper.cpp" />
     <ClCompile Include="Direct3DBase.cpp" />
+    <ClCompile Include="Direct3DContentProvider.cpp" />
+    <ClCompile Include="GIFImage.cpp" />
     <ClCompile Include="GIFRenderer.cpp" />
+    <ClCompile Include="pch.cpp" />
+    <ClCompile Include="WebMImage.cpp" />
+    <ClCompile Include="WebMRenderer.cpp" />
   </ItemGroup>
   <ItemGroup>
-    <ClInclude Include="pch.h" />
-    <ClInclude Include="Direct3DContentProvider.h" />
-    <ClInclude Include="GIFWrapper.h" />
-    <ClInclude Include="Direct3DBase.h" />
-    <ClInclude Include="GIFRenderer.h" />
+    <ClInclude Include="AnimatedWrapper.h" />
     <ClInclude Include="BasicTimer.h" />
+    <ClInclude Include="Direct3DBase.h" />
+    <ClInclude Include="Direct3DContentProvider.h" />
+    <ClInclude Include="GIFImage.h" />
+    <ClInclude Include="GIFRenderer.h" />
+    <ClInclude Include="pch.h" />
+    <ClInclude Include="WebMImage.h" />
+    <ClInclude Include="WebMRenderer.h" />
   </ItemGroup>
 </Project>

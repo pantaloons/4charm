@@ -213,6 +213,7 @@ GifDrawBoxedText8x8(SavedImage *Image,
 {
     int i, j = 0, LineCount = 0, TextWidth = 0;
     const char *cp;
+	char *token = NULL;
 
     /* compute size of text to box */
     for (cp = legend; *cp; cp++)
@@ -234,7 +235,7 @@ GifDrawBoxedText8x8(SavedImage *Image,
 
     /* draw the text */
     i = 0;
-    cp = strtok((char *)legend, "\r\n");
+	cp = strtok_s((char *)legend, "\r\n", &token);
     do {
         int leadspace = 0;
 
@@ -243,7 +244,7 @@ GifDrawBoxedText8x8(SavedImage *Image,
 
         GifDrawText8x8(Image, x + border + (leadspace * GIF_FONT_WIDTH),
                  y + border + (GIF_FONT_HEIGHT * i++), cp, fg);
-        cp = strtok((char *)NULL, "\r\n");
+		cp = strtok_s((char *)NULL, "\r\n", &token);
     } while (cp);
 
     /* outline the box */

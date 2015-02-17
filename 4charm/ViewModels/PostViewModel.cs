@@ -309,9 +309,11 @@ namespace _4charm.ViewModels
         /// <param name="boardID">Board part of the quote hyperlink.</param>
         /// <param name="threadID">Thread ID of the quote hyperlink.</param>
         /// <param name="postID">Post ID of the quote hyperlink.</param>
-        public void QuoteLinkTapped(string boardID, ulong threadID, ulong postID)
+        public void QuoteLinkTapped(string boardID, string threadID, ulong postID)
         {
-            if ((boardID == "" || boardID == _post.Thread.Board.Name) && threadID == _post.Thread.Number && QuoteTapped != null)
+            ulong lThreadId = 0;
+            bool isCurrentThread = string.IsNullOrWhiteSpace(threadID) || (ulong.TryParse(threadID, out lThreadId) && lThreadId == _post.Thread.Number);
+            if ((boardID == "" || boardID == _post.Thread.Board.Name) && isCurrentThread && QuoteTapped != null)
             {
                 // The quote links into the current thread. The view model was constructed with an appropriate handler,
                 // since the existing thread view wants to handle this.

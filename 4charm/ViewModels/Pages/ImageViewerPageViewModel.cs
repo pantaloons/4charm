@@ -161,11 +161,19 @@ namespace _4charm.ViewModels
         {
             if (SelectedIndex >= 0 && SelectedIndex < ImagePosts.Count)
             {
+                bool cantSave = false;
+
+                Models.API.APIPost.FileTypes fileType = (ImagePosts[SelectedIndex] as ImageViewerPostViewModel).FileType;
+                if (fileType == Models.API.APIPost.FileTypes.webm || fileType == Models.API.APIPost.FileTypes.swf || fileType == Models.API.APIPost.FileTypes.gif)
+                {
+                    cantSave = true;
+                }
+
                 ProgressIndicator progress = new ProgressIndicator
                 {
                     IsVisible = true,
                     IsIndeterminate = true,
-                    Text = AppResources.ImageViewerPage_SavingImage
+                    Text = cantSave ? AppResources.ImageViewerPage_CantSave : AppResources.ImageViewerPage_SavingImage
                 };
 
                 PhoneApplicationPage page = (App.Current.RootVisual as PhoneApplicationFrame).Content as PhoneApplicationPage;
@@ -174,17 +182,24 @@ namespace _4charm.ViewModels
                 SystemTray.SetIsVisible(page, true);
                 SystemTray.SetProgressIndicator(page, progress);
 
-                bool result = await SaveInternal(ImagePosts[SelectedIndex] as ImageViewerPostViewModel);
-
-                if (result)
+                if (cantSave)
                 {
-                    progress.Text = AppResources.ImageViewerPage_ImageSaved;
-                    await Task.Delay(400);
+                    await Task.Delay(1000);
                 }
                 else
                 {
-                    progress.Text = AppResources.ImageViewerPage_ImageFailed;
-                    await Task.Delay(1000);
+                    bool result = await SaveInternal(ImagePosts[SelectedIndex] as ImageViewerPostViewModel);
+
+                    if (result)
+                    {
+                        progress.Text = AppResources.ImageViewerPage_ImageSaved;
+                        await Task.Delay(400);
+                    }
+                    else
+                    {
+                        progress.Text = AppResources.ImageViewerPage_ImageFailed;
+                        await Task.Delay(1000);
+                    }
                 }
 
                 SystemTray.SetProgressIndicator(page, null);

@@ -5,7 +5,7 @@
 #include <Windows.Phone.Graphics.Interop.h>
 #include <DrawingSurfaceNative.h>
 
-#include "GIFWrapper.h"
+#include "AnimatedWrapper.h"
 
 class Direct3DContentProvider : public Microsoft::WRL::RuntimeClass<
 		Microsoft::WRL::RuntimeClassFlags<Microsoft::WRL::WinRtClassicComMix>,
@@ -13,7 +13,7 @@ class Direct3DContentProvider : public Microsoft::WRL::RuntimeClass<
 		IDrawingSurfaceContentProviderNative>
 {
 public:
-	Direct3DContentProvider(GIFSurface::GIFWrapper^ controller);
+	Direct3DContentProvider(GIFSurface::AnimatedWrapper^ controller);
 
 	void ReleaseD3DResources();
 
@@ -27,7 +27,7 @@ public:
 private:
 	HRESULT InitializeTexture(_In_ const DrawingSurfaceSizeF* size);
 
-	GIFSurface::GIFWrapper^ m_controller;
+	GIFSurface::AnimatedWrapper^ m_controller;
 	Microsoft::WRL::ComPtr<IDrawingSurfaceRuntimeHostNative> m_host;
 	Microsoft::WRL::ComPtr<IDrawingSurfaceSynchronizedTextureNative> m_synchronizedTexture;
 };

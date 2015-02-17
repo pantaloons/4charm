@@ -375,4 +375,7 @@
   <data name="TilePicker_ChooseTile" xml:space="preserve">
     <value>choose tile</value>
   </data>
+  <data name="ImageViewerPage_CantSave" xml:space="preserve">
+    <value>Cannot save this filetype</value>
+  </data>
 </root>

@@ -34,7 +34,7 @@ namespace _4charm.Controls.Image
 
         private Size? _size;
         private Stream _streamSource;
-        private GIFWrapper _gifWrapper;
+        private AnimatedWrapper _animatedWrapper;
         private string _fileType;
         private bool _hasCreatedProvider;
 
@@ -48,7 +48,7 @@ namespace _4charm.Controls.Image
         {
             DefaultStyleKey = typeof(AnimatedImage);
 
-            _gifWrapper = new GIFWrapper();
+            _animatedWrapper = new AnimatedWrapper();
 
             SizeChanged += AnimatedImage_SizeChanged;
         }
@@ -106,7 +106,7 @@ namespace _4charm.Controls.Image
             {
                 _image.UnloadStreamSource();
             }
-            _gifWrapper.UnloadGIF();
+            _animatedWrapper.Unload();
         }
 
         private async Task ForceLoad()
@@ -155,7 +155,44 @@ namespace _4charm.Controls.Image
                     return;
                 }
 
-                _gifWrapper.SetGIFSource(gif);
+                _animatedWrapper.SetSource(gif);
+                _image.Opacity = 0;
+                _surface.Opacity = 1;
+            }
+            else if (_fileType == ".webm")
+            {
+                byte[] data = new byte[_streamSource.Length];
+                _streamSource.Seek(0, SeekOrigin.Begin);
+                _streamSource.Read(data, 0, (int)_streamSource.Length);
+
+                _isLoading = true;
+                WebMImage webm;
+                try
+                {
+                    webm = await Task.Run<WebMImage>(() => new WebMImage(data));
+                }
+                catch
+                {
+                    return;
+                }
+                finally
+                {
+                    if (!token.IsCancellationRequested)
+                    {
+                        Debug.Assert(_cancel.Token == token);
+                        _cancel = null;
+                        _isLoading = false;
+                    }
+                }
+
+                if (token.IsCancellationRequested)
+                {
+                    // The source got changed again, after this was called.
+                    webm.Dispose();
+                    return;
+                }
+
+                _animatedWrapper.SetSource(webm);
                 _image.Opacity = 0;
                 _surface.Opacity = 1;
             }
@@ -187,7 +224,7 @@ namespace _4charm.Controls.Image
 
         private void ShouldAnimateChanged()
         {
-            _gifWrapper.ShouldAnimate = ShouldAnimate;
+            _animatedWrapper.ShouldAnimate = ShouldAnimate;
         }
 
         private void CreateIfReady()
@@ -199,25 +236,25 @@ namespace _4charm.Controls.Image
 
             _hasCreatedProvider = true;
             UpdateRendererSize();
-            _surface.SetContentProvider(_gifWrapper.CreateContentProvider());
+            _surface.SetContentProvider(_animatedWrapper.CreateContentProvider());
         }
 
         private void UpdateRendererSize()
         {
             // Set window bounds in dips
-            _gifWrapper.WindowBounds = new Windows.Foundation.Size(
+            _animatedWrapper.WindowBounds = new Windows.Foundation.Size(
                 (float)_size.Value.Width,
                 (float)_size.Value.Height
                 );
 
             // Set native resolution in pixels
-            _gifWrapper.NativeResolution = new Windows.Foundation.Size(
+            _animatedWrapper.NativeResolution = new Windows.Foundation.Size(
                 (float)Math.Floor(_size.Value.Width *Application.Current.Host.Content.ScaleFactor / 100.0f + 0.5f),
                 (float)Math.Floor(_size.Value.Height *Application.Current.Host.Content.ScaleFactor / 100.0f + 0.5f)
                 );
 
             // Set render resolution to the full native resolution
-            _gifWrapper.RenderResolution = _gifWrapper.NativeResolution;
+            _animatedWrapper.RenderResolution = _animatedWrapper.NativeResolution;
         }
     }
 }

@@ -24,7 +24,7 @@ namespace _4charm.Models
             {"gif", new BoardID("gif", "Adult GIF", true)},
             {"h", new BoardID("h", "Hentai", true)},
             {"hr", new BoardID("hr", "High Resolution", true)},
-            {"k", new BoardID("k", "Weapons", true)},
+            {"k", new BoardID("k", "Weapons", false)},
             {"m", new BoardID("m", "Mecha", false)},
             {"o", new BoardID("o", "Auto", false)},
             {"p", new BoardID("p", "Photography", false)},

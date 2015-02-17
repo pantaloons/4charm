@@ -54,30 +54,30 @@ static int EGifBufferedOutput(GifFileType * GifFile, GifByteType * Buf,
  Returns a dynamically allocated GifFileType pointer which serves as the GIF
  info record. The Error member is cleared if successful.
 ******************************************************************************/
-GifFileType *
-EGifOpenFileName(const char *FileName, const bool TestExistence, int *Error)
-{
-
-    int FileHandle;
-    GifFileType *GifFile;
-
-    if (TestExistence)
-        FileHandle = open(FileName, O_WRONLY | O_CREAT | O_EXCL, 
-			  S_IREAD | S_IWRITE);
-    else
-        FileHandle = open(FileName, O_WRONLY | O_CREAT | O_TRUNC, 
-			  S_IREAD | S_IWRITE);
-
-    if (FileHandle == -1) {
-        if (Error != NULL)
-	    *Error = E_GIF_ERR_OPEN_FAILED;
-        return NULL;
-    }
-    GifFile = EGifOpenFileHandle(FileHandle, Error);
-    if (GifFile == (GifFileType *) NULL)
-        (void)close(FileHandle);
-    return GifFile;
-}
+//GifFileType *
+//EGifOpenFileName(const char *FileName, const bool TestExistence, int *Error)
+//{
+//
+//    int FileHandle;
+//    GifFileType *GifFile;
+//
+//    if (TestExistence)
+//        FileHandle = open(FileName, O_WRONLY | O_CREAT | O_EXCL, 
+//			  S_IREAD | S_IWRITE);
+//    else
+//        FileHandle = open(FileName, O_WRONLY | O_CREAT | O_TRUNC, 
+//			  S_IREAD | S_IWRITE);
+//
+//    if (FileHandle == -1) {
+//        if (Error != NULL)
+//	    *Error = E_GIF_ERR_OPEN_FAILED;
+//        return NULL;
+//    }
+//    GifFile = EGifOpenFileHandle(FileHandle, Error);
+//    if (GifFile == (GifFileType *) NULL)
+//        (void)close(FileHandle);
+//    return GifFile;
+//}
 
 /******************************************************************************
  Update a new GIF file, given its file handle, which must be opened for
@@ -86,53 +86,53 @@ EGifOpenFileName(const char *FileName, const bool TestExistence, int *Error)
  info record.
  Only fails on a memory allocation error.
 ******************************************************************************/
-GifFileType *
-EGifOpenFileHandle(const int FileHandle, int *Error)
-{
-    GifFileType *GifFile;
-    GifFilePrivateType *Private;
-    FILE *f;
-
-    GifFile = (GifFileType *) malloc(sizeof(GifFileType));
-    if (GifFile == NULL) {
-        return NULL;
-    }
-
-    memset(GifFile, '\0', sizeof(GifFileType));
-
-    Private = (GifFilePrivateType *)malloc(sizeof(GifFilePrivateType));
-    if (Private == NULL) {
-        free(GifFile);
-        if (Error != NULL)
-	    *Error = E_GIF_ERR_NOT_ENOUGH_MEM;
-        return NULL;
-    }
-    if ((Private->HashTable = _InitHashTable()) == NULL) {
-        free(GifFile);
-        free(Private);
-        if (Error != NULL)
-	    *Error = E_GIF_ERR_NOT_ENOUGH_MEM;
-        return NULL;
-    }
-
-#ifdef _WIN32
-    _setmode(FileHandle, O_BINARY);    /* Make sure it is in binary mode. */
-#endif /* _WIN32 */
-
-    f = fdopen(FileHandle, "wb");    /* Make it into a stream: */
-
-    GifFile->Private = (void *)Private;
-    Private->FileHandle = FileHandle;
-    Private->File = f;
-    Private->FileState = FILE_STATE_WRITE;
-
-    Private->Write = (OutputFunc) 0;    /* No user write routine (MRB) */
-    GifFile->UserData = (void *)NULL;    /* No user write handle (MRB) */
-
-    GifFile->Error = 0;
-
-    return GifFile;
-}
+//GifFileType *
+//EGifOpenFileHandle(const int FileHandle, int *Error)
+//{
+//    GifFileType *GifFile;
+//    GifFilePrivateType *Private;
+//    FILE *f;
+//
+//    GifFile = (GifFileType *) malloc(sizeof(GifFileType));
+//    if (GifFile == NULL) {
+//        return NULL;
+//    }
+//
+//    memset(GifFile, '\0', sizeof(GifFileType));
+//
+//    Private = (GifFilePrivateType *)malloc(sizeof(GifFilePrivateType));
+//    if (Private == NULL) {
+//        free(GifFile);
+//        if (Error != NULL)
+//	    *Error = E_GIF_ERR_NOT_ENOUGH_MEM;
+//        return NULL;
+//    }
+//    if ((Private->HashTable = _InitHashTable()) == NULL) {
+//        free(GifFile);
+//        free(Private);
+//        if (Error != NULL)
+//	    *Error = E_GIF_ERR_NOT_ENOUGH_MEM;
+//        return NULL;
+//    }
+//
+//#ifdef _WIN32
+//    _setmode(FileHandle, O_BINARY);    /* Make sure it is in binary mode. */
+//#endif /* _WIN32 */
+//
+//    f = fdopen(FileHandle, "wb");    /* Make it into a stream: */
+//
+//    GifFile->Private = (void *)Private;
+//    Private->FileHandle = FileHandle;
+//    Private->File = f;
+//    Private->FileState = FILE_STATE_WRITE;
+//
+//    Private->Write = (OutputFunc) 0;    /* No user write routine (MRB) */
+//    GifFile->UserData = (void *)NULL;    /* No user write handle (MRB) */
+//
+//    GifFile->Error = 0;
+//
+//    return GifFile;
+//}
 
 /******************************************************************************
  Output constructor that takes user supplied output function.
