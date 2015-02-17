@@ -208,7 +208,7 @@ namespace _4charm.ViewModels
         {
             Uri uri = new Uri("http://www.google.com/recaptcha/api/fallback?k=6Ldp2bsSAAAAAAJ5uyx_lx34lJeEpTLVkP5k04qc");
 
-            Match m = Regex.Match(await RequestManager.Current.GetStringAsync(uri), "name=\"c\"\\s+value=\"([^\"]+)\"");
+            Match m = Regex.Match(await RequestManager.Current.GetStringAsync(uri), "name=\"c\" value=\"([^\"]+)\"");
 
             return m.Groups[1].Value;
         }
