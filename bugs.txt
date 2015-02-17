@@ -1,4 +1,0 @@
-extra zoom
-text size option
-file names
-fix email field (it's gone)
