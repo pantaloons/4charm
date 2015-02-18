@@ -1406,7 +1406,8 @@ ne_read_block(nestegg * ctx, uint64_t block_id, uint64_t block_size, nestegg_pac
 
 	abs_timecode = timecode + cluster_tc;
 	if (abs_timecode < 0)
-		return -1;
+		abs_timecode = 0;
+		//return -1;
 
 	pkt = ne_alloc(sizeof(*pkt));
 	if (!pkt)

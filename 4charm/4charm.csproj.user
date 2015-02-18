@@ -10,11 +10,11 @@
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|x86'">
     <CurrentDeployCmdId>256</CurrentDeployCmdId>
-    <CurrentDeployID>30F105C9-681E-420b-A277-7C086EAD8A4E</CurrentDeployID>
+    <CurrentDeployID>A6BAF594-9315-40C3-AD16-F5B8A425A7AB</CurrentDeployID>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Release|x86'">
     <CurrentDeployCmdId>256</CurrentDeployCmdId>
-    <CurrentDeployID>30F105C9-681E-420b-A277-7C086EAD8A4E</CurrentDeployID>
+    <CurrentDeployID>A6BAF594-9315-40C3-AD16-F5B8A425A7AB</CurrentDeployID>
   </PropertyGroup>
   <PropertyGroup Condition="'$(Configuration)|$(Platform)' == 'Debug|ARM'">
     <CurrentDeployCmdId>256</CurrentDeployCmdId>
@@ -28,8 +28,8 @@
     <VisualStudio>
       <FlavorProperties GUID="{C089C8C0-30E0-4E22-80C0-CE093F111A43}">
         <SilverlightMobileCSProjectFlavor>
-          <FullDeploy>True</FullDeploy>
-          <DebuggerType>Managed</DebuggerType>
+          <FullDeploy>False</FullDeploy>
+          <DebuggerType>Native</DebuggerType>
           <DebuggerAgentType>Managed</DebuggerAgentType>
           <Tombstone>True</Tombstone>
         </SilverlightMobileCSProjectFlavor>
