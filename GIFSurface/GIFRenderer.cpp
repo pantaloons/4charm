@@ -112,22 +112,6 @@ void GIFRenderer::Render(float timeDelta, bool forceUpdate)
 	}
 }
 
-static long long GetTime()
-{
-	LARGE_INTEGER l2;
-	QueryPerformanceCounter(&l2);
-	return l2.QuadPart;
-}
-
-static long long GetDuration(long long start)
-{
-	LARGE_INTEGER freq;
-	QueryPerformanceFrequency(&freq);
-
-	long long l3 = ((GetTime() - start) * 1000) / freq.QuadPart;
-	return l3;
-}
-
 void GIFRenderer::RenderWebM(float timeDelta, bool forceUpdate)
 {
 	uint64_t cacheTimestamp = m_timestamp;

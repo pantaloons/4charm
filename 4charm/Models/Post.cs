@@ -14,7 +14,7 @@ namespace _4charm.Models
     /// of "/fa/ - 1111112", etc.
     /// 
     /// Posts should never actually be created, instead you should fetch a desired thread out of the cache using
-    /// ThreadCache.EnforceBoard("fa").EnforceBoard(1111111).EnforcePost(132144). This ensures uniqueness and
+    /// ThreadCache.EnforceBoard("fa").EnforceThread(1111111).EnforcePost(132144). This ensures uniqueness and
     /// consistency of post instances across the application.
     /// 
     /// A post contains all pertient information like poster name, comment, subject, image, etc. It also has a link
