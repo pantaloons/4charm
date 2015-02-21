@@ -205,114 +205,114 @@
     </ClCompile>
     <CustomBuild Include="vp8\common\arm\armv6\bilinearfilter_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_bilinearfilter_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_bilinearfilter_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_bilinearfilter_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_bilinearfilter_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_bilinearfilter_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_bilinearfilter_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\copymem8x4_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_copymem8x4_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_copymem8x4_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_copymem8x4_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_copymem8x4_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_copymem8x4_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_copymem8x4_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\copymem8x8_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_copymem8x8_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_copymem8x8_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_copymem8x8_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_copymem8x8_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_copymem8x8_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_copymem8x8_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\copymem16x16_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_copymem16x16_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_copymem16x16_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_copymem16x16_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_copymem16x16_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_copymem16x16_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_copymem16x16_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\dc_only_idct_add_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_dc_only_idct_add_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_dc_only_idct_add_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_dc_only_idct_add_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_dc_only_idct_add_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_dc_only_idct_add_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_dc_only_idct_add_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\iwalsh_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_iwalsh_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_iwalsh_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_iwalsh_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_iwalsh_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_iwalsh_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_iwalsh_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\filter_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_filter_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_filter_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_filter_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_filter_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_filter_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_filter_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\idct_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_idct_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_idct_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_idct_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_idct_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_idct_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_idct_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\loopfilter_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_loopfilter_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_loopfilter_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_loopfilter_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_loopfilter_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_loopfilter_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_loopfilter_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\simpleloopfilter_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_simpleloopfilter_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_simpleloopfilter_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_simpleloopfilter_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_simpleloopfilter_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_simpleloopfilter_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_simpleloopfilter_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\sixtappredict8x4_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_sixtappredict8x4_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_sixtappredict8x4_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_sixtappredict8x4_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_sixtappredict8x4_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_sixtappredict8x4_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_sixtappredict8x4_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\intra4x4_predict_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_intra4x4_predict_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_intra4x4_predict_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_intra4x4_predict_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_intra4x4_predict_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_intra4x4_predict_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_intra4x4_predict_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\dequant_idct_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_dequant_idct_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_dequant_idct_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_dequant_idct_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_dequant_idct_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_dequant_idct_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_dequant_idct_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\dequantize_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_dequantize_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_dequantize_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_dequantize_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_dequantize_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_dequantize_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_dequantize_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <ClCompile Include="..\libvpx\vp8\common\arm\armv6\idct_blk_v6.c">
@@ -320,50 +320,50 @@
     </ClCompile>
     <CustomBuild Include="vp8\common\arm\armv6\vp8_sad16x16_armv6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_sad16x16_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_sad16x16_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_sad16x16_armv6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_sad16x16_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_sad16x16_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_sad16x16_armv6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\vp8_variance8x8_armv6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance8x8_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance8x8_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance8x8_armv6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance8x8_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance8x8_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance8x8_armv6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\vp8_variance16x16_armv6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance16x16_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance16x16_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance16x16_armv6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance16x16_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance16x16_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance16x16_armv6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\vp8_variance_halfpixvar16x16_h_armv6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_h_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_h_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_h_armv6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_h_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_h_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_h_armv6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\vp8_variance_halfpixvar16x16_v_armv6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_v_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_v_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_v_armv6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_v_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_v_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_v_armv6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\common\arm\armv6\vp8_variance_halfpixvar16x16_hv_armv6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_hv_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_hv_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_hv_armv6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_hv_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_hv_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_common_arm_armv6_vp8_variance_halfpixvar16x16_hv_armv6.asm_asm.obj</Outputs>
     </CustomBuild>
     <ClCompile Include="..\libvpx\vp8\common\arm\neon\bilinearpredict_neon.c">
@@ -428,26 +428,26 @@
     </ClCompile>
     <CustomBuild Include="vp8\encoder\arm\armv6\vp8_short_fdct4x4_armv6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_encoder_arm_armv6_vp8_short_fdct4x4_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_encoder_arm_armv6_vp8_short_fdct4x4_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_encoder_arm_armv6_vp8_short_fdct4x4_armv6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_encoder_arm_armv6_vp8_short_fdct4x4_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_encoder_arm_armv6_vp8_short_fdct4x4_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_encoder_arm_armv6_vp8_short_fdct4x4_armv6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\encoder\arm\armv6\vp8_mse16x16_armv6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_encoder_arm_armv6_vp8_mse16x16_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_encoder_arm_armv6_vp8_mse16x16_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_encoder_arm_armv6_vp8_mse16x16_armv6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_encoder_arm_armv6_vp8_mse16x16_armv6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_encoder_arm_armv6_vp8_mse16x16_armv6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_encoder_arm_armv6_vp8_mse16x16_armv6.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp8\encoder\arm\armv6\walsh_v6.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_encoder_arm_armv6_walsh_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_encoder_arm_armv6_walsh_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp8_encoder_arm_armv6_walsh_v6.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp8_encoder_arm_armv6_walsh_v6.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp8_encoder_arm_armv6_walsh_v6.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp8_encoder_arm_armv6_walsh_v6.asm_asm.obj</Outputs>
     </CustomBuild>
     <ClCompile Include="..\libvpx\vp8\encoder\arm\neon\denoising_neon.c">
@@ -635,34 +635,34 @@
     </ClCompile>
     <CustomBuild Include="vp9\common\arm\neon\vp9_loopfilter_16_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_loopfilter_16_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_loopfilter_16_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_loopfilter_16_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_loopfilter_16_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_loopfilter_16_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_loopfilter_16_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_loopfilter_8_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_loopfilter_8_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_loopfilter_8_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_loopfilter_8_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_loopfilter_8_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_loopfilter_8_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_loopfilter_8_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_mb_lpf_neon.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_mb_lpf_neon.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_mb_lpf_neon.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_mb_lpf_neon.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_mb_lpf_neon.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_mb_lpf_neon.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_mb_lpf_neon.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_save_reg_neon.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_save_reg_neon.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_save_reg_neon.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_save_reg_neon.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_save_reg_neon.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_save_reg_neon.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_save_reg_neon.asm_asm.obj</Outputs>
     </CustomBuild>
     <ClCompile Include="..\libvpx\vp9\common\arm\neon\vp9_iht4x4_add_neon.c">
@@ -676,26 +676,26 @@
     </ClCompile>
     <CustomBuild Include="vp9\common\arm\neon\vp9_avg_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_avg_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_avg_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_avg_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_avg_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_avg_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_avg_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_convolve8_avg_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_convolve8_avg_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_convolve8_avg_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_convolve8_avg_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_convolve8_avg_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_convolve8_avg_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_convolve8_avg_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_convolve8_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_convolve8_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_convolve8_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_convolve8_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_convolve8_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_convolve8_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_convolve8_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <ClCompile Include="..\libvpx\vp9\common\arm\neon\vp9_convolve_neon.c">
@@ -703,26 +703,26 @@
     </ClCompile>
     <CustomBuild Include="vp9\common\arm\neon\vp9_copy_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_copy_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_copy_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_copy_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_copy_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_copy_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_copy_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_idct16x16_1_add_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct16x16_1_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct16x16_1_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct16x16_1_add_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct16x16_1_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct16x16_1_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct16x16_1_add_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_idct16x16_add_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct16x16_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct16x16_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct16x16_add_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct16x16_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct16x16_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct16x16_add_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <ClCompile Include="..\libvpx\vp9\common\arm\neon\vp9_idct16x16_neon.c">
@@ -730,66 +730,66 @@
     </ClCompile>
     <CustomBuild Include="vp9\common\arm\neon\vp9_idct32x32_1_add_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct32x32_1_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct32x32_1_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct32x32_1_add_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct32x32_1_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct32x32_1_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct32x32_1_add_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_idct32x32_add_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct32x32_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct32x32_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct32x32_add_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct32x32_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct32x32_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct32x32_add_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_idct4x4_1_add_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct4x4_1_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct4x4_1_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct4x4_1_add_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct4x4_1_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct4x4_1_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct4x4_1_add_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_idct4x4_add_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct4x4_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct4x4_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct4x4_add_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct4x4_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct4x4_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct4x4_add_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_idct8x8_1_add_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct8x8_1_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct8x8_1_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct8x8_1_add_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct8x8_1_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct8x8_1_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct8x8_1_add_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_idct8x8_add_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct8x8_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct8x8_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct8x8_add_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_idct8x8_add_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_idct8x8_add_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_idct8x8_add_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_loopfilter_4_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_loopfilter_4_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_loopfilter_4_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_loopfilter_4_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_loopfilter_4_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_loopfilter_4_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_loopfilter_4_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <CustomBuild Include="vp9\common\arm\neon\vp9_reconintra_neon_asm.asm.s">
       <Message Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_reconintra_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_reconintra_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Debug|ARM'">$(IntDir)vp9_common_arm_neon_vp9_reconintra_neon_asm.asm_asm.obj</Outputs>
       <Message Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">Assembling %(Filename)%(Extension)</Message>
-      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o $(IntDir)vp9_common_arm_neon_vp9_reconintra_neon_asm.asm_asm.obj</Command>
+      <Command Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">armasm -nologo -nowarn "%(FullPath)" -o "$(IntDir)vp9_common_arm_neon_vp9_reconintra_neon_asm.asm_asm.obj"</Command>
       <Outputs Condition="'$(Configuration)|$(Platform)'=='Release|ARM'">$(IntDir)vp9_common_arm_neon_vp9_reconintra_neon_asm.asm_asm.obj</Outputs>
     </CustomBuild>
     <ClCompile Include="..\libvpx\vp9\vp9_cx_iface.c">
