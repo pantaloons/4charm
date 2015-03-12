@@ -164,9 +164,9 @@ void GIFRenderer::RenderWebMToSurface(vpx_image_t *image)
 
 	int x = 0;
 
-	for (int j = 0; j < image->d_h; j += reduce)
+	for (unsigned int j = 0; j < image->d_h; j += reduce)
 	{
-		for (int i = 0; i < image->d_w; i += reduce)
+		for (unsigned int i = 0; i < image->d_w; i += reduce)
 		{
 			int y = py[i] - 16, u = pu[i / 2] - 128, v = pv[i / 2] - 128;
 			rgb[0] = CLIP(SCALEYUV(bcoeff(y, u, v)));
@@ -278,7 +278,6 @@ void GIFRenderer::ScanToNextFrame(float timeDelta)
 			unsigned char * data;
 			size_t data_size;
 
-			uint64_t tstamp;
 			nestegg_packet_data(pkt, chunk, &data, &data_size);
 
 			vpx_codec_err_t err = vpx_codec_decode(&(m_webm->m_decoder), data, data_size, NULL, 1);
@@ -307,7 +306,7 @@ void GIFRenderer::ScanToNextFrame(float timeDelta)
 
 		if (m_total - timecode > 30 * 1000 * 1000)
 		{
-			m_total = timecode + 30 * 1000 * 1000;
+			m_total = (float)(timecode + 30 * 1000 * 1000);
 			break;
 		}
 	}
