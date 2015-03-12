@@ -136,6 +136,11 @@ namespace _4charm.ViewModels
             get { return GetProperty<ulong>(); }
             set { SetProperty(value); }
         }
+        public string NumberQuotes
+        {
+            get { return GetProperty<string>(); }
+            set { SetProperty(value); }
+        }
         public string LongNumber
         {
             get { return GetProperty<string>(); }
@@ -244,6 +249,7 @@ namespace _4charm.ViewModels
             TruncatedCounterText = p.PostCount + " / " + p.ImageCount;
 
             Number = p.Number;
+            NumberQuotes = p.Number + p.Quotes.Count == 0 ? "" : " (" + p.Quotes.Count + ")";
             LongNumber = p.LongNumber;
 
             HasImage = _post.RenamedFileName != 0;
