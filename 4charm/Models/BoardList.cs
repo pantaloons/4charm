@@ -28,7 +28,7 @@ namespace _4charm.Models
             {"m", new BoardID("m", "Mecha", false)},
             {"o", new BoardID("o", "Auto", false)},
             {"p", new BoardID("p", "Photography", false)},
-            {"r", new BoardID("r", "Request", true)},
+            {"r", new BoardID("r", "Adult Requests", true)},
             {"s", new BoardID("s", "Sexy Beautiful Women", true)},
             {"t", new BoardID("t", "Torrents", true)},
             {"u", new BoardID("u", "Yuri", true)},
@@ -51,9 +51,10 @@ namespace _4charm.Models
             {"y", new BoardID("y", "Yaoi", true)},
 
             {"3", new BoardID("3", "3DCG", false)},
+            {"aco", new BoardID("aco", "Adult Cartoons", true)},
             {"adv", new BoardID("adv", "Advice", false)},
             {"an", new BoardID("an", "Animals & Nature", false)},
-            {"asp", new BoardID("asp", "Alternative Sports", false)},
+            {"asp", new BoardID("asp", "Alternative Sports & Wrestling", false)},
             {"biz", new BoardID("biz", "Business & Finance", false)},
             {"cgl", new BoardID("cgl", "Cosplay & EGL", false)},
             {"ck", new BoardID("ck", "Food & Cooking", false)},
@@ -63,12 +64,14 @@ namespace _4charm.Models
             {"fit", new BoardID("fit", "Fitness", false)},
             {"gd", new BoardID("gd", "Graphic Design", false)},
             {"hc", new BoardID("hc", "Hardcore", true)},
+            {"his", new BoardID("his", "History & Humanities", false)},
             {"int", new BoardID("int", "International", false)},
             {"jp", new BoardID("jp", "Otaku Culture", false)},
             {"lit", new BoardID("lit", "Literature", false)},
             {"mlp", new BoardID("mlp", "Pony", false)},
             {"mu", new BoardID("mu", "Music", false)},
             {"n", new BoardID("n", "Transportation", false)},
+            {"news", new BoardID("news", "Current News", false)},
             {"out", new BoardID("out", "Outdoors", false)},
             {"po", new BoardID("po", "Papercraft & Origami", false)},
             {"pol", new BoardID("pol", "Politically Incorrect", true)},
@@ -81,7 +84,10 @@ namespace _4charm.Models
             {"tv", new BoardID("tv", "Television & Film", false)},
             {"vp", new BoardID("vp", "Pokémon", false)},
             {"wsg", new BoardID("wsg", "Worksafe GIF", false)},
-            {"x", new BoardID("x", "Paranormal", false)}
+            {"x", new BoardID("x", "Paranormal", false)},
+            
+            {"trash", new BoardID("trash", "Off-Topic", true)},
+            {"wsr", new BoardID("wsr", "Worksafe Requests", false)}
         };
     }
 }
