@@ -24,8 +24,10 @@ void Direct3DBase::CreateDeviceResources()
 	// than the API default. It is required for compatibility with Direct2D.
 	UINT creationFlags = D3D11_CREATE_DEVICE_BGRA_SUPPORT;
 
-#if defined(_DEBUG)
+#if defined(_DEBUG) && !defined(_NO_D3D_DEBUG)
 	// If the project is in a debug build, enable debugging via SDK Layers with this flag.
+	// WARNING: According to http://blogs.msdn.com/b/chuckw/archive/2012/11/30/direct3d-sdk-debug-layer-tricks.aspx,
+	// D3D device debugging in a hybrid DirectX/Silverlight app is not permitted. 
 	creationFlags |= D3D11_CREATE_DEVICE_DEBUG;
 #endif
 
