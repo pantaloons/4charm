@@ -234,6 +234,7 @@
     <Content Include="Assets\ApplicationIcon.dark.png" />
     <Content Include="Assets\Boards\Fanart\3.jpg" />
     <Content Include="Assets\Boards\Fanart\a.jpg" />
+    <Content Include="Assets\Boards\Fanart\aco.jpg" />
     <Content Include="Assets\Boards\Fanart\adv.jpg" />
     <Content Include="Assets\Boards\Fanart\an.jpg" />
     <Content Include="Assets\Boards\Fanart\asp.jpg" />
@@ -254,6 +255,7 @@
     <Content Include="Assets\Boards\Fanart\gif.jpg" />
     <Content Include="Assets\Boards\Fanart\h.jpg" />
     <Content Include="Assets\Boards\Fanart\hc.jpg" />
+    <Content Include="Assets\Boards\Fanart\his.jpg" />
     <Content Include="Assets\Boards\Fanart\hm.jpg" />
     <Content Include="Assets\Boards\Fanart\hr.jpg" />
     <Content Include="Assets\Boards\Fanart\i.jpg" />
@@ -267,6 +269,7 @@
     <Content Include="Assets\Boards\Fanart\mlp.jpg" />
     <Content Include="Assets\Boards\Fanart\mu.jpg" />
     <Content Include="Assets\Boards\Fanart\n.jpg" />
+    <Content Include="Assets\Boards\Fanart\news.jpg" />
     <Content Include="Assets\Boards\Fanart\o.jpg" />
     <Content Include="Assets\Boards\Fanart\out.jpg" />
     <Content Include="Assets\Boards\Fanart\p.jpg" />
@@ -282,6 +285,7 @@
     <Content Include="Assets\Boards\Fanart\t.jpg" />
     <Content Include="Assets\Boards\Fanart\tg.jpg" />
     <Content Include="Assets\Boards\Fanart\toy.jpg" />
+    <Content Include="Assets\Boards\Fanart\trash.jpg" />
     <Content Include="Assets\Boards\Fanart\trv.jpg" />
     <Content Include="Assets\Boards\Fanart\tv.jpg" />
     <Content Include="Assets\Boards\Fanart\u.jpg" />
@@ -292,10 +296,12 @@
     <Content Include="Assets\Boards\Fanart\w.jpg" />
     <Content Include="Assets\Boards\Fanart\wg.jpg" />
     <Content Include="Assets\Boards\Fanart\wsg.jpg" />
+    <Content Include="Assets\Boards\Fanart\wsr.jpg" />
     <Content Include="Assets\Boards\Fanart\x.jpg" />
     <Content Include="Assets\Boards\Fanart\y.jpg" />
     <Content Include="Assets\Boards\Icons\3.jpg" />
     <Content Include="Assets\Boards\Icons\a.jpg" />
+    <Content Include="Assets\Boards\Icons\aco.jpg" />
     <Content Include="Assets\Boards\Icons\adv.jpg" />
     <Content Include="Assets\Boards\Icons\an.jpg" />
     <Content Include="Assets\Boards\Icons\asp.jpg" />
@@ -316,6 +322,7 @@
     <Content Include="Assets\Boards\Icons\gif.jpg" />
     <Content Include="Assets\Boards\Icons\h.jpg" />
     <Content Include="Assets\Boards\Icons\hc.jpg" />
+    <Content Include="Assets\Boards\Icons\his.jpg" />
     <Content Include="Assets\Boards\Icons\hm.jpg" />
     <Content Include="Assets\Boards\Icons\hr.jpg" />
     <Content Include="Assets\Boards\Icons\i.jpg" />
@@ -329,6 +336,7 @@
     <Content Include="Assets\Boards\Icons\mlp.jpg" />
     <Content Include="Assets\Boards\Icons\mu.jpg" />
     <Content Include="Assets\Boards\Icons\n.jpg" />
+    <Content Include="Assets\Boards\Icons\news.jpg" />
     <Content Include="Assets\Boards\Icons\o.jpg" />
     <Content Include="Assets\Boards\Icons\out.jpg" />
     <Content Include="Assets\Boards\Icons\p.jpg" />
@@ -344,6 +352,7 @@
     <Content Include="Assets\Boards\Icons\t.jpg" />
     <Content Include="Assets\Boards\Icons\tg.jpg" />
     <Content Include="Assets\Boards\Icons\toy.jpg" />
+    <Content Include="Assets\Boards\Icons\trash.jpg" />
     <Content Include="Assets\Boards\Icons\trv.jpg" />
     <Content Include="Assets\Boards\Icons\tv.jpg" />
     <Content Include="Assets\Boards\Icons\u.jpg" />
@@ -354,6 +363,7 @@
     <Content Include="Assets\Boards\Icons\w.jpg" />
     <Content Include="Assets\Boards\Icons\wg.jpg" />
     <Content Include="Assets\Boards\Icons\wsg.jpg" />
+    <Content Include="Assets\Boards\Icons\wsr.jpg" />
     <Content Include="Assets\Boards\Icons\x.jpg" />
     <Content Include="Assets\Boards\Icons\y.jpg" />
     <Page Include="Views\ImageViewer.xaml">
